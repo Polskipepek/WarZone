@@ -17,39 +17,121 @@ export class ConsentClient {
         this.baseUrl = baseUrl ? baseUrl : "";
     }
 
-    get(): Promise<string> {
+    addCustomer(customer: Customer): Promise<FileResponse | null> {
         let url_ = this.baseUrl + "/api/Consent";
         url_ = url_.replace(/[?&]$/, "");
 
+        const content_ = JSON.stringify(customer);
+
         let options_ = <RequestInit>{
+            body: content_,
             method: "POST",
             headers: {
-                "Accept": "application/json"
+                "Content-Type": "application/json",
+                "Accept": "application/octet-stream"
             }
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processGet(_response);
+            return this.processAddCustomer(_response);
         });
     }
 
-    protected processGet(response: Response): Promise<string> {
+    protected processAddCustomer(response: Response): Promise<FileResponse | null> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 !== undefined ? resultData200 : <any>null;
-            return result200;
-            });
+        if (status === 200 || status === 206) {
+            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
+            const fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
+            const fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
+            return response.blob().then(blob => { return { fileName: fileName, data: blob, status: status, headers: _headers }; });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<string>(<any>null);
+        return Promise.resolve<FileResponse | null>(<any>null);
     }
+}
+
+export class ModelBase implements IModelBase {
+    id!: number;
+
+    constructor(data?: IModelBase) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+        }
+    }
+
+    static fromJS(data: any): ModelBase {
+        data = typeof data === 'object' ? data : {};
+        let result = new ModelBase();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IModelBase {
+    id: number;
+}
+
+export class Customer extends ModelBase implements ICustomer {
+    customerName?: string | undefined;
+    customerSurname?: string | undefined;
+
+    constructor(data?: ICustomer) {
+        super(data);
+    }
+
+    init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.customerName = _data["customerName"];
+            this.customerSurname = _data["customerSurname"];
+        }
+    }
+
+    static fromJS(data: any): Customer {
+        data = typeof data === 'object' ? data : {};
+        let result = new Customer();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["customerName"] = this.customerName;
+        data["customerSurname"] = this.customerSurname;
+        super.toJSON(data);
+        return data; 
+    }
+}
+
+export interface ICustomer extends IModelBase {
+    customerName?: string | undefined;
+    customerSurname?: string | undefined;
+}
+
+export interface FileResponse {
+    data: Blob;
+    status: number;
+    fileName?: string;
+    headers?: { [name: string]: any };
 }
 
 export class ApiException extends Error {

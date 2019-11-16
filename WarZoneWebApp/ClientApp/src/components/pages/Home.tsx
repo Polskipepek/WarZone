@@ -1,34 +1,13 @@
 import React, { Component } from 'react';
-import { Button } from 'antd';
+import { Button, Layout, Menu, Breadcrumb } from 'antd';
+import { RouteComponentProps } from 'react-router';
+import WarzoneLayout from '../WarzoneLayout';
 
-export default class Home extends Component<any> {
+export default class Home extends Component<RouteComponentProps> {
     render() {
-        return (
-            <div>
-                {this.DisplayHeaderLogo()}
-                {this.DisplayPageSelectionButtons()}
-            </div>
-        );
+        return this.DisplayPageSelectionButtons();
     }
-
-    DisplayHeaderLogo() {
-        return (
-            <div>
-                <img src="http://www.war-zone.com.pl/wp-content/uploads/2016/01/LOGO_FB.png" style={{
-                    maxWidth: "200px",
-                    height: "auto",
-                    width: "auto",
-                    display: "block",
-                    marginLeft: window.innerWidth / 2 - 100,
-
-                } as React.CSSProperties}>
-                </img>
-
-            </div>
-        );
-    }
-
-    DisplayPageSelectionButtons() {
+    DisplayPageSelectionButtons = () => {
         let butWidth = 300;
         return (
             <div>
@@ -55,9 +34,9 @@ export default class Home extends Component<any> {
                     left: window.innerWidth / 2 - butWidth / 2,
                     marginTop: "20px",
                     fontSize: 35,
-                    }
                 }
-                    onClick={()=> this.props.history.push("/offerlogin")}
+                }
+                    onClick={() => this.props.history.push("/offerlogin")}
                 >
                     Oferta
                 </Button>

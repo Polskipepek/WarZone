@@ -5,10 +5,10 @@
     "title": "My Title",
     "version": "1.0.0"
   },
-  "produces": [
-    "text/plain",
+  "consumes": [
     "application/json",
-    "text/json"
+    "text/json",
+    "application/*+json"
   ],
   "paths": {
     "/api/Consent": {
@@ -16,15 +16,58 @@
         "tags": [
           "Consent"
         ],
-        "operationId": "Consent_Get",
+        "operationId": "Consent_AddCustomer",
+        "parameters": [
+          {
+            "name": "customer",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Customer"
+            },
+            "x-nullable": false
+          }
+        ],
         "responses": {
           "200": {
-            "x-nullable": false,
+            "x-nullable": true,
             "description": "",
             "schema": {
+              "type": "file"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Customer": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ModelBase"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "customerName": {
+              "type": "string"
+            },
+            "customerSurname": {
               "type": "string"
             }
           }
+        }
+      ]
+    },
+    "ModelBase": {
+      "type": "object",
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     }

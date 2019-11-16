@@ -1,3 +1,43 @@
-body {
+.ant-layout-header {
+    min-height: 75px;
+    float: left;
+    position: fixed;
+    min-width: 100%;
+    z-index: 1;
+    background: rgb(131, 131, 131) !important;
+}
+
+.ant-menu {
+    background: rgb(131, 131, 131) !important;
+
+}
+
+
+.bg-def-color,
+body,
+.ant-layout-content {
     background-color: rgb(190, 190, 190);
+}
+
+.logo {
+    float: left;
+    max-width: 150px;
+    max-height: 100px;
+    margin-top: 0px;
+}
+
+.ant-menu-item-selected {
+    background: rgb(58, 58, 58) !important;
+}
+
+.ant-card {
+    display: inline-block;
+    margin: 10px !important;
+}
+
+.kliven-hscroll {
+    overflow-x: scroll;
+    overflow-y: hidden;
+    white-space: nowrap;
+    margin-top: 20px;
 }

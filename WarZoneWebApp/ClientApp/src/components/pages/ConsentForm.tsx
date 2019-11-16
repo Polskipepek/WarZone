@@ -15,8 +15,8 @@ export class InnerConsentForm extends Component<any, { consentCheckbox: boolean 
     render() {
         return (
             <div>
-                {this.DisplayForms()}
                 {this.DisplayRegulations()}
+                {this.DisplayForms()}
             </div>
         );
     }
