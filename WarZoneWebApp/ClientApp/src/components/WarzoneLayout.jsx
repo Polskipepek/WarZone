@@ -35,7 +35,7 @@ const WarzoneLayoutInner = (props) => (
                 }}
                 theme="dark"
             >
-                <Menu.Item onClick={() => props.history.push("/")} key="1">
+                <Menu.Item onClick={() => props.history.push("/dashboard")} key="1">
                     Strona Główna
 						</Menu.Item>
                 <Menu.Item
@@ -54,9 +54,7 @@ const WarzoneLayoutInner = (props) => (
         </Header>
         <Content style={{ padding: '0 50px' }}>
             <div style={{ background: '#fff', padding: 24, minHeight: 280 }}>
-                <BrowserRouter>
-                    <Route {...props} />
-                </BrowserRouter>
+                <Route {...props} />
             </div>
         </Content>
         <Footer style={{ textAlign: 'center' }}></Footer>
@@ -64,11 +62,12 @@ const WarzoneLayoutInner = (props) => (
 );
 
 const WarzoneLayout = (props) => (
-    <BrowserRouter>
+    <Switch>
+        <WarzoneLayoutInner {...props} path="/dashboard" component={Home} />
+        <WarzoneLayoutInner {...props} path="/consent" component={ConsentForm} />
+        <WarzoneLayoutInner {...props} path="/offer" component={Offer} />
+    </Switch>
 
-        <WarzoneLayoutInner {...props} exact path="/dashboard" component={Home} />
 
-
-    </BrowserRouter>
 );
 export default WarzoneLayout;
