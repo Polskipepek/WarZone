@@ -6,13 +6,11 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using WarZoneWebApp.Database.Seeds;
 
-namespace WarZoneWebApp
-{
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
+namespace WarZoneWebApp {
+    public class Program {
+        public static void Main(string[] args) {
             CreateWebHostBuilder(args).Build().Run();
         }
 
