@@ -1,16 +1,22 @@
 import React, { Component } from 'react';
 import { Button, Form, Input, Icon, Checkbox } from 'antd';
+import { ConsentClient, ICustomer, Customer } from '../../ApiClient';
 
 function hasErrors(fieldsError: { [x: string]: any; }) {
     return Object.keys(fieldsError).some(field => fieldsError[field]);
 }
 
 export class InnerConsentForm extends Component<any, { consentCheckbox: boolean }> {
+    formValues: any;
     constructor(props: any) {
         super(props);
         this.state = {
             consentCheckbox: false
         }
+        this.formValues = {
+            Imię: "",
+            Nazwisko: ""
+        };
     }
     render() {
         return (
@@ -20,6 +26,20 @@ export class InnerConsentForm extends Component<any, { consentCheckbox: boolean 
             </div>
         );
     }
+
+
+    submitForm = () => {
+        if (this.formValues.Imię != "" && this.formValues.Nazwisko != "") {
+            const customer: ICustomer = {
+                id: 0,
+                customerName: this.formValues.Imię,
+                customerSurname: this.formValues.Nazwisko
+            };
+
+            new ConsentClient().addCustomer(customer as Customer).then(e => console.log(e));
+        }
+    }
+
 
     handleSubmit = (e: { preventDefault: () => void; }) => {
         e.preventDefault();
@@ -36,17 +56,19 @@ export class InnerConsentForm extends Component<any, { consentCheckbox: boolean 
 
         // const surname = isFieldTouched("surname") && getFieldError("surname");
         return (
-            <Form layout="inline" onSubmit={this.handleSubmit}>
-                {this.DisplayInputField("Imię", "", "Imię", "edit", "Podaj swoje imię", () => !isFieldTouched("Imię") || !getFieldError("Imię"))}
-                {this.DisplayInputField("Nazwisko", "", "Nazwisko", "edit", "Podaj swoje nazwisko", () => !isFieldTouched("Nazwisko") || !getFieldError("Nazwisko"))}
-                <Checkbox onChange={(e) => this.setState({ consentCheckbox: e.target.checked })}>{"Akceptuję regulamin"}</Checkbox>
-                <Form.Item>
-                    <Button
-                        type="primary" htmlType="submit" disabled={this.state.consentCheckbox == false || hasErrors(getFieldsError())}>
-                        Log in
+            <div className="kliven-centered">
+                <Form layout="inline" onSubmit={this.handleSubmit}>
+                    {this.DisplayInputField("Imię", "", "Imię", "edit", "Podaj swoje imię", () => !isFieldTouched("Imię") || !getFieldError("Imię"))}
+                    {this.DisplayInputField("Nazwisko", "", "Nazwisko", "edit", "Podaj swoje nazwisko", () => !isFieldTouched("Nazwisko") || !getFieldError("Nazwisko"))}
+
+                    <Checkbox onChange={(e) => this.setState({ consentCheckbox: e.target.checked })}>{"Akceptuję regulamin"}</Checkbox>
+                    <Form.Item>
+                        <Button onClick={() => this.submitForm()} size="large" type="primary" htmlType="submit" disabled={this.state.consentCheckbox == false || hasErrors(getFieldsError())}>
+                            Dalej
                     </Button>
-                </Form.Item>
-            </Form>
+                    </Form.Item>
+                </Form>
+            </div>
         );
     }
 
@@ -57,10 +79,11 @@ export class InnerConsentForm extends Component<any, { consentCheckbox: boolean 
                 {getFieldDecorator(fieldName, {
                     rules: [{ required: true, message: { errorMessage } }],
                 })(
-                    <Input
+                    <Input size="large"
                         prefix={<Icon type={iconType} style={{ color: 'rgba(0,0,0,.25)' }} />}
                         type={fieldType}
                         placeholder={placeholder}
+                        onChange={(value) => this.formValues[fieldName] = value.target.value}
                     />,
                 )}
             </Form.Item>

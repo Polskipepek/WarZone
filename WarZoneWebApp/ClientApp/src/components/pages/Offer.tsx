@@ -1,23 +1,23 @@
-import React, { Component } from 'react';
+import React, { Component, useState, useEffect } from 'react';
 import { Button, Form, Input, Icon } from 'antd';
+import WeaponList from '../weapon/WeaponList';
 
 function hasErrors(fieldsError: { [x: string]: any; }) {
     return Object.keys(fieldsError).some(field => fieldsError[field]);
 }
 
-export class InnerOffer extends Component<any> {
-    render() {
-        return (
-            <div>
-
-            </div>
-        );
-    }
+const Offer: React.FunctionComponent = props => {
 
 
+    useEffect(() => {
 
+    });
 
+    return (
+        <div>
+            <WeaponList />
+        </div>
+    );
 
 }
-const Offer = Form.create()(InnerOffer);
 export default Offer;

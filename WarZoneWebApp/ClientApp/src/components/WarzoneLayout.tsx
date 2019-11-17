@@ -72,12 +72,12 @@ const WarzoneLayoutInner: React.FunctionComponent<RouteComponentProps> = (props)
 						</Menu.Item>
                 </Menu>
             </Header>
-            <Content style={{ padding: '80px 50px' }}>
-                <div style={{ background: '#fff', padding: 24, minHeight: window.screen.availHeight / 4 * 3 }}>
+            <Content style={{ padding: '80px 25px' }}>
+                <div style={{ background: '#fff', padding: 24, minHeight: window.screen.availHeight * .9 }}>
                     {props.children}
                 </div>
             </Content>
-            <Footer style={{ textAlign: 'center' }}></Footer>
+            <Footer style={{ textAlign: 'center' }}><div className="kliven-centered">Created by KlivenINC</div></Footer>
         </Layout>
     );
 };

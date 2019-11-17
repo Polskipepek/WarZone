@@ -12,7 +12,6 @@
 
 }
 
-
 .bg-def-color,
 body,
 .ant-layout-content {
@@ -32,7 +31,12 @@ body,
 
 .ant-card {
     display: inline-block;
-    margin: 10px !important;
+    margin: 15px !important;
+
+}
+
+.ant-card-head {
+    padding: 1px !important;
 }
 
 .kliven-hscroll {
@@ -46,4 +50,27 @@ body,
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.ant-layout-footer {
+    min-height: 5px !important;
+
+}
+
+.grid-container {
+    display: grid;
+    grid-column-gap: 25px;
+    grid-row-gap: 25px;
+    grid-template-columns: repeat(6, auto);
+    padding: 10px;
+}
+
+.grid-item {
+    -webkit-box-shadow: 2px 2px 4px 5px rgba(0, 0, 0, 0.56);
+    -moz-box-shadow: 2px 2px 4px 5px rgba(0, 0, 0, 0.56);
+    box-shadow: 2px 2px 4px 5px rgba(0, 0, 0, 0.56);
+    padding: 1px;
+    font-size: 30px;
+    text-align: center;
+    max-width: 250px;
 }

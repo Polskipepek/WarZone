@@ -22,6 +22,9 @@ namespace WarZoneWebApp.Controllers {
         public async Task<IActionResult> AddCustomer([FromBody]Customer customer) {
             //3. Handle request
             //4. return value
+            if (string.IsNullOrWhiteSpace(customer.CustomerName) || string.IsNullOrWhiteSpace(customer.CustomerSurname)) {
+                return BadRequest();
+            }
             await context.Customers.AddAsync(customer);
             await context.SaveChangesAsync();
             return Ok();
