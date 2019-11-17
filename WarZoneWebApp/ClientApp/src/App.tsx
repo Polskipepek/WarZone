@@ -15,8 +15,14 @@ export default class App extends Component {
   render() {
     return (
       <BrowserRouter>
-        <Redirect from="/" to="/dashboard"></Redirect>
-        <Route path="/" component={WarzoneLayout}></Route>
+        <WarzoneLayout>
+          <Switch>
+            <Route path="/" exact component={Home} />
+            <Route path="/consent" component={ConsentForm} />
+            <Route path="/offer" component={Offer} />
+          </Switch>
+        </WarzoneLayout>
+
       </BrowserRouter>
       /*             <BrowserRouter>
                   <Switch>

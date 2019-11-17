@@ -19,8 +19,6 @@ export class InnerOffer extends Component<InnerOfferProps & RouteComponentProps 
             <div>
                 {this.DisplayForms()}
 
-
-
             </div>
         );
     }
