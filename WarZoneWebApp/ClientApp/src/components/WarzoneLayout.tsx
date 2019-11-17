@@ -33,7 +33,7 @@ const WarzoneLayoutInner: React.FunctionComponent<RouteComponentProps> = (props)
 
     return (
         <Layout className="layout">
-            <Header color="white">
+            <Header color="white" >
                 <div className="logo" onClick={() => changePage(Resources.pageAdresses.home)}>
                     <img src="http://www.war-zone.com.pl/wp-content/uploads/2016/01/LOGO_FB.png" style={{
                         maxHeight: "64px",
@@ -72,8 +72,8 @@ const WarzoneLayoutInner: React.FunctionComponent<RouteComponentProps> = (props)
 						</Menu.Item>
                 </Menu>
             </Header>
-            <Content style={{ padding: '0 50px' }}>
-                <div style={{ background: '#fff', padding: 24, minHeight: 280 }}>
+            <Content style={{ padding: '80px 50px' }}>
+                <div style={{ background: '#fff', padding: 24, minHeight: window.screen.availHeight / 4 * 3 }}>
                     {props.children}
                 </div>
             </Content>

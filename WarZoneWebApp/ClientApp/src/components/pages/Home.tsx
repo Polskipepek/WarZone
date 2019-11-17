@@ -1,10 +1,10 @@
-import React, { Component, Props } from 'react';
+import React, { Component, Props, Fragment } from 'react';
 import { Button, Layout, Menu, Breadcrumb, Form, Input, Icon } from 'antd';
 import { RouteComponentProps } from 'react-router';
 import WarzoneLayout from '../WarzoneLayout';
 import { FormComponentProps } from 'antd/lib/form';
 
-export default Form.create()(class Home extends Component<RouteComponentProps & FormComponentProps> {
+class HomeInner extends Component<RouteComponentProps & FormComponentProps> {
     constructor(props: any) {
         super(props);
         this.state = {
@@ -14,33 +14,50 @@ export default Form.create()(class Home extends Component<RouteComponentProps & 
     }
 
     render() {
-        return this.DisplayPageSelectionButtons();
+        return (
+            <div className="kliven-centered" style={{ marginTop: window.screen.availHeight * 0.2 }}>
+                {this.DisplayForms()}
+            </div>
+        );
     }
 
 
-    DisplayForms() {
+    DisplayForms = () => {
         const { getFieldDecorator, getFieldsError, getFieldError, isFieldTouched } = this.props.form;
+        const name = isFieldTouched('username') && getFieldError('username');
         const surname = isFieldTouched('password') && getFieldError('password');
+
         return (
             <Form layout="inline" onSubmit={this.handleSubmit}>
+                <Form.Item validateStatus={name ? 'error' : ''} help={name || ''}>
+                    {getFieldDecorator('username', {
+                        rules: [{ required: true, message: 'Please input your username!' }],
+                    })(
+                        <Input size="large"
+                            prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                            placeholder="Username"
+                        />,
+                    )}
+                </Form.Item>
+
                 <Form.Item validateStatus={surname ? 'error' : ''} help={surname || ''}>
                     {getFieldDecorator('password', {
                         rules: [{ required: true, message: 'Please input your Password!' }],
                     })(
-                        <Input
+                        <Input size="large"
                             prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
                             type="password"
                             placeholder="Password"
                         />,
                     )}
                 </Form.Item>
-
                 <Form.Item>
-                    <Button type="primary" htmlType="submit" disabled={hasErrors(getFieldsError())}>
+                    <Button type="primary" htmlType="submit" disabled={hasErrors(getFieldsError())} size="large">
                         Log in
                     </Button>
                 </Form.Item>
             </Form>
+
         );
     }
 
@@ -82,7 +99,7 @@ export default Form.create()(class Home extends Component<RouteComponentProps & 
                     fontSize: 35,
                 }
                 }
-                    onClick={() => this.props.history.push("/offerlogin")}
+                    onClick={() => this.props.history.push("/offer")}
                 >
                     Oferta
                 </Button>
@@ -91,7 +108,8 @@ export default Form.create()(class Home extends Component<RouteComponentProps & 
     }
 }
 
-);
 function hasErrors(fieldsError: { [x: string]: any; }) {
     return Object.keys(fieldsError).some(field => fieldsError[field]);
 }
+const Home = Form.create()(HomeInner);
+export default Home;
