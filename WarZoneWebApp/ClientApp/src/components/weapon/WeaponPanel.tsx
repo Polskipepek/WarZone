@@ -7,13 +7,7 @@ interface IWeaponPanelProps {
 }
 const WeaponPanel: React.FunctionComponent<IWeaponPanelProps> = props => {
     return (
-        /*       <List.Item
-    style={{
-      width: 200,
-      minWidth: 200,
-      height: 400
-    }}
-  > */
+
         <Card
             style={{
                 width: 200,

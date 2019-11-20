@@ -6,6 +6,147 @@
     "version": "1.0.0"
   },
   "paths": {
+    "/api/Transaction": {
+      "post": {
+        "tags": [
+          "Transaction"
+        ],
+        "operationId": "Transaction_AddTransaction",
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/*+json"
+        ],
+        "parameters": [
+          {
+            "name": "customer",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Customer"
+            },
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": true,
+            "description": "",
+            "schema": {
+              "type": "file"
+            }
+          }
+        }
+      }
+    },
+    "/api/Customer/getcustomers": {
+      "post": {
+        "tags": [
+          "Customer"
+        ],
+        "operationId": "Customer_GetCustomers",
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Receipt"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Offer": {
+      "post": {
+        "tags": [
+          "Offer"
+        ],
+        "operationId": "Offer_GetWeapons",
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Weapon"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Receipt/AddReceipt": {
+      "post": {
+        "tags": [
+          "Receipt"
+        ],
+        "operationId": "Receipt_AddReceipt",
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/*+json"
+        ],
+        "parameters": [
+          {
+            "name": "customer",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Customer"
+            },
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": true,
+            "description": "",
+            "schema": {
+              "type": "file"
+            }
+          }
+        }
+      }
+    },
+    "/api/Receipt/GetReceipts": {
+      "get": {
+        "tags": [
+          "Receipt"
+        ],
+        "operationId": "Receipt_GetReceipts",
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Receipt"
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Consent": {
       "post": {
         "tags": [
@@ -34,31 +175,6 @@
             "description": "",
             "schema": {
               "type": "file"
-            }
-          }
-        }
-      }
-    },
-    "/api/Offer": {
-      "post": {
-        "tags": [
-          "Offer"
-        ],
-        "operationId": "Offer_GetWeapons",
-        "produces": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "responses": {
-          "200": {
-            "x-nullable": false,
-            "description": "",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/Weapon"
-              }
             }
           }
         }
@@ -95,6 +211,42 @@
           "format": "int32"
         }
       }
+    },
+    "Receipt": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ModelBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "creationDate",
+            "modifyDate",
+            "customerId"
+          ],
+          "properties": {
+            "creationDate": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "modifyDate": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "closeDate": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "customerId": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "customer": {
+              "$ref": "#/definitions/Customer"
+            }
+          }
+        }
+      ]
     },
     "Weapon": {
       "allOf": [

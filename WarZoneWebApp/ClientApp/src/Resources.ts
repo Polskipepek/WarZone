@@ -3,6 +3,7 @@ export default class Resources {
         home: "/",
         consent: "/consent",
         offer: "/offer",
+        receipts: "/receipts",
 
     };
 }

@@ -12,13 +12,13 @@ namespace Model.Database {
 
 
         [ForeignKey(nameof(CustomerId))]
-        public Customer Customer { get; set; }
+        public virtual Customer Customer { get; set; }
 
         [ForeignKey(nameof(ServiceId))]
-        public Service Service { get; set; }
+        public virtual Service Service { get; set; }
 
         [ForeignKey(nameof(ReceiptId))]
-        public Receipt Receipt { get; set; }
+        public virtual Receipt Receipt { get; set; }
 
     }
 }

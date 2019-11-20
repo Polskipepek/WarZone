@@ -27,6 +27,8 @@ const WarzoneLayoutInner: React.FunctionComponent<RouteComponentProps> = (props)
                 return "1";
             case Resources.pageAdresses.offer:
                 return "3";
+            case Resources.pageAdresses.receipts:
+                return "4";
         }
         return "1";
     }
@@ -36,7 +38,7 @@ const WarzoneLayoutInner: React.FunctionComponent<RouteComponentProps> = (props)
             <Header color="white" >
                 <div className="logo" onClick={() => changePage(Resources.pageAdresses.home)}>
                     <img src="http://www.war-zone.com.pl/wp-content/uploads/2016/01/LOGO_FB.png" style={{
-                        maxHeight: "64px",
+                        maxHeight: "48px",
                         height: "auto",
                         width: "auto",
                         display: "inline",
@@ -51,7 +53,7 @@ const WarzoneLayoutInner: React.FunctionComponent<RouteComponentProps> = (props)
                     selectedKeys={[getCurrentSelectedPage() as string]}
                     style={{
                         margin: "20px 80px",
-                        lineHeight: "32px"
+                        lineHeight: "25px"
                     }}
                     theme="dark"
                 >
@@ -69,6 +71,12 @@ const WarzoneLayoutInner: React.FunctionComponent<RouteComponentProps> = (props)
                         key="3"
                     >
                         Oferta
+						</Menu.Item>
+                    <Menu.Item
+                        onClick={() => changePage(Resources.pageAdresses.receipts)}
+                        key="4"
+                    >
+                        Otwarte rachunki
 						</Menu.Item>
                 </Menu>
             </Header>

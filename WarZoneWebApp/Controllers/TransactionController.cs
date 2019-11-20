@@ -10,16 +10,16 @@ using Model.Database;
 namespace WarZoneWebApp.Controllers {
     [Route("api/[controller]")]
     [ApiController]
-    public class TransactionController : ControllerBase {
+    public class ConsentController : ControllerBase {
 
         private readonly Context context;
 
-        public TransactionController (Context context) {
+        public ConsentController (Context context) {
             this.context = context;
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddTransaction([FromBody]Customer customer) {
+        public async Task<IActionResult> AddCustomer([FromBody]Customer customer) {
             //3. Handle request
             //4. return value
             if (string.IsNullOrWhiteSpace(customer.CustomerName) || string.IsNullOrWhiteSpace(customer.CustomerSurname)) {

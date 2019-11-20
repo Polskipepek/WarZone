@@ -7,7 +7,7 @@
 //----------------------
 // ReSharper disable InconsistentNaming
 
-export class ConsentClient {
+export class TransactionClient {
     private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
     private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
@@ -17,8 +17,8 @@ export class ConsentClient {
         this.baseUrl = baseUrl ? baseUrl : "";
     }
 
-    addCustomer(customer: Customer): Promise<FileResponse | null> {
-        let url_ = this.baseUrl + "/api/Consent";
+    addTransaction(customer: Customer): Promise<FileResponse | null> {
+        let url_ = this.baseUrl + "/api/Transaction";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(customer);
@@ -33,11 +33,11 @@ export class ConsentClient {
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processAddCustomer(_response);
+            return this.processAddTransaction(_response);
         });
     }
 
-    protected processAddCustomer(response: Response): Promise<FileResponse | null> {
+    protected processAddTransaction(response: Response): Promise<FileResponse | null> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200 || status === 206) {
@@ -51,6 +51,55 @@ export class ConsentClient {
             });
         }
         return Promise.resolve<FileResponse | null>(<any>null);
+    }
+}
+
+export class CustomerClient {
+    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
+        this.http = http ? http : <any>window;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    getCustomers(): Promise<Receipt[]> {
+        let url_ = this.baseUrl + "/api/Customer/getcustomers";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "POST",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetCustomers(_response);
+        });
+    }
+
+    protected processGetCustomers(response: Response): Promise<Receipt[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(Receipt.fromJS(item));
+            }
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<Receipt[]>(<any>null);
     }
 }
 
@@ -100,6 +149,138 @@ export class OfferClient {
             });
         }
         return Promise.resolve<Weapon[]>(<any>null);
+    }
+}
+
+export class ReceiptClient {
+    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
+        this.http = http ? http : <any>window;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    addReceipt(customer: Customer): Promise<FileResponse | null> {
+        let url_ = this.baseUrl + "/api/Receipt/AddReceipt";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(customer);
+
+        let options_ = <RequestInit>{
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/octet-stream"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processAddReceipt(_response);
+        });
+    }
+
+    protected processAddReceipt(response: Response): Promise<FileResponse | null> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200 || status === 206) {
+            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
+            const fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
+            const fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
+            return response.blob().then(blob => { return { fileName: fileName, data: blob, status: status, headers: _headers }; });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<FileResponse | null>(<any>null);
+    }
+
+    getReceipts(): Promise<Receipt[]> {
+        let url_ = this.baseUrl + "/api/Receipt/GetReceipts";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetReceipts(_response);
+        });
+    }
+
+    protected processGetReceipts(response: Response): Promise<Receipt[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(Receipt.fromJS(item));
+            }
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<Receipt[]>(<any>null);
+    }
+}
+
+export class ConsentClient {
+    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
+        this.http = http ? http : <any>window;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    addCustomer(customer: Customer): Promise<FileResponse | null> {
+        let url_ = this.baseUrl + "/api/Consent";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(customer);
+
+        let options_ = <RequestInit>{
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/octet-stream"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processAddCustomer(_response);
+        });
+    }
+
+    protected processAddCustomer(response: Response): Promise<FileResponse | null> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200 || status === 206) {
+            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
+            const fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
+            const fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
+            return response.blob().then(blob => { return { fileName: fileName, data: blob, status: status, headers: _headers }; });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<FileResponse | null>(<any>null);
     }
 }
 
@@ -174,6 +355,55 @@ export class Customer extends ModelBase implements ICustomer {
 export interface ICustomer extends IModelBase {
     customerName?: string | undefined;
     customerSurname?: string | undefined;
+}
+
+export class Receipt extends ModelBase implements IReceipt {
+    creationDate!: Date;
+    modifyDate!: Date;
+    closeDate?: Date | undefined;
+    customerId!: number;
+    customer?: Customer | undefined;
+
+    constructor(data?: IReceipt) {
+        super(data);
+    }
+
+    init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.creationDate = _data["creationDate"] ? new Date(_data["creationDate"].toString()) : <any>undefined;
+            this.modifyDate = _data["modifyDate"] ? new Date(_data["modifyDate"].toString()) : <any>undefined;
+            this.closeDate = _data["closeDate"] ? new Date(_data["closeDate"].toString()) : <any>undefined;
+            this.customerId = _data["customerId"];
+            this.customer = _data["customer"] ? Customer.fromJS(_data["customer"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): Receipt {
+        data = typeof data === 'object' ? data : {};
+        let result = new Receipt();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["creationDate"] = this.creationDate ? this.creationDate.toISOString() : <any>undefined;
+        data["modifyDate"] = this.modifyDate ? this.modifyDate.toISOString() : <any>undefined;
+        data["closeDate"] = this.closeDate ? this.closeDate.toISOString() : <any>undefined;
+        data["customerId"] = this.customerId;
+        data["customer"] = this.customer ? this.customer.toJSON() : <any>undefined;
+        super.toJSON(data);
+        return data; 
+    }
+}
+
+export interface IReceipt extends IModelBase {
+    creationDate: Date;
+    modifyDate: Date;
+    closeDate?: Date | undefined;
+    customerId: number;
+    customer?: Customer | undefined;
 }
 
 export class Weapon extends ModelBase implements IWeapon {

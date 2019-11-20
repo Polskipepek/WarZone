@@ -4,7 +4,7 @@ using System;
 
 namespace Model {
     public class Context : DbContext {
-        public const string CONNECTION_STRING = "Host=localhost;Database=WarzoneDB;Username=postgres;Password=postgres";
+        public const string CONNECTION_STRING = "Host=localhost;Port=5433;Database=WarzoneDB;Username=postgres;Password=postgres";
         public DbSet<Weapon> Weapons { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Receipt> Receipts { get; set; }

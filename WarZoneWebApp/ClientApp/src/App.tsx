@@ -8,6 +8,8 @@ import ConsentForm from './components/pages/ConsentForm';
 import Offer from './components/pages/Offer';
 import OfferLogin from './components/pages/OfferLogin';
 import WarzoneLayout from './components/WarzoneLayout';
+import Resources from './Resources';
+import Receipts from './components/pages/Receipts';
 
 export default class App extends Component {
   static displayName = App.name;
@@ -17,9 +19,11 @@ export default class App extends Component {
       <BrowserRouter>
         <WarzoneLayout>
           <Switch>
-            <Route path="/" exact component={Home} />
-            <Route path="/consent" component={ConsentForm} />
-            <Route path="/offer" component={Offer} />
+            <Route path={Resources.pageAdresses.home} exact component={Home} />
+            <Route path={Resources.pageAdresses.consent} component={ConsentForm} />
+            <Route path={Resources.pageAdresses.offer} component={Offer} />
+            <Route path={Resources.pageAdresses.receipts} component={Receipts} />
+
           </Switch>
         </WarzoneLayout>
 

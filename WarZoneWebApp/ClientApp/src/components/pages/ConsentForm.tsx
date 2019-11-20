@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Button, Form, Input, Icon, Checkbox } from 'antd';
-import { ConsentClient, ICustomer, Customer } from '../../ApiClient';
+import { ConsentClient, ICustomer, Customer, ReceiptClient } from '../../ApiClient';
 
 function hasErrors(fieldsError: { [x: string]: any; }) {
     return Object.keys(fieldsError).some(field => fieldsError[field]);
@@ -36,9 +36,12 @@ export class InnerConsentForm extends Component<any, { consentCheckbox: boolean 
                 customerSurname: this.formValues.Nazwisko
             };
 
-            new ConsentClient().addCustomer(customer as Customer).then(e => console.log(e));
+            new ConsentClient().addCustomer(customer as Customer);
+            new ReceiptClient().addReceipt(customer as Customer);
         }
     }
+
+
 
 
     handleSubmit = (e: { preventDefault: () => void; }) => {
