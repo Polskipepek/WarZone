@@ -1,5 +1,6 @@
 import ConsentForm from './pages/ConsentForm';
 import Home from './pages/Home';
+import MenuItem from 'antd/lib/menu/MenuItem';
 import Offer from './pages/Offer';
 import React, { Component, useEffect, useState } from 'react';
 import Resources from '../Resources';
@@ -87,7 +88,9 @@ const WarzoneLayoutInner: React.FunctionComponent<RouteComponentProps> = (props)
                     >
                         Otwarte rachunki
 						</Menu.Item>
-
+                    <MenuItem>
+                        Wybrany rachunek: TODO
+                    </MenuItem>
                 </Menu>
             </Header>
             <Content style={{ padding: '80px 25px' }}>
