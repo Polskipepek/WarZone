@@ -4,30 +4,31 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Model;
 using Model.Database;
 
 namespace WarZoneWebApp.Controllers {
     [Route("api/[controller]")]
     [ApiController]
-    public class ConsentController : ControllerBase {
+    public class TransactionController : ControllerBase {
 
         private readonly Context context;
 
-        public ConsentController (Context context) {
+        public TransactionController (Context context) {
             this.context = context;
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddCustomer([FromBody]Customer customer) {
-            //3. Handle request
-            //4. return value
-            if (string.IsNullOrWhiteSpace(customer.CustomerName) || string.IsNullOrWhiteSpace(customer.CustomerSurname)) {
+        [Route("[action]")]
+        public ActionResult<Transaction[]> GetTransactions([FromBody]Receipt receipt) {
+            if (receipt == null || receipt.Customer == null) {
                 return BadRequest();
             }
-            await context.Customers.AddAsync(customer);
-            await context.SaveChangesAsync();
-            return Ok();
+            context.Transactions.Include(e => e.Customer).Include(e=>e.Service).Include(e=>e.Receipt).Load();
+            var transactions = context.Transactions.Where(e => e.Receipt == receipt).OrderBy(e => e.ServiceId).ToArray();
+
+            return transactions;
         }
 
 

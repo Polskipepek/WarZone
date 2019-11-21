@@ -3,7 +3,7 @@
     float: left;
     position: fixed;
     min-width: 100%;
-    z-index: 1;
+    z-index: 1000;
     background: rgb(131, 131, 131) !important;
 }
 

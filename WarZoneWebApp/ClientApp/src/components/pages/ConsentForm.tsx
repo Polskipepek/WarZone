@@ -1,6 +1,17 @@
 import React, { Component } from 'react';
-import { Button, Form, Input, Icon, Checkbox } from 'antd';
-import { ConsentClient, ICustomer, Customer, ReceiptClient } from '../../ApiClient';
+import {
+    Button,
+    Checkbox,
+    Form,
+    Icon,
+    Input
+    } from 'antd';
+import {
+    ConsentClient,
+    Customer,
+    ICustomer,
+    ReceiptClient
+    } from '../../ApiClient';
 
 function hasErrors(fieldsError: { [x: string]: any; }) {
     return Object.keys(fieldsError).some(field => fieldsError[field]);

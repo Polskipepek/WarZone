@@ -7,7 +7,7 @@
 //----------------------
 // ReSharper disable InconsistentNaming
 
-export class TransactionClient {
+export class ConsentClient {
     private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
     private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
@@ -17,8 +17,8 @@ export class TransactionClient {
         this.baseUrl = baseUrl ? baseUrl : "";
     }
 
-    addTransaction(customer: Customer): Promise<FileResponse | null> {
-        let url_ = this.baseUrl + "/api/Transaction";
+    addCustomer(customer: Customer): Promise<FileResponse | null> {
+        let url_ = this.baseUrl + "/api/Consent/AddCustomer";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(customer);
@@ -33,11 +33,11 @@ export class TransactionClient {
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processAddTransaction(_response);
+            return this.processAddCustomer(_response);
         });
     }
 
-    protected processAddTransaction(response: Response): Promise<FileResponse | null> {
+    protected processAddCustomer(response: Response): Promise<FileResponse | null> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200 || status === 206) {
@@ -237,7 +237,7 @@ export class ReceiptClient {
     }
 }
 
-export class ConsentClient {
+export class TransactionClient {
     private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
     private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
@@ -247,40 +247,46 @@ export class ConsentClient {
         this.baseUrl = baseUrl ? baseUrl : "";
     }
 
-    addCustomer(customer: Customer): Promise<FileResponse | null> {
-        let url_ = this.baseUrl + "/api/Consent";
+    getTransactions(receipt: Receipt): Promise<Transaction[]> {
+        let url_ = this.baseUrl + "/api/Transaction/GetTransactions";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(customer);
+        const content_ = JSON.stringify(receipt);
 
         let options_ = <RequestInit>{
             body: content_,
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Accept": "application/octet-stream"
+                "Accept": "application/json"
             }
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processAddCustomer(_response);
+            return this.processGetTransactions(_response);
         });
     }
 
-    protected processAddCustomer(response: Response): Promise<FileResponse | null> {
+    protected processGetTransactions(response: Response): Promise<Transaction[]> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200 || status === 206) {
-            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
-            const fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
-            const fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
-            return response.blob().then(blob => { return { fileName: fileName, data: blob, status: status, headers: _headers }; });
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(Transaction.fromJS(item));
+            }
+            return result200;
+            });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<FileResponse | null>(<any>null);
+        return Promise.resolve<Transaction[]>(<any>null);
     }
 }
 
@@ -361,6 +367,7 @@ export class Receipt extends ModelBase implements IReceipt {
     creationDate!: Date;
     modifyDate!: Date;
     closeDate?: Date | undefined;
+    totalPrice!: number;
     customerId!: number;
     customer?: Customer | undefined;
 
@@ -374,6 +381,7 @@ export class Receipt extends ModelBase implements IReceipt {
             this.creationDate = _data["creationDate"] ? new Date(_data["creationDate"].toString()) : <any>undefined;
             this.modifyDate = _data["modifyDate"] ? new Date(_data["modifyDate"].toString()) : <any>undefined;
             this.closeDate = _data["closeDate"] ? new Date(_data["closeDate"].toString()) : <any>undefined;
+            this.totalPrice = _data["totalPrice"];
             this.customerId = _data["customerId"];
             this.customer = _data["customer"] ? Customer.fromJS(_data["customer"]) : <any>undefined;
         }
@@ -391,6 +399,7 @@ export class Receipt extends ModelBase implements IReceipt {
         data["creationDate"] = this.creationDate ? this.creationDate.toISOString() : <any>undefined;
         data["modifyDate"] = this.modifyDate ? this.modifyDate.toISOString() : <any>undefined;
         data["closeDate"] = this.closeDate ? this.closeDate.toISOString() : <any>undefined;
+        data["totalPrice"] = this.totalPrice;
         data["customerId"] = this.customerId;
         data["customer"] = this.customer ? this.customer.toJSON() : <any>undefined;
         super.toJSON(data);
@@ -402,6 +411,7 @@ export interface IReceipt extends IModelBase {
     creationDate: Date;
     modifyDate: Date;
     closeDate?: Date | undefined;
+    totalPrice: number;
     customerId: number;
     customer?: Customer | undefined;
 }
@@ -437,6 +447,96 @@ export class Weapon extends ModelBase implements IWeapon {
 
 export interface IWeapon extends IModelBase {
     weaponName?: string | undefined;
+}
+
+export class Transaction extends ModelBase implements ITransaction {
+    customerId!: number;
+    serviceId!: number;
+    receiptId!: number;
+    customer?: Customer | undefined;
+    service?: Service | undefined;
+    receipt?: Receipt | undefined;
+
+    constructor(data?: ITransaction) {
+        super(data);
+    }
+
+    init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.customerId = _data["customerId"];
+            this.serviceId = _data["serviceId"];
+            this.receiptId = _data["receiptId"];
+            this.customer = _data["customer"] ? Customer.fromJS(_data["customer"]) : <any>undefined;
+            this.service = _data["service"] ? Service.fromJS(_data["service"]) : <any>undefined;
+            this.receipt = _data["receipt"] ? Receipt.fromJS(_data["receipt"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): Transaction {
+        data = typeof data === 'object' ? data : {};
+        let result = new Transaction();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["customerId"] = this.customerId;
+        data["serviceId"] = this.serviceId;
+        data["receiptId"] = this.receiptId;
+        data["customer"] = this.customer ? this.customer.toJSON() : <any>undefined;
+        data["service"] = this.service ? this.service.toJSON() : <any>undefined;
+        data["receipt"] = this.receipt ? this.receipt.toJSON() : <any>undefined;
+        super.toJSON(data);
+        return data; 
+    }
+}
+
+export interface ITransaction extends IModelBase {
+    customerId: number;
+    serviceId: number;
+    receiptId: number;
+    customer?: Customer | undefined;
+    service?: Service | undefined;
+    receipt?: Receipt | undefined;
+}
+
+export class Service extends ModelBase implements IService {
+    serviceName?: string | undefined;
+    servicePrice!: number;
+
+    constructor(data?: IService) {
+        super(data);
+    }
+
+    init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.serviceName = _data["serviceName"];
+            this.servicePrice = _data["servicePrice"];
+        }
+    }
+
+    static fromJS(data: any): Service {
+        data = typeof data === 'object' ? data : {};
+        let result = new Service();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["serviceName"] = this.serviceName;
+        data["servicePrice"] = this.servicePrice;
+        super.toJSON(data);
+        return data; 
+    }
+}
+
+export interface IService extends IModelBase {
+    serviceName?: string | undefined;
+    servicePrice: number;
 }
 
 export interface FileResponse {

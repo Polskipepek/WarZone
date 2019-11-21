@@ -1,7 +1,9 @@
-import React, { useState, useEffect, Consumer } from 'react'
-import { ReceiptClient, IReceipt, Customer } from '../../ApiClient';
-import { Alert } from 'antd';
 import CustomerList, { customers } from '../../CustomerList';
+import React, { Consumer, useEffect, useState } from 'react';
+import ReceiptPanel from '../receipt/ReceiptPanel';
+import { Alert } from 'antd';
+import { Customer, IReceipt, ReceiptClient } from '../../ApiClient';
+import '../receipt/receipt.css';
 
 const Receipts: React.FunctionComponent = props => {
     const [receipts, setReceipts] = useState<IReceipt[]>([]);
@@ -20,19 +22,16 @@ const Receipts: React.FunctionComponent = props => {
 
 
     return (
-        <div>
-            <h2>Rachunki</h2>
+        <div className="receiptsGrid">
             {receipts && receipts.map((receipt) => {
                 const data = receipt.creationDate;
                 return (
-                    <div>
-                        <h2>Rachunek:{' ' + data.getFullYear() + '-' + data.getMonth() + '-' +
+                    <React.Fragment>
+                        {/*                         <h3>Rachunek:{' ' + data.getFullYear() + '-' + data.getMonth() + '-' +
                             data.getDay() + ' ' + data.getHours() + ':' + data.getMinutes() + ":" + data.getMinutes() + '\t'}
-                            {receipt.customer!.customerSurname + " " + receipt.customer!.customerName}</h2>
-                        <h3>
-                            rec
-                        </h3>
-                    </div>
+                            {receipt.customer!.customerSurname + " " + receipt.customer!.customerName}</h3> */}
+                        <ReceiptPanel receipt={receipt} />
+                    </React.Fragment>
                 );
             })}
         </div>

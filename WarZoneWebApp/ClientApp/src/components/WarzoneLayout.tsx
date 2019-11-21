@@ -1,19 +1,28 @@
-import React, { Component } from 'react';
-import { Button, Layout, Menu, Breadcrumb } from 'antd';
-import { RouteComponentProps, Route, Switch, withRouter } from 'react-router';
-import { BrowserRouter } from 'react-router-dom';
 import ConsentForm from './pages/ConsentForm';
-import Offer from './pages/Offer';
 import Home from './pages/Home';
-import { JSXElement } from '@babel/types';
+import Offer from './pages/Offer';
+import React, { Component, useEffect, useState } from 'react';
 import Resources from '../Resources';
+import {
+    Breadcrumb,
+    Button,
+    Layout,
+    Menu
+    } from 'antd';
+import { BrowserRouter } from 'react-router-dom';
+import { JSXElement } from '@babel/types';
+import {
+    Route,
+    RouteComponentProps,
+    Switch,
+    withRouter
+    } from 'react-router';
 
 
 const { Header, Content, Footer } = Layout;
 
 const WarzoneLayoutInner: React.FunctionComponent<RouteComponentProps> = (props) => {
-
-
+    const [chosenReceipt, setChosenReceipt] = useState<string>("");
     const changePage = (page: string) => {
         props.history.push(page);
     }
@@ -78,6 +87,7 @@ const WarzoneLayoutInner: React.FunctionComponent<RouteComponentProps> = (props)
                     >
                         Otwarte rachunki
 						</Menu.Item>
+
                 </Menu>
             </Header>
             <Content style={{ padding: '80px 25px' }}>

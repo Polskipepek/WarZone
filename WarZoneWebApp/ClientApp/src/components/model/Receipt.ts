@@ -7,6 +7,7 @@ export interface Receipt extends ModelBase {
 		creationDate: Date;
 		modifyDate: Date;
 		closeDate?: Date;
+		totalPrice: number;
 		customerId: number;
 		customer: Customer;
 }

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { ICustomer, CustomerClient } from "./ApiClient";
+import React, { useEffect, useState } from 'react';
+import { CustomerClient, ICustomer } from './ApiClient';
 
 export const [customers, setCustomers] = useState<ICustomer[]>([]);
 

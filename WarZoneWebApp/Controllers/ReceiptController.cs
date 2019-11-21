@@ -33,9 +33,10 @@ namespace WarZoneWebApp.Controllers {
             //3. Handle request
             //4. return value
             context.Receipts.Include(e => e.Customer).Load();
-            var receipts = context.Receipts.Where(e=>e.Id != -1).OrderByDescending(e => e.ModifyDate).ToArray();
+            var receipts = context.Receipts.Where(e=>e.Id != -1).OrderByDescending(e => e.ModifyDate).ToList();
+            receipts.ForEach(e => e.GetTotalPrice(context));
 
-            return receipts;
+            return receipts.ToArray();
         }
 
 

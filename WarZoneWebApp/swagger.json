@@ -6,12 +6,12 @@
     "version": "1.0.0"
   },
   "paths": {
-    "/api/Transaction": {
+    "/api/Consent/AddCustomer": {
       "post": {
         "tags": [
-          "Transaction"
+          "Consent"
         ],
-        "operationId": "Transaction_AddTransaction",
+        "operationId": "Consent_AddCustomer",
         "consumes": [
           "application/json",
           "text/json",
@@ -147,34 +147,42 @@
         }
       }
     },
-    "/api/Consent": {
+    "/api/Transaction/GetTransactions": {
       "post": {
         "tags": [
-          "Consent"
+          "Transaction"
         ],
-        "operationId": "Consent_AddCustomer",
+        "operationId": "Transaction_GetTransactions",
         "consumes": [
           "application/json",
           "text/json",
           "application/*+json"
         ],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
         "parameters": [
           {
-            "name": "customer",
+            "name": "receipt",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/Customer"
+              "$ref": "#/definitions/Receipt"
             },
             "x-nullable": false
           }
         ],
         "responses": {
           "200": {
-            "x-nullable": true,
+            "x-nullable": false,
             "description": "",
             "schema": {
-              "type": "file"
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Transaction"
+              }
             }
           }
         }
@@ -222,6 +230,7 @@
           "required": [
             "creationDate",
             "modifyDate",
+            "totalPrice",
             "customerId"
           ],
           "properties": {
@@ -236,6 +245,10 @@
             "closeDate": {
               "type": "string",
               "format": "date-time"
+            },
+            "totalPrice": {
+              "type": "number",
+              "format": "double"
             },
             "customerId": {
               "type": "integer",
@@ -258,6 +271,66 @@
           "properties": {
             "weaponName": {
               "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "Transaction": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ModelBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "customerId",
+            "serviceId",
+            "receiptId"
+          ],
+          "properties": {
+            "customerId": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "serviceId": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "receiptId": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "customer": {
+              "$ref": "#/definitions/Customer"
+            },
+            "service": {
+              "$ref": "#/definitions/Service"
+            },
+            "receipt": {
+              "$ref": "#/definitions/Receipt"
+            }
+          }
+        }
+      ]
+    },
+    "Service": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ModelBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "servicePrice"
+          ],
+          "properties": {
+            "serviceName": {
+              "type": "string"
+            },
+            "servicePrice": {
+              "type": "number",
+              "format": "double"
             }
           }
         }

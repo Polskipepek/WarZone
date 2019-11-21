@@ -1,15 +1,17 @@
-import React, { Component } from 'react';
-import { Route, Switch, Redirect } from 'react-router';
-import { BrowserRouter } from 'react-router-dom';
-import Home from './components/pages/Home';
-import 'antd/dist/antd.css';
-import './styles/warzone.css';
 import ConsentForm from './components/pages/ConsentForm';
+import Home from './components/pages/Home';
 import Offer from './components/pages/Offer';
 import OfferLogin from './components/pages/OfferLogin';
-import WarzoneLayout from './components/WarzoneLayout';
-import Resources from './Resources';
+import React, { Component } from 'react';
 import Receipts from './components/pages/Receipts';
+import Resources from './Resources';
+import WarzoneLayout from './components/WarzoneLayout';
+import { BrowserRouter } from 'react-router-dom';
+import { Redirect, Route, Switch } from 'react-router';
+import './styles/warzone.css';
+import 'antd/dist/antd.css';
+
+
 
 export default class App extends Component {
   static displayName = App.name;
@@ -17,7 +19,7 @@ export default class App extends Component {
   render() {
     return (
       <BrowserRouter>
-        <WarzoneLayout>
+        <WarzoneLayout >
           <Switch>
             <Route path={Resources.pageAdresses.home} exact component={Home} />
             <Route path={Resources.pageAdresses.consent} component={ConsentForm} />

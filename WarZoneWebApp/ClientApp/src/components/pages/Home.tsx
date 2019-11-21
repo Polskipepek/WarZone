@@ -1,8 +1,16 @@
-import React, { Component, Props, Fragment } from 'react';
-import { Button, Layout, Menu, Breadcrumb, Form, Input, Icon } from 'antd';
-import { RouteComponentProps } from 'react-router';
+import React, { Component, Fragment, Props } from 'react';
 import WarzoneLayout from '../WarzoneLayout';
+import {
+    Breadcrumb,
+    Button,
+    Form,
+    Icon,
+    Input,
+    Layout,
+    Menu
+    } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
+import { RouteComponentProps } from 'react-router';
 
 class HomeInner extends Component<RouteComponentProps & FormComponentProps> {
     constructor(props: any) {
