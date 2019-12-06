@@ -1,9 +1,12 @@
 export default class Resources {
     public static pageAdresses = {
         home: "/",
-        consent: "/consent",
+        consent: "/consentContent",
         offer: "/offer",
         receipts: "/receipts",
 
     };
+    public static buttons = {
+        accept: "Akceptuję"
+    }
 }

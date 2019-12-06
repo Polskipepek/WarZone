@@ -1,3 +1,4 @@
+import ConsentContent from './components/pages/ConsentContent';
 import ConsentForm from './components/pages/ConsentForm';
 import Home from './components/pages/Home';
 import Offer from './components/pages/Offer';
@@ -20,7 +21,7 @@ const App: React.FunctionComponent = () => {
       <WarzoneLayout >
         <Switch>
           <Route path={Resources.pageAdresses.home} exact component={Home} />
-          <Route path={Resources.pageAdresses.consent} component={ConsentForm} />
+          <Route path={Resources.pageAdresses.consent} component={ConsentContent} />
           <Route path={Resources.pageAdresses.offer} component={Offer} />
           <Route path={Resources.pageAdresses.receipts} component={Receipts} />
 
