@@ -10,19 +10,26 @@ import {
     Typography
     } from 'antd';
 import { ColumnProps } from 'antd/lib/table';
+import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
+import { IAppState } from '../redux/Store';
 import {
     IReceipt,
     ITransaction,
     Receipt,
     TransactionClient
     } from '../../ApiClient';
+import { IReceiptSelectReceiptAction, ReceiptActionTypes, selectReceiptAction } from '../redux/actions/ReceiptActions';
+import { IReceiptsProps } from '../pages/Receipts';
 import './receipt.css';
 
 interface IReceiptPanelProps {
     receipt: IReceipt;
+    id: number;
+    selectReceipt: (receipt: IReceipt) => void;
 }
 
-const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps> = props => {
+const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps & IReceiptsProps> = (props: IReceiptPanelProps) => {
     const [transactions, setTransactions] = useState<ITransaction[]>([]);
 
     useEffect(() => {
@@ -55,8 +62,8 @@ const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps> = props => {
     return (
         <div className="receiptPanel">
             {transactions &&
-                <Collapse defaultActiveKey={['1']} onChange={() => { }}>
-                    <Collapse.Panel header={getHeader()} key="1" extra={genExtra()}>
+                <Collapse onChange={(state) => { selectReceiptAction(ReceiptActionTypes.SELECT, props.receipt) }}>
+                    <Collapse.Panel header={getHeader()} key={props.id} extra={genExtra()}>
                         <ReceiptTableInner transactions={transactions} />
                     </Collapse.Panel>
                 </Collapse>
@@ -64,5 +71,16 @@ const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps> = props => {
         </div>)
 
 }
+const mapStateToProps = (store: IAppState) => {
+    const ret: IReceiptsProps = {
+        receipts: store.receiptState.receipts,
+        selectedReceipt: store.receiptState.selectedReceipt
+    }
+    return ret;
+};
 
-export default ReceiptPanel;
+const mapDispatchToProps = (dispatch: Dispatch<IReceiptSelectReceiptAction>) => ({
+    selectReceiptAction: (e: IReceipt | undefined) => dispatch(selectReceiptAction(ReceiptActionTypes.SELECT, e)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(ReceiptPanel);

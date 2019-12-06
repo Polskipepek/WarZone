@@ -135,7 +135,7 @@ export class InnerConsentForm extends Component<any, { consentCheckbox: boolean 
                 <h3>c) dróg ewakuacji,</h3>
                 <h3>d) miejsca instalacji telefonu lub innych urządzeń łączności,</h3>
                 <h3>4) wykaz sygnałów alarmowych,</h3>
-                <h3>>5) informację o możliwości i sposobie połączenia się z najbliższym punktem pomocy medycznej, </h3>
+                <h3>5) informację o możliwości i sposobie połączenia się z najbliższym punktem pomocy medycznej, </h3>
                 <h3>6) Za szkody powstałe podczas strzelania oraz spowodowanie wypadku odpowiada właściciel lub zarządca strzelnicy, prowadzący strzelanie lub trening strzelecki albo korzystający ze strzelnicy, na zasadach określonych w odrębnych przepisach.</h3>
                 <p>&nbsp;</p>
                 <h3><b>Rozdział 2</b></h3>

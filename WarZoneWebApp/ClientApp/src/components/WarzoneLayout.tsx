@@ -1,4 +1,5 @@
 import ConsentForm from './pages/ConsentForm';
+import currentReceiptReducer from './redux/reducers/ReceiptReducer';
 import Home from './pages/Home';
 import MenuItem from 'antd/lib/menu/MenuItem';
 import Offer from './pages/Offer';
@@ -11,6 +12,10 @@ import {
     Menu
     } from 'antd';
 import { BrowserRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { createStore } from 'redux';
+import { IAppState } from './redux/Store';
+import { IReceiptsProps } from './pages/Receipts';
 import { JSXElement } from '@babel/types';
 import {
     Route,
@@ -22,11 +27,21 @@ import {
 
 const { Header, Content, Footer } = Layout;
 
-const WarzoneLayoutInner: React.FunctionComponent<RouteComponentProps> = (props) => {
+const WarzoneLayoutInner: React.FunctionComponent<RouteComponentProps & IReceiptsProps> = (props) => {
     const [chosenReceipt, setChosenReceipt] = useState<string>("");
     const changePage = (page: string) => {
         props.history.push(page);
     }
+
+    const currentReceiptReducer = null;
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const res = await fetch('');
+            res.json().then(res => setChosenReceipt(res));
+        }
+    })
+
 
     const getCurrentSelectedPage = () => {
         //alert("SPRAWDZAM");
@@ -88,9 +103,11 @@ const WarzoneLayoutInner: React.FunctionComponent<RouteComponentProps> = (props)
                     >
                         Otwarte rachunki
 						</Menu.Item>
-                    <MenuItem>
-                        Wybrany rachunek: TODO
-                    </MenuItem>
+                    {props.selectedReceipt &&
+                        <MenuItem>
+                            Wybrany rachunek: {console.log(props.selectedReceipt.id + "\n" + props.selectedReceipt.totalPrice)}
+                        </MenuItem>
+                    }
                 </Menu>
             </Header>
             <Content style={{ padding: '80px 25px' }}>
@@ -102,4 +119,15 @@ const WarzoneLayoutInner: React.FunctionComponent<RouteComponentProps> = (props)
         </Layout>
     );
 };
-export default withRouter(WarzoneLayoutInner);
+const mapStateToProps = (store: IAppState) => {
+    const ret: IReceiptsProps = {
+        receipts: store.receiptState.receipts,
+        selectedReceipt: store.receiptState.selectedReceipt
+    }
+    return ret;
+};
+
+
+//export default connect(mapStateToProps, mapDispatchToProps)(Receipts);
+
+export default connect(mapStateToProps)(withRouter(WarzoneLayoutInner));

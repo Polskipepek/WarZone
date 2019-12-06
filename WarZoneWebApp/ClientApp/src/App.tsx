@@ -7,37 +7,37 @@ import Receipts from './components/pages/Receipts';
 import Resources from './Resources';
 import WarzoneLayout from './components/WarzoneLayout';
 import { BrowserRouter } from 'react-router-dom';
+import { createStore } from 'redux';
 import { Redirect, Route, Switch } from 'react-router';
 import './styles/warzone.css';
 import 'antd/dist/antd.css';
 
 
 
-export default class App extends Component {
-  static displayName = App.name;
+const App: React.FunctionComponent = () => {
+  return (
+    <BrowserRouter>
+      <WarzoneLayout >
+        <Switch>
+          <Route path={Resources.pageAdresses.home} exact component={Home} />
+          <Route path={Resources.pageAdresses.consent} component={ConsentForm} />
+          <Route path={Resources.pageAdresses.offer} component={Offer} />
+          <Route path={Resources.pageAdresses.receipts} component={Receipts} />
 
-  render() {
-    return (
-      <BrowserRouter>
-        <WarzoneLayout >
-          <Switch>
-            <Route path={Resources.pageAdresses.home} exact component={Home} />
-            <Route path={Resources.pageAdresses.consent} component={ConsentForm} />
-            <Route path={Resources.pageAdresses.offer} component={Offer} />
-            <Route path={Resources.pageAdresses.receipts} component={Receipts} />
+        </Switch>
+      </WarzoneLayout>
 
-          </Switch>
-        </WarzoneLayout>
+    </BrowserRouter>
+    /*             <BrowserRouter>
+                <Switch>
+                  <Route exact path="/" component={WarzoneLayout}></Route>
+                  <Route path="/consent" component={ConsentForm}></Route>
+                  <Route path="/offer" component={Offer}></Route>
+                  <Route path="/offerlogin" component={OfferLogin}></Route>
+                </Switch>
+              </BrowserRouter> */
+  );
 
-      </BrowserRouter>
-      /*             <BrowserRouter>
-                  <Switch>
-                    <Route exact path="/" component={WarzoneLayout}></Route>
-                    <Route path="/consent" component={ConsentForm}></Route>
-                    <Route path="/offer" component={Offer}></Route>
-                    <Route path="/offerlogin" component={OfferLogin}></Route>
-                  </Switch>
-                </BrowserRouter> */
-    );
-  }
 }
+
+export default App;
