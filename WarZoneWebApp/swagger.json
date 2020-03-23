@@ -6,6 +6,44 @@
     "version": "1.0.0"
   },
   "paths": {
+    "/api/Users": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "operationId": "Users_Authenticate",
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/*+json"
+        ],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "appUser",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AppUser"
+            },
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/AppUser"
+            }
+          }
+        }
+      }
+    },
     "/api/Consent/AddCustomer": {
       "post": {
         "tags": [
@@ -190,7 +228,7 @@
     }
   },
   "definitions": {
-    "Customer": {
+    "AppUser": {
       "allOf": [
         {
           "$ref": "#/definitions/ModelBase"
@@ -198,10 +236,19 @@
         {
           "type": "object",
           "properties": {
-            "customerName": {
+            "login": {
               "type": "string"
             },
-            "customerSurname": {
+            "hash": {
+              "type": "string"
+            },
+            "salt": {
+              "type": "string"
+            },
+            "token": {
+              "type": "string"
+            },
+            "password": {
               "type": "string"
             }
           }
@@ -219,6 +266,24 @@
           "format": "int32"
         }
       }
+    },
+    "Customer": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ModelBase"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "customerName": {
+              "type": "string"
+            },
+            "customerSurname": {
+              "type": "string"
+            }
+          }
+        }
+      ]
     },
     "Receipt": {
       "allOf": [

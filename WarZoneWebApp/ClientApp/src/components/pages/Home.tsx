@@ -1,3 +1,4 @@
+import LoginForm from '../LoginForm';
 import React, { Component, Fragment, Props } from 'react';
 import WarzoneLayout from '../WarzoneLayout';
 import {
@@ -11,6 +12,7 @@ import {
     } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import { RouteComponentProps } from 'react-router';
+import { UsersClient } from '../../ApiClient';
 
 class HomeInner extends Component<RouteComponentProps & FormComponentProps> {
     constructor(props: any) {
@@ -24,50 +26,11 @@ class HomeInner extends Component<RouteComponentProps & FormComponentProps> {
     render() {
         return (
             <div className="kliven-centered" style={{ marginTop: window.screen.availHeight * 0.2 }}>
-                {this.DisplayForms()}
+                <LoginForm />
             </div>
         );
     }
 
-
-    DisplayForms = () => {
-        const { getFieldDecorator, getFieldsError, getFieldError, isFieldTouched } = this.props.form;
-        const name = isFieldTouched('username') && getFieldError('username');
-        const surname = isFieldTouched('password') && getFieldError('password');
-
-        return (
-            <Form layout="inline" onSubmit={this.handleSubmit}>
-                <Form.Item validateStatus={name ? 'error' : ''} help={name || ''}>
-                    {getFieldDecorator('username', {
-                        rules: [{ required: true, message: 'Please input your username!' }],
-                    })(
-                        <Input size="large"
-                            prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
-                            placeholder="Username"
-                        />,
-                    )}
-                </Form.Item>
-
-                <Form.Item validateStatus={surname ? 'error' : ''} help={surname || ''}>
-                    {getFieldDecorator('password', {
-                        rules: [{ required: true, message: 'Please input your Password!' }],
-                    })(
-                        <Input size="large"
-                            prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
-                            type="password"
-                            placeholder="Password"
-                        />,
-                    )}
-                </Form.Item>
-                <Form.Item>
-                    <Button type="primary" htmlType="submit" disabled={hasErrors(getFieldsError())} size="large">
-                        Log in
-                    </Button>
-                </Form.Item>
-            </Form>
-
-        );
-    }
 
     handleSubmit = (e: { preventDefault: () => void; }) => {
         e.preventDefault();
@@ -78,7 +41,16 @@ class HomeInner extends Component<RouteComponentProps & FormComponentProps> {
         });
     };
 
-    DisplayPageSelectionButtons = () => {
+
+}
+
+function hasErrors(fieldsError: { [x: string]: any; }) {
+    return Object.keys(fieldsError).some(field => fieldsError[field]);
+}
+const Home = Form.create()(HomeInner);
+export default Home;
+
+    /* DisplayPageSelectionButtons = () => {
         let butWidth = 300;
         return (
             <div>
@@ -113,11 +85,4 @@ class HomeInner extends Component<RouteComponentProps & FormComponentProps> {
                 </Button>
             </div>
         );
-    }
-}
-
-function hasErrors(fieldsError: { [x: string]: any; }) {
-    return Object.keys(fieldsError).some(field => fieldsError[field]);
-}
-const Home = Form.create()(HomeInner);
-export default Home;
+    } */

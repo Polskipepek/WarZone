@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Model;
 using Model.Database;
+using System.Linq;
 
 namespace WarZoneWebApp.Controllers {
-    [Route("api/[controller]")]
+
+    [Route ("api/[controller]")]
     [ApiController]
     public class TransactionController : ControllerBase {
 
@@ -20,13 +17,13 @@ namespace WarZoneWebApp.Controllers {
         }
 
         [HttpPost]
-        [Route("[action]")]
-        public ActionResult<Transaction[]> GetTransactions([FromBody]Receipt receipt) {
+        [Route ("[action]")]
+        public ActionResult<Transaction[]> GetTransactions ([FromBody]Receipt receipt) {
             if (receipt == null || receipt.Customer == null) {
-                return BadRequest();
+                return BadRequest ();
             }
-            context.Transactions.Include(e => e.Customer).Include(e=>e.Service).Include(e=>e.Receipt).Load();
-            var transactions = context.Transactions.Where(e => e.Receipt == receipt).OrderBy(e => e.ServiceId).ToArray();
+            context.Transactions.Include (e => e.Customer).Include (e => e.Service).Include (e => e.Receipt).Load ();
+            var transactions = context.Transactions.Where (e => e.Receipt == receipt).OrderBy (e => e.ServiceId).ToArray ();
 
             return transactions;
         }

@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react';
 import WeaponPanel from './WeaponPanel';
-import { OfferClient, IWeapon } from '../../ApiClient';
+import { IWeapon, OfferClient } from '../../ApiClient';
 
 const WeaponList: React.FunctionComponent = props => {
     const [weapons, setWeapons] = useState<IWeapon[]>([]);

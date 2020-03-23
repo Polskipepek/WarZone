@@ -2,9 +2,7 @@ import CustomerList, { customers } from '../../CustomerList';
 import React, { Consumer, useEffect, useState } from 'react';
 import ReceiptPanel from '../receipt/ReceiptPanel';
 import { Alert } from 'antd';
-import { connect } from 'react-redux';
 import { Customer, IReceipt, ReceiptClient } from '../../ApiClient';
-import { IAppState } from '../redux/Store';
 import '../receipt/receipt.css';
 
 export interface IReceiptsProps {
@@ -38,7 +36,7 @@ const Receipts: React.FunctionComponent<IReceiptsProps> = (props: IReceiptsProps
                         {/*                         <h3>Rachunek:{' ' + data.getFullYear() + '-' + data.getMonth() + '-' +
                             data.getDay() + ' ' + data.getHours() + ':' + data.getMinutes() + ":" + data.getMinutes() + '\t'}
                             {receipt.customer!.customerSurname + " " + receipt.customer!.customerName}</h3> */}
-                        <ReceiptPanel receipt={receipt} id={index} selectReceipt={(xd) => { }} />
+                        <ReceiptPanel receipt={receipt} id={index} selectReceipt={(xd: any) => { }} />
                     </React.Fragment>
                 );
             })}
@@ -46,18 +44,18 @@ const Receipts: React.FunctionComponent<IReceiptsProps> = (props: IReceiptsProps
 
     );
 }
-const mapStateToProps = (store: IAppState) => {
-    const ret: IReceiptsProps = {
-        receipts: store.receiptState.receipts,
-        selectedReceipt: store.receiptState.selectedReceipt
-    }
-    return ret;
-};
+// const mapStateToProps = (store: IAppState) => {
+//     const ret: IReceiptsProps = {
+//         receipts: store.receiptState.receipts,
+//         selectedReceipt: store.receiptState.selectedReceipt
+//     }
+//     return ret;
+// };
 
-const mapDispatchToProps = (dispatch: any) => ({
-    selectedReceipt: (f: any) => { return f.target.selectedReceipt },
-});
+// const mapDispatchToProps = (dispatch: any) => ({
+//     selectedReceipt: (f: any) => { return f.target.selectedReceipt },
+// });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Receipts);
-//export default Receipts;
+//export default connect(mapStateToProps, mapDispatchToProps)(Receipts);
+export default Receipts;
 

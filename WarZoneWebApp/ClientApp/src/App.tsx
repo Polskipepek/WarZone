@@ -1,17 +1,15 @@
 import ConsentContent from './components/pages/ConsentContent';
-import ConsentForm from './components/pages/ConsentForm';
 import Home from './components/pages/Home';
 import Offer from './components/pages/Offer';
-import OfferLogin from './components/pages/OfferLogin';
-import React, { Component } from 'react';
+import React from 'react';
 import Receipts from './components/pages/Receipts';
 import Resources from './Resources';
 import WarzoneLayout from './components/WarzoneLayout';
 import { BrowserRouter } from 'react-router-dom';
-import { createStore } from 'redux';
-import { Redirect, Route, Switch } from 'react-router';
+import { Route, Switch } from 'react-router';
 import './styles/warzone.css';
 import 'antd/dist/antd.css';
+//import { ProtectedRoute } from './ProtectedRoute';
 
 
 
@@ -24,10 +22,8 @@ const App: React.FunctionComponent = () => {
           <Route path={Resources.pageAdresses.consent} component={ConsentContent} />
           <Route path={Resources.pageAdresses.offer} component={Offer} />
           <Route path={Resources.pageAdresses.receipts} component={Receipts} />
-
         </Switch>
       </WarzoneLayout>
-
     </BrowserRouter>
     /*             <BrowserRouter>
                 <Switch>

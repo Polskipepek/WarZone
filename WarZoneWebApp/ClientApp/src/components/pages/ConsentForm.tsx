@@ -12,12 +12,13 @@ import {
     ICustomer,
     ReceiptClient
     } from '../../ApiClient';
+import { FormComponentProps } from 'antd/lib/form';
 
 function hasErrors(fieldsError: { [x: string]: any; }) {
     return Object.keys(fieldsError).some(field => fieldsError[field]);
 }
 
-export class InnerConsentForm extends Component<any> {
+export class InnerConsentForm extends Component<FormComponentProps> {
     formValues: any;
     constructor(props: any) {
         super(props);

@@ -7,6 +7,55 @@
 //----------------------
 // ReSharper disable InconsistentNaming
 
+export class UsersClient {
+    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
+        this.http = http ? http : <any>window;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    authenticate(appUser: AppUser): Promise<AppUser> {
+        let url_ = this.baseUrl + "/api/Users";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(appUser);
+
+        let options_ = <RequestInit>{
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processAuthenticate(_response);
+        });
+    }
+
+    protected processAuthenticate(response: Response): Promise<AppUser> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = AppUser.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<AppUser>(<any>null);
+    }
+}
+
 export class ConsentClient {
     private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
     private baseUrl: string;
@@ -324,6 +373,55 @@ export class ModelBase implements IModelBase {
 
 export interface IModelBase {
     id: number;
+}
+
+export class AppUser extends ModelBase implements IAppUser {
+    login?: string | undefined;
+    hash?: string | undefined;
+    salt?: string | undefined;
+    token?: string | undefined;
+    password?: string | undefined;
+
+    constructor(data?: IAppUser) {
+        super(data);
+    }
+
+    init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.login = _data["login"];
+            this.hash = _data["hash"];
+            this.salt = _data["salt"];
+            this.token = _data["token"];
+            this.password = _data["password"];
+        }
+    }
+
+    static fromJS(data: any): AppUser {
+        data = typeof data === 'object' ? data : {};
+        let result = new AppUser();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["login"] = this.login;
+        data["hash"] = this.hash;
+        data["salt"] = this.salt;
+        data["token"] = this.token;
+        data["password"] = this.password;
+        super.toJSON(data);
+        return data; 
+    }
+}
+
+export interface IAppUser extends IModelBase {
+    login?: string | undefined;
+    hash?: string | undefined;
+    salt?: string | undefined;
+    token?: string | undefined;
+    password?: string | undefined;
 }
 
 export class Customer extends ModelBase implements ICustomer {

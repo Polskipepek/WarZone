@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Model;
 using Model.Database;
-using Faker;
+
 using Model.Helpers;
 
 namespace WarZoneWebApp.Database.Seeds {

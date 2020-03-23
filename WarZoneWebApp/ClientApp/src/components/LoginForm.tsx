@@ -1,0 +1,105 @@
+import React, { Component, useState } from 'react';
+import { AppUser, IAppUser, UsersClient } from '../ApiClient';
+import {
+    Button,
+    Checkbox,
+    Form,
+    Icon,
+    Input
+    } from 'antd';
+import { FormComponentProps } from 'antd/lib/form';
+
+
+
+function hasErrors(fieldsError: { [x: string]: any; }) {
+    return Object.keys(fieldsError).some(field => fieldsError[field]);
+}
+
+interface ILoginFormState {
+    username: string;
+    password: string;
+}
+
+class InnerLoginForm extends React.Component<FormComponentProps, ILoginFormState> {
+    state = {
+        username: "",
+        password: ""
+    }
+    DisplayForms = () => {
+        const { getFieldDecorator, getFieldsError, getFieldError, isFieldTouched } = this.props.form;
+        const isCorrectName = isFieldTouched('username') && getFieldError('username');
+        const isCorrectPassword = isFieldTouched('password') && getFieldError('password');
+
+        return (
+            <Form layout="inline" onSubmit={this.handleSubmit}>
+                <Form.Item validateStatus={isCorrectName ? 'error' : ''} help={isCorrectName || ''}>
+                    {getFieldDecorator('username', {
+                        rules: [{ required: true, message: 'Please input your username!' }],
+                    })(
+                        <Input size="large"
+                            prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                            placeholder="Username"
+                            onChange={(event) => {
+                                this.setState({ username: event.target.value });
+                            }}
+                        />,
+                    )}
+                </Form.Item>
+
+                <Form.Item validateStatus={isCorrectPassword ? 'error' : ''} help={isCorrectPassword || ''}>
+                    {getFieldDecorator('password', {
+                        rules: [{ required: true, message: 'Please input your Password!' }],
+                    })(
+                        <Input size="large"
+                            prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                            type="password"
+                            placeholder="Password"
+                            onChange={(event) => {
+                                this.setState({ password: event.target.value });
+                            }}
+                        />,
+                    )}
+                </Form.Item>
+                <Form.Item>
+                    <Button type="primary" htmlType="submit" disabled={hasErrors(getFieldsError())} size="large"
+                        onClick={() => {
+                            alert(this.state.password);
+                            const user: IAppUser = { id: 0, login: this.state.username, password: this.state.password }
+                            new UsersClient().authenticate(user as AppUser).then(resp => {
+                                console.log(resp);
+                                //Auth(user);
+                                //alert(isAuthenticated());
+                            });
+                        }}>
+                        Log in
+                    </Button>
+                </Form.Item>
+            </Form >
+
+        );
+    }
+
+
+
+    handleSubmit = (e: { preventDefault: () => void; }) => {
+        e.preventDefault();
+        this.props.form.validateFields((err: any, values: any) => {
+            if (!err) {
+                console.log('Received values of form: ', values);
+            }
+        });
+    };
+
+
+    render() {
+        return (
+            <div>
+                {this.DisplayForms()}
+            </div>
+        );
+    }
+
+
+}
+const LoginForm = Form.create()(InnerLoginForm);
+export default LoginForm;
