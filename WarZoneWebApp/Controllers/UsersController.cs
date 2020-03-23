@@ -1,9 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Logic.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Model;
 using Model.Database;
-using Model.Services;
-
 
 [ApiController]
 [Route ("api/[controller]")]
@@ -23,6 +22,9 @@ public class UsersController : ControllerBase {
 
         if (user == null)
             return BadRequest (new { message = "Username or password is incorrect" });
+
+
+
 
         return user;
     }

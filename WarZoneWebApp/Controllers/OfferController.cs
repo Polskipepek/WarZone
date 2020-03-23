@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Model;
 using Model.Database;
+using System.Linq;
 
 namespace WarZoneWebApp.Controllers {
-    [Route("api/[controller]")]
+    [Route ("api/[controller]")]
     [ApiController]
     public class OfferController : ControllerBase {
 
@@ -20,11 +15,11 @@ namespace WarZoneWebApp.Controllers {
         }
 
         [HttpPost]
-        public ActionResult<Weapon[]> GetWeapons() {
+        public ActionResult<Weapon[]> GetWeapons () {
             //3. Handle request
             //4. return value
 
-            return context.Weapons.Where(e=>e.Id != -1).OrderBy(e=>e.WeaponName).ToArray();
+            return context.Weapons.Where (e => e.Id != -1).OrderBy (e => e.WeaponName).ToArray ();
         }
 
 

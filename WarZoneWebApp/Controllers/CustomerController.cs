@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Model;
 using Model.Database;
+using System.Linq;
 
 namespace WarZoneWebApp.Controllers {
-    [Route("api/[controller]")]
+    [Route ("api/[controller]")]
     [ApiController]
     public class CustomerController : ControllerBase {
 
@@ -28,12 +23,12 @@ namespace WarZoneWebApp.Controllers {
         //    return Ok();
         //}
         [HttpPost]
-        [Route("getcustomers")]
+        [Route ("getcustomers")]
         public ActionResult<Receipt[]> GetCustomers () {
             //3. Handle request
             //4. return value
 
-            return context.Receipts.Where(e => e.CloseDate == null).OrderByDescending(e => e.ModifyDate).ToArray();
+            return context.Receipts.Where (e => e.CloseDate == null).OrderByDescending (e => e.ModifyDate).ToArray ();
         }
 
 
