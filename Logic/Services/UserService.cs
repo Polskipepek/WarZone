@@ -1,14 +1,10 @@
-﻿using Helpers;
-using Helpers.Misc;
+﻿using Helpers.Misc;
 using Microsoft.Extensions.Options;
 using Model;
 using Model.Database;
 using System.Linq;
 
 namespace Logic.Services {
-    public interface IUserService {
-        AppUser Authenticate (string username, string password);
-    }
 
     public class UserService : IUserService {
         private readonly AppSettings _appSettings;
@@ -17,17 +13,27 @@ namespace Logic.Services {
             _appSettings = appSettings.Value;
         }
 
-        public AppUser Authenticate (string username, string password) {
+        public bool Authenticate (string username, string password) {
             AppUser user = null;
             using (var context = new Context ()) {
-                user = context.AppUsers.Where (user => user.Login == username).FirstOrDefault ();
+                user = context.AppUsers.FirstOrDefault (user => user.Login == username);
+
+                if (user == null || StringHelper.CompareSha256 (password + user.Salt, user.Hash) == false)
+                    return false;
+
+                user.Token = Faker.Generators.Strings.GenerateAlphaNumericString (16, 16);
+
+                context.AppUsers.Update (user);
+
+                return true;
+
             }
+        }
 
-            if (user == null || StringHelper.CompareSha256 (password + user.Salt, user.Hash) == false)
-                return null;
-
-
-            return user.WithoutPassword ();
+        public AppUser Authorize (string username, string token) {
+            using (var context = new Context ()) {
+                return context.AppUsers.FirstOrDefault (user => user.Login == username && user.Token == token);
+            }
         }
 
     }

@@ -1,32 +1,26 @@
 ﻿using Logic.Services;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Model;
-using Model.Database;
 
 [ApiController]
 [Route ("api/[controller]")]
 public class UsersController : ControllerBase {
-    private IUserService _userService;
+    private UserService UserService { get; set; }
     private Context context;
 
-    public UsersController (Context context, IUserService userService) {
+    public UsersController (Context context, UserService userService) {
         this.context = context;
-        _userService = userService;
+        UserService = userService;
     }
 
-    [AllowAnonymous]
     [HttpPost]
-    public ActionResult<AppUser> Authenticate ([FromBody]AppUser appUser) {
-        var user = _userService.Authenticate (appUser.Login, appUser.Password);
+    public IActionResult Authenticate ([FromHeader] string login, [FromHeader] string password) {
+        var success = UserService.Authenticate (login, password);
 
-        if (user == null)
+        if (!success)
             return BadRequest (new { message = "Username or password is incorrect" });
 
-
-
-
-        return user;
+        return Ok ();
     }
 
 }

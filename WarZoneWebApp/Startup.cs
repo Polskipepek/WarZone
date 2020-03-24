@@ -1,3 +1,4 @@
+using Logic.OperationContext;
 using Logic.Seeders;
 using Logic.Services;
 using Microsoft.AspNetCore.Builder;
@@ -64,6 +65,7 @@ namespace WarZoneWebApp {
 
             // configure DI for application services
             services.AddScoped<IUserService, UserService> ();
+            services.AddScoped<IOperationContext, OperationContext> ();
 
 
 

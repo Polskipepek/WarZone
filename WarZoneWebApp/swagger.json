@@ -12,33 +12,26 @@
           "Users"
         ],
         "operationId": "Users_Authenticate",
-        "consumes": [
-          "application/json",
-          "text/json",
-          "application/*+json"
-        ],
-        "produces": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
         "parameters": [
           {
-            "name": "appUser",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/AppUser"
-            },
-            "x-nullable": false
+            "type": "string",
+            "name": "login",
+            "in": "header",
+            "x-nullable": true
+          },
+          {
+            "type": "string",
+            "name": "password",
+            "in": "header",
+            "x-nullable": true
           }
         ],
         "responses": {
           "200": {
-            "x-nullable": false,
+            "x-nullable": true,
             "description": "",
             "schema": {
-              "$ref": "#/definitions/AppUser"
+              "type": "file"
             }
           }
         }
@@ -228,45 +221,6 @@
     }
   },
   "definitions": {
-    "AppUser": {
-      "allOf": [
-        {
-          "$ref": "#/definitions/ModelBase"
-        },
-        {
-          "type": "object",
-          "properties": {
-            "login": {
-              "type": "string"
-            },
-            "hash": {
-              "type": "string"
-            },
-            "salt": {
-              "type": "string"
-            },
-            "token": {
-              "type": "string"
-            },
-            "password": {
-              "type": "string"
-            }
-          }
-        }
-      ]
-    },
-    "ModelBase": {
-      "type": "object",
-      "required": [
-        "id"
-      ],
-      "properties": {
-        "id": {
-          "type": "integer",
-          "format": "int32"
-        }
-      }
-    },
     "Customer": {
       "allOf": [
         {
@@ -284,6 +238,18 @@
           }
         }
       ]
+    },
+    "ModelBase": {
+      "type": "object",
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
     },
     "Receipt": {
       "allOf": [

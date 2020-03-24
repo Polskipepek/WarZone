@@ -10,7 +10,9 @@ namespace Helpers {
 
         public static AppUser WithoutPassword (this AppUser user) {
             user.Hash = null;
+            user.Password = null;
             return user;
         }
+
     }
 }
