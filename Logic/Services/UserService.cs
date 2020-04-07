@@ -30,9 +30,10 @@ namespace Logic.Services {
             }
         }
 
-        public AppUser Authorize (string username, string token) {
+        public bool Authorize (string username, string token, out AppUser appUser) {
             using (var context = new Context ()) {
-                return context.AppUsers.FirstOrDefault (user => user.Login == username && user.Token == token);
+                appUser = context.AppUsers.FirstOrDefault (user => user.Login == username && user.Token == token);
+                return appUser != null;
             }
         }
 

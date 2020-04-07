@@ -6,5 +6,10 @@ namespace Logic.OperationContext {
         public static AppUser CurrentUser { get; set; }
 
         public static bool IsAdmin { get; set; }
+
+        public static void ClearContextData () {
+            CurrentUser = null;
+            IsAdmin = false;
+        }
     }
 }

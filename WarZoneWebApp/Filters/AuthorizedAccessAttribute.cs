@@ -2,6 +2,7 @@
 using Logic.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Model.Database;
 using System;
 
 namespace WarZoneWebApp.Filters {
@@ -11,20 +12,20 @@ namespace WarZoneWebApp.Filters {
         public UserService UserService { get; set; }
         public OperationContext OperationContext { get; set; }
         public void OnActionExecuting (ActionExecutingContext context) {
-            var currentUser = UserService.Authorize (context.HttpContext.Request.Headers["login"], context.HttpContext.Request.Headers["token"]);
+            if (context.HttpContext.Request.Cookies.TryGetValue ("login", out string login) && context.HttpContext.Request.Cookies.TryGetValue ("token", out string token)) {
+                if (UserService.Authorize (login, token, out AppUser currentUser)) {
+                    OperationContext.CurrentUser = currentUser;
+                    OperationContext.IsAdmin = currentUser.Id == 0;
 
-            if (currentUser == null) {
-                context.Result = new UnauthorizedResult ();
-                return;
+                    return;
+                }
             }
-
-            OperationContext.CurrentUser = currentUser;
-            OperationContext.IsAdmin = currentUser.Id == 0;
+            OperationContext.ClearContextData ();
+            context.Result = new UnauthorizedResult ();
         }
 
         public void OnActionExecuted (ActionExecutedContext context) {
-            OperationContext.CurrentUser = null;
-            OperationContext.IsAdmin = false;
+            OperationContext.ClearContextData ();
         }
     }
 }
