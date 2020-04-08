@@ -1,8 +1,14 @@
-import React, { Component } from 'react';
-import { Button, Form, Input, Icon } from 'antd';
 import Home from './Home';
-import { homedir } from 'os';
+import React from 'react';
+import {
+    Button,
+    Form,
+    Icon,
+    Input
+    } from 'antd';
+import { Component } from 'react';
 import { FormComponentProps } from 'antd/lib/form';
+import { homedir } from 'os';
 import { RouteComponentProps } from 'react-router';
 
 function hasErrors(fieldsError: { [x: string]: any; }) {

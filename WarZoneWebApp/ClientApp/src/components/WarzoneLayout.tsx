@@ -1,5 +1,4 @@
 import ConsentForm from './pages/ConsentForm';
-import currentReceiptReducer from './redux/reducers/ReceiptReducer';
 import Home from './pages/Home';
 import MenuItem from 'antd/lib/menu/MenuItem';
 import Offer from './pages/Offer';
@@ -12,9 +11,6 @@ import {
     Menu
     } from 'antd';
 import { BrowserRouter } from 'react-router-dom';
-import { connect } from 'react-redux';
-import { createStore } from 'redux';
-import { IAppState } from './redux/Store';
 import { IReceiptsProps } from './pages/Receipts';
 import { JSXElement } from '@babel/types';
 import {
@@ -27,7 +23,7 @@ import {
 
 const { Header, Content, Footer } = Layout;
 
-const WarzoneLayoutInner: React.FunctionComponent<RouteComponentProps & IReceiptsProps> = (props) => {
+const WarzoneLayoutInner: React.FunctionComponent<RouteComponentProps> = (props) => {
     const [chosenReceipt, setChosenReceipt] = useState<string>("");
     const changePage = (page: string) => {
         props.history.push(page);
@@ -103,11 +99,11 @@ const WarzoneLayoutInner: React.FunctionComponent<RouteComponentProps & IReceipt
                     >
                         Otwarte rachunki
 						</Menu.Item>
-                    {props.selectedReceipt &&
+                    {/*                     {props.selectedReceipt &&
                         <MenuItem>
                             Wybrany rachunek: {console.log(props.selectedReceipt.id + "\n" + props.selectedReceipt.totalPrice)}
                         </MenuItem>
-                    }
+                    } */}
                 </Menu>
             </Header>
             <Content style={{ padding: '80px 25px' }}>
@@ -119,15 +115,6 @@ const WarzoneLayoutInner: React.FunctionComponent<RouteComponentProps & IReceipt
         </Layout>
     );
 };
-const mapStateToProps = (store: IAppState) => {
-    const ret: IReceiptsProps = {
-        receipts: store.receiptState.receipts,
-        selectedReceipt: store.receiptState.selectedReceipt
-    }
-    return ret;
-};
-
-
 //export default connect(mapStateToProps, mapDispatchToProps)(Receipts);
 
-export default connect(mapStateToProps)(withRouter(WarzoneLayoutInner));
+export default withRouter(WarzoneLayoutInner);

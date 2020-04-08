@@ -36,7 +36,7 @@ const Receipts: React.FunctionComponent<IReceiptsProps> = (props: IReceiptsProps
                         {/*                         <h3>Rachunek:{' ' + data.getFullYear() + '-' + data.getMonth() + '-' +
                             data.getDay() + ' ' + data.getHours() + ':' + data.getMinutes() + ":" + data.getMinutes() + '\t'}
                             {receipt.customer!.customerSurname + " " + receipt.customer!.customerName}</h3> */}
-                        <ReceiptPanel receipt={receipt} id={index} selectReceipt={(xd: any) => { }} />
+                        {/* <ReceiptPanel receipt={receipt} id={index} selectReceipt={(xd: any) => { }} /> */}
                     </React.Fragment>
                 );
             })}

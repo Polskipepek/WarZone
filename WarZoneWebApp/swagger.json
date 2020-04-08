@@ -12,6 +12,11 @@
           "Users"
         ],
         "operationId": "Users_Authenticate",
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
         "parameters": [
           {
             "type": "string",
@@ -28,10 +33,10 @@
         ],
         "responses": {
           "200": {
-            "x-nullable": true,
+            "x-nullable": false,
             "description": "",
             "schema": {
-              "type": "file"
+              "$ref": "#/definitions/AppUser"
             }
           }
         }
@@ -221,7 +226,7 @@
     }
   },
   "definitions": {
-    "Customer": {
+    "AppUser": {
       "allOf": [
         {
           "$ref": "#/definitions/ModelBase"
@@ -229,10 +234,19 @@
         {
           "type": "object",
           "properties": {
-            "customerName": {
+            "login": {
               "type": "string"
             },
-            "customerSurname": {
+            "hash": {
+              "type": "string"
+            },
+            "salt": {
+              "type": "string"
+            },
+            "token": {
+              "type": "string"
+            },
+            "password": {
               "type": "string"
             }
           }
@@ -250,6 +264,24 @@
           "format": "int32"
         }
       }
+    },
+    "Customer": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ModelBase"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "customerName": {
+              "type": "string"
+            },
+            "customerSurname": {
+              "type": "string"
+            }
+          }
+        }
+      ]
     },
     "Receipt": {
       "allOf": [

@@ -10,16 +10,12 @@ import {
     Typography
     } from 'antd';
 import { ColumnProps } from 'antd/lib/table';
-import { connect } from 'react-redux';
-import { Dispatch } from 'redux';
-import { IAppState } from '../redux/Store';
 import {
     IReceipt,
     ITransaction,
     Receipt,
     TransactionClient
     } from '../../ApiClient';
-import { IReceiptSelectReceiptAction, ReceiptActionTypes, selectReceiptAction } from '../redux/actions/ReceiptActions';
 import { IReceiptsProps } from '../pages/Receipts';
 import './receipt.css';
 
@@ -62,7 +58,7 @@ const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps & IReceiptsProps>
     return (
         <div className="receiptPanel">
             {transactions &&
-                <Collapse onChange={(state) => { selectReceiptAction(ReceiptActionTypes.SELECT, props.receipt) }}>
+                <Collapse>
                     <Collapse.Panel header={getHeader()} key={props.id} extra={genExtra()}>
                         <ReceiptTableInner transactions={transactions} />
                     </Collapse.Panel>
@@ -71,16 +67,5 @@ const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps & IReceiptsProps>
         </div>)
 
 }
-const mapStateToProps = (store: IAppState) => {
-    const ret: IReceiptsProps = {
-        receipts: store.receiptState.receipts,
-        selectedReceipt: store.receiptState.selectedReceipt
-    }
-    return ret;
-};
 
-const mapDispatchToProps = (dispatch: Dispatch<IReceiptSelectReceiptAction>) => ({
-    selectReceiptAction: (e: IReceipt | undefined) => dispatch(selectReceiptAction(ReceiptActionTypes.SELECT, e)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(ReceiptPanel);
+export default ReceiptPanel;

@@ -64,11 +64,8 @@ class InnerLoginForm extends React.Component<FormComponentProps, ILoginFormState
                     <Button type="primary" htmlType="submit" disabled={hasErrors(getFieldsError())} size="large"
                         onClick={() => {
                             alert(this.state.password);
-                            const user: IAppUser = { id: 0, login: this.state.username, password: this.state.password }
-                            new UsersClient().authenticate(user as AppUser).then(resp => {
+                            new UsersClient().authenticate(this.state.username, this.state.password).then(resp => {
                                 console.log(resp);
-                                //Auth(user);
-                                //alert(isAuthenticated());
                             });
                         }}>
                         Log in

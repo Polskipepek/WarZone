@@ -13,8 +13,8 @@ namespace Logic.Services {
             _appSettings = appSettings.Value;
         }
 
-        public bool Authenticate (string username, string password) {
-            AppUser user = null;
+        public bool Authenticate (string username, string password, out AppUser user) {
+            user = null;
             using (var context = new Context ()) {
                 user = context.AppUsers.FirstOrDefault (user => user.Login == username);
 
@@ -26,7 +26,6 @@ namespace Logic.Services {
                 context.AppUsers.Update (user);
 
                 return true;
-
             }
         }
 
@@ -36,6 +35,5 @@ namespace Logic.Services {
                 return appUser != null;
             }
         }
-
     }
 }

@@ -16,7 +16,7 @@ import 'antd/dist/antd.css';
 const App: React.FunctionComponent = () => {
   return (
     <BrowserRouter>
-      <WarzoneLayout >
+      <WarzoneLayout>
         <Switch>
           <Route path={Resources.pageAdresses.home} exact component={Home} />
           <Route path={Resources.pageAdresses.consent} component={ConsentContent} />

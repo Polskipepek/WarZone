@@ -40,42 +40,14 @@ namespace WarZoneWebApp {
             var appSettings = appSettingsSection.Get<AppSettings> ();
             var key = Encoding.ASCII.GetBytes (appSettings.Secret);
 
-            //TODO//
-            //TODO//
-            //TODO//
-
-            /*            services.AddAuthentication (x => {
-                            x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                            x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                        })
-                        .AddJwtBearer (x => {
-                            x.RequireHttpsMetadata = false;
-                            x.SaveToken = true;
-                            x.TokenValidationParameters = new TokenValidationParameters {
-                                ValidateIssuerSigningKey = true,
-                                IssuerSigningKey = new SymmetricSecurityKey (key),
-                                ValidateIssuer = false,
-                                ValidateAudience = false
-                            };
-                        });*/
-
-            //TODO//
-            //TODO//
-            //TODO//
-
             // configure DI for application services
-            services.AddScoped<IUserService, UserService> ();
-            services.AddScoped<IOperationContext, OperationContext> ();
+            services.AddSingleton<IUserService, UserService> ();
+            services.AddSingleton<IOperationContext, OperationContext> ();
+            services.AddSingleton<Context> ();
 
+            services.ConfigureAddMvc ();
+            services.ConfigureAddAuthentication ();
 
-
-            //services.AddMvc(config =>
-            //{
-            //    var policy = new AuthorizationPolicyBuilder()
-            //                    .RequireAuthenticatedUser()
-            //                    .Build();
-            //    config.Filters.Add(new AuthorizeFilter(policy));
-            //});
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -87,6 +59,7 @@ namespace WarZoneWebApp {
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts ();
             }
+
 
             app.UseHttpsRedirection ();
             app.UseStaticFiles ();
