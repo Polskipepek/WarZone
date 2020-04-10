@@ -10,14 +10,14 @@ const ConsentContent: React.FunctionComponent = (props) => {
         setVisible(true)
     }
 
-    const handleOk = (e: any) => {
-        setVisible(false);
-        alert("handleok " + visible)
-    };
+    // const handleOk = (e: any) => {
+    //     setVisible(false);
+    //     alert("handleok " + visible)
+    // };
 
-    const handleCancel = (e: any) => {
-        setVisible(false)
-    };
+    // const handleCancel = (e: any) => {
+    //     setVisible(false)
+    // };
 
 
     const DisplayRegulations = () => {

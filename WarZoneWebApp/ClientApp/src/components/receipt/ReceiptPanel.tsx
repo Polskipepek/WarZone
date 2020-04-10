@@ -1,31 +1,20 @@
-import React, { Component, useEffect, useState } from 'react';
-import ReactDOM from 'react-dom';
+import React, { useEffect, useState } from 'react';
 import ReceiptTableInner from './ReceiptTableInner';
-import {
-    Collapse,
-    Divider,
-    Icon,
-    Table,
-    Tag,
-    Typography
-    } from 'antd';
-import { ColumnProps } from 'antd/lib/table';
+import { Collapse, Icon, Typography } from 'antd';
 import {
     IReceipt,
     ITransaction,
     Receipt,
     TransactionClient
     } from '../../ApiClient';
-import { IReceiptsProps } from '../pages/Receipts';
 import './receipt.css';
 
 interface IReceiptPanelProps {
     receipt: IReceipt;
     id: number;
-    selectReceipt: (receipt: IReceipt) => void;
 }
 
-const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps & IReceiptsProps> = (props: IReceiptPanelProps) => {
+const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps> = (props: IReceiptPanelProps) => {
     const [transactions, setTransactions] = useState<ITransaction[]>([]);
 
     useEffect(() => {

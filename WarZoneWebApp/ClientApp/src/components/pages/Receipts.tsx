@@ -1,42 +1,43 @@
-import CustomerList, { customers } from '../../CustomerList';
-import React, { Consumer, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ReceiptPanel from '../receipt/ReceiptPanel';
-import { Alert } from 'antd';
-import { Customer, IReceipt, ReceiptClient } from '../../ApiClient';
+import { IReceipt, ReceiptClient } from '../../ApiClient';
 import '../receipt/receipt.css';
 
 export interface IReceiptsProps {
-    receipts: IReceipt[],
+    // receipts: IReceipt[],
     selectedReceipt: IReceipt | undefined
 }
 
 const Receipts: React.FunctionComponent<IReceiptsProps> = (props: IReceiptsProps) => {
     const [selectedReceipt, setSelectedReceipt] = useState<IReceipt>();
+    const [receipts, setReceipts] = useState<IReceipt[]>();
 
-    /* const CreateReceipt = () => {
-         console.log("szukamm");
-         new ReceiptClient().getReceipts().then(e => {
-             console.log(e);
-             setReceipts(e);
-         });
-     }*/
+    const CreateReceipt = () => {
+        console.log("szukamm");
+        new ReceiptClient().getReceipts().then(e => {
+            console.log(e);
+            setReceipts(e);
+        });
+    }
 
     useEffect(() => {
-        // CreateReceipt();
+        CreateReceipt();
     }, []);
 
 
     return (
         <div className="receiptsGrid">
-            {props.receipts && props.receipts.map((receipt, index) => {
-
+            {receipts && receipts.map((receipt, index) => {
                 const data = receipt.creationDate;
                 return (
                     <React.Fragment>
-                        {/*                         <h3>Rachunek:{' ' + data.getFullYear() + '-' + data.getMonth() + '-' +
-                            data.getDay() + ' ' + data.getHours() + ':' + data.getMinutes() + ":" + data.getMinutes() + '\t'}
-                            {receipt.customer!.customerSurname + " " + receipt.customer!.customerName}</h3> */}
-                        {/* <ReceiptPanel receipt={receipt} id={index} selectReceipt={(xd: any) => { }} /> */}
+                        <h3>
+                            Rachunek:{' ' + data.getFullYear() + '-' + data.getMonth() + '-' +
+                                data.getDay() + ' ' + data.getHours() + ':' + data.getMinutes() + ":" + data.getMinutes() + '\t' +
+                                receipt.customer!.customerSurname + " " + receipt.customer!.customerName
+                            }
+                        </h3>
+                        <ReceiptPanel receipt={receipt} id={index} />
                     </React.Fragment>
                 );
             })}

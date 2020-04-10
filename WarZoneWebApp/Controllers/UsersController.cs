@@ -44,6 +44,12 @@ public class UsersController : ControllerBase {
         // UserContextInitializer.Init (appUser, token);
     }
 
+    [HttpPost]
+    [AllowAnonymous]
+    public ActionResult<bool> IsAuthorized () {
+        return Request.Cookies.ContainsKey ("auth_WarZoneWebApp");
+    }
+
     private static string CreateToken () {
         return Guid.NewGuid ().ToString ();
     }

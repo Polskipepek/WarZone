@@ -16,7 +16,7 @@ namespace Logic.Services {
         public bool Authenticate (string username, string password, out AppUser user) {
             user = null;
             using (var context = new Context ()) {
-                user = context.AppUsers.FirstOrDefault (user => user.Login == username);
+                user = context.AppUsers.FirstOrDefault (user => string.Equals (user.Login, username, System.StringComparison.OrdinalIgnoreCase));
 
                 if (user == null || StringHelper.CompareSha256 (password + user.Salt, user.Hash) == false)
                     return false;

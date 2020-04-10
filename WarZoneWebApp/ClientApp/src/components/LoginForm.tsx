@@ -1,13 +1,12 @@
-import React, { Component, useState } from 'react';
-import { AppUser, IAppUser, UsersClient } from '../ApiClient';
+import React from 'react';
 import {
     Button,
-    Checkbox,
     Form,
     Icon,
     Input
     } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
+import { UsersClient } from '../ApiClient';
 
 
 
@@ -63,7 +62,6 @@ class InnerLoginForm extends React.Component<FormComponentProps, ILoginFormState
                 <Form.Item>
                     <Button type="primary" htmlType="submit" disabled={hasErrors(getFieldsError())} size="large"
                         onClick={() => {
-                            alert(this.state.password);
                             new UsersClient().authenticate(this.state.username, this.state.password).then(resp => {
                                 console.log(resp);
                             });

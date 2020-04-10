@@ -5,11 +5,6 @@ const ProtectedRoute: React.FunctionComponent<Component> = (component: Component
 
   const [isAuthenticated, setIsAuthenticated] = useState(Boolean)
 
-  const array1 = [1, 2, 3, 4, 5];
-  const array2 = [63, 523, 65, 78, "sxdd"];
-
-  const arrayMerged = ["69", "dupa", ...array1, "huj", ...array2];
-
   if (isAuthenticated === null) {
     return <></>
   }

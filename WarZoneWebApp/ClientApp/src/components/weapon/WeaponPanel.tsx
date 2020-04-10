@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { Card, List, Typography } from 'antd';
+import React from 'react';
+import { Card, Typography } from 'antd';
 import { IWeapon } from '../../ApiClient';
 
 interface IWeaponPanelProps {

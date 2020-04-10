@@ -1,19 +1,6 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import {
-    Collapse,
-    Divider,
-    Table,
-    Tag
-    } from 'antd';
-import { ColumnProps } from 'antd/lib/table';
-import {
-    ConsentClient,
-    IReceipt,
-    ITransaction,
-    Receipt
-    } from '../../ApiClient';
-import { cpus } from 'os';
+import { ITransaction } from '../../ApiClient';
+import { Table } from 'antd';
 import './receipt.css';
 
 interface IReceiptPanelProps {

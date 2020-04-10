@@ -1,5 +1,4 @@
-import React, { Component, useState, useEffect } from 'react';
-import { Button, Form, Input, Icon } from 'antd';
+import React, { useEffect } from 'react';
 import WeaponList from '../weapon/WeaponList';
 
 const Offer: React.FunctionComponent = props => {

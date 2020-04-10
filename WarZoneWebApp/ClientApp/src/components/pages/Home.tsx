@@ -1,25 +1,14 @@
 import LoginForm from '../LoginForm';
-import React, { Component, Fragment, Props } from 'react';
-import WarzoneLayout from '../WarzoneLayout';
-import {
-    Breadcrumb,
-    Button,
-    Form,
-    Icon,
-    Input,
-    Layout,
-    Menu
-    } from 'antd';
+import React, { Component } from 'react';
+import { Form } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import { RouteComponentProps } from 'react-router';
-import { UsersClient } from '../../ApiClient';
 
 class HomeInner extends Component<RouteComponentProps & FormComponentProps> {
     constructor(props: any) {
         super(props);
         this.state = {
             consentCheckbox: false
-
         }
     }
 
@@ -40,8 +29,6 @@ class HomeInner extends Component<RouteComponentProps & FormComponentProps> {
             }
         });
     };
-
-
 }
 
 function hasErrors(fieldsError: { [x: string]: any; }) {
@@ -50,39 +37,39 @@ function hasErrors(fieldsError: { [x: string]: any; }) {
 const Home = Form.create()(HomeInner);
 export default Home;
 
-    /* DisplayPageSelectionButtons = () => {
-        let butWidth = 300;
-        return (
-            <div>
-                <Button type="primary" size="large" icon="edit" style={
-                    {
-                        display: "block",
-                        width: butWidth,
-                        height: 100,
-                        position: "relative",
-                        left: window.innerWidth / 2 - butWidth / 2,
-                        marginTop: "40px",
-                        fontSize: 35,
-                    }
-                }
-                    onClick={() => { this.props.history.push("/consent") }}
-                >
-                    Formularz
-                </Button>
-                <Button size="large" icon="" style={{
+/* DisplayPageSelectionButtons = () => {
+    let butWidth = 300;
+    return (
+        <div>
+            <Button type="primary" size="large" icon="edit" style={
+                {
                     display: "block",
                     width: butWidth,
                     height: 100,
                     position: "relative",
                     left: window.innerWidth / 2 - butWidth / 2,
-                    marginTop: "20px",
+                    marginTop: "40px",
                     fontSize: 35,
                 }
-                }
-                    onClick={() => this.props.history.push("/offer")}
-                >
-                    Oferta
-                </Button>
-            </div>
-        );
-    } */
+            }
+                onClick={() => { this.props.history.push("/consent") }}
+            >
+                Formularz
+            </Button>
+            <Button size="large" icon="" style={{
+                display: "block",
+                width: butWidth,
+                height: 100,
+                position: "relative",
+                left: window.innerWidth / 2 - butWidth / 2,
+                marginTop: "20px",
+                fontSize: 35,
+            }
+            }
+                onClick={() => this.props.history.push("/offer")}
+            >
+                Oferta
+            </Button>
+        </div>
+    );
+} */
