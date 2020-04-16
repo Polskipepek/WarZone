@@ -22,15 +22,14 @@ const App: React.FunctionComponent = () => {
   return (
     <BrowserRouter>
       <WarzoneLayout>
-        <Switch>
-          <Route path={Resources.pageAdresses.home} exact component={Home} />
-          <Route path={Resources.pageAdresses.consent} component={ConsentContent} />
-          <AuthorizedView authorized={true}>
+        <AuthorizedView authorized={true}>
+          <Switch>
+            <Route path={Resources.pageAdresses.home} exact component={Home} />
+            <Route path={Resources.pageAdresses.consent} component={ConsentContent} />
             <Route path={Resources.pageAdresses.offer} component={Offer} />
             <Route path={Resources.pageAdresses.receipts} component={Receipts} />
-          </AuthorizedView>
-
-        </Switch>
+          </Switch>
+        </AuthorizedView>
       </WarzoneLayout>
     </BrowserRouter>
   );

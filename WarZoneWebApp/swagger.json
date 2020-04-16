@@ -6,7 +6,7 @@
     "version": "1.0.0"
   },
   "paths": {
-    "/api/Users": {
+    "/api/Users/Authenticate": {
       "post": {
         "tags": [
           "Users"
@@ -37,6 +37,28 @@
             "description": "",
             "schema": {
               "$ref": "#/definitions/AppUser"
+            }
+          }
+        }
+      }
+    },
+    "/api/Users/IsAuthorized": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "operationId": "Users_IsAuthorized",
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "type": "boolean"
             }
           }
         }

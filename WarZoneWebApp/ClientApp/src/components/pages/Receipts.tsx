@@ -10,7 +10,7 @@ export interface IReceiptsProps {
 
 const Receipts: React.FunctionComponent<IReceiptsProps> = (props: IReceiptsProps) => {
     const [selectedReceipt, setSelectedReceipt] = useState<IReceipt>();
-    const [receipts, setReceipts] = useState<IReceipt[]>();
+    const [receipts, setReceipts] = useState<IReceipt[] | null>();
 
     const CreateReceipt = () => {
         console.log("szukamm");

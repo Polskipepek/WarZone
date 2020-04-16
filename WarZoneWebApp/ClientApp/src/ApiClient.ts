@@ -17,8 +17,8 @@ export class UsersClient {
         this.baseUrl = baseUrl ? baseUrl : "";
     }
 
-    authenticate(login: string | null | undefined, password: string | null | undefined): Promise<AppUser> {
-        let url_ = this.baseUrl + "/api/Users";
+    authenticate(login?: string | null | undefined, password?: string | null | undefined): Promise<AppUser | null> {
+        let url_ = this.baseUrl + "/api/Users/Authenticate";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ = <RequestInit>{
@@ -35,14 +35,14 @@ export class UsersClient {
         });
     }
 
-    protected processAuthenticate(response: Response): Promise<AppUser> {
+    protected processAuthenticate(response: Response): Promise<AppUser | null> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = AppUser.fromJS(resultData200);
+            result200 = resultData200 ? AppUser.fromJS(resultData200) : <any>null;
             return result200;
             });
         } else if (status !== 200 && status !== 204) {
@@ -50,7 +50,41 @@ export class UsersClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<AppUser>(<any>null);
+        return Promise.resolve<AppUser | null>(<any>null);
+    }
+
+    isAuthorized(): Promise<boolean> {
+        let url_ = this.baseUrl + "/api/Users/IsAuthorized";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "POST",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processIsAuthorized(_response);
+        });
+    }
+
+    protected processIsAuthorized(response: Response): Promise<boolean> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<boolean>(<any>null);
     }
 }
 
@@ -64,7 +98,7 @@ export class ConsentClient {
         this.baseUrl = baseUrl ? baseUrl : "";
     }
 
-    addCustomer(customer: Customer): Promise<FileResponse | null> {
+    addCustomer(customer: Customer | null): Promise<FileResponse | null> {
         let url_ = this.baseUrl + "/api/Consent/AddCustomer";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -75,7 +109,7 @@ export class ConsentClient {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Accept": "application/octet-stream"
+                "Accept": "application/json"
             }
         };
 
@@ -111,7 +145,7 @@ export class CustomerClient {
         this.baseUrl = baseUrl ? baseUrl : "";
     }
 
-    getCustomers(): Promise<Receipt[]> {
+    getCustomers(): Promise<Receipt[] | null> {
         let url_ = this.baseUrl + "/api/Customer/getcustomers";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -127,7 +161,7 @@ export class CustomerClient {
         });
     }
 
-    protected processGetCustomers(response: Response): Promise<Receipt[]> {
+    protected processGetCustomers(response: Response): Promise<Receipt[] | null> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -146,7 +180,7 @@ export class CustomerClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<Receipt[]>(<any>null);
+        return Promise.resolve<Receipt[] | null>(<any>null);
     }
 }
 
@@ -160,7 +194,7 @@ export class OfferClient {
         this.baseUrl = baseUrl ? baseUrl : "";
     }
 
-    getWeapons(): Promise<Weapon[]> {
+    getWeapons(): Promise<Weapon[] | null> {
         let url_ = this.baseUrl + "/api/Offer";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -176,7 +210,7 @@ export class OfferClient {
         });
     }
 
-    protected processGetWeapons(response: Response): Promise<Weapon[]> {
+    protected processGetWeapons(response: Response): Promise<Weapon[] | null> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -195,7 +229,7 @@ export class OfferClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<Weapon[]>(<any>null);
+        return Promise.resolve<Weapon[] | null>(<any>null);
     }
 }
 
@@ -209,7 +243,7 @@ export class ReceiptClient {
         this.baseUrl = baseUrl ? baseUrl : "";
     }
 
-    addReceipt(customer: Customer): Promise<FileResponse | null> {
+    addReceipt(customer: Customer | null): Promise<FileResponse | null> {
         let url_ = this.baseUrl + "/api/Receipt/AddReceipt";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -220,7 +254,7 @@ export class ReceiptClient {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Accept": "application/octet-stream"
+                "Accept": "application/json"
             }
         };
 
@@ -245,7 +279,7 @@ export class ReceiptClient {
         return Promise.resolve<FileResponse | null>(<any>null);
     }
 
-    getReceipts(): Promise<Receipt[]> {
+    getReceipts(): Promise<Receipt[] | null> {
         let url_ = this.baseUrl + "/api/Receipt/GetReceipts";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -261,7 +295,7 @@ export class ReceiptClient {
         });
     }
 
-    protected processGetReceipts(response: Response): Promise<Receipt[]> {
+    protected processGetReceipts(response: Response): Promise<Receipt[] | null> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -280,7 +314,7 @@ export class ReceiptClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<Receipt[]>(<any>null);
+        return Promise.resolve<Receipt[] | null>(<any>null);
     }
 }
 
@@ -294,7 +328,7 @@ export class TransactionClient {
         this.baseUrl = baseUrl ? baseUrl : "";
     }
 
-    getTransactions(receipt: Receipt): Promise<Transaction[]> {
+    getTransactions(receipt: Receipt | null): Promise<Transaction[] | null> {
         let url_ = this.baseUrl + "/api/Transaction/GetTransactions";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -314,7 +348,7 @@ export class TransactionClient {
         });
     }
 
-    protected processGetTransactions(response: Response): Promise<Transaction[]> {
+    protected processGetTransactions(response: Response): Promise<Transaction[] | null> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -333,7 +367,7 @@ export class TransactionClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<Transaction[]>(<any>null);
+        return Promise.resolve<Transaction[] | null>(<any>null);
     }
 }
 
@@ -642,7 +676,7 @@ export interface FileResponse {
     headers?: { [name: string]: any };
 }
 
-export class ApiException extends Error {
+export class SwaggerException extends Error {
     message: string;
     status: number; 
     response: string; 
@@ -659,10 +693,10 @@ export class ApiException extends Error {
         this.result = result;
     }
 
-    protected isApiException = true;
+    protected isSwaggerException = true;
 
-    static isApiException(obj: any): obj is ApiException {
-        return obj.isApiException === true;
+    static isSwaggerException(obj: any): obj is SwaggerException {
+        return obj.isSwaggerException === true;
     }
 }
 
@@ -670,5 +704,5 @@ function throwException(message: string, status: number, response: string, heade
     if (result !== null && result !== undefined)
         throw result;
     else
-        throw new ApiException(message, status, response, headers, null);
+        throw new SwaggerException(message, status, response, headers, null);
 }

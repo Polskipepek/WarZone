@@ -58,6 +58,11 @@
 
   <ItemGroup>
     <Folder Include="Database\" />
+    <Folder Include="Filters\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="nswag_config.json" />
   </ItemGroup>
 
   <ItemGroup>
@@ -117,10 +122,16 @@
     </ItemGroup>
   </Target>
 
-  <Target Name="NSwag" AfterTargets="Build">
+  <!--<Target Name="NSwag" AfterTargets="Build">
     <Copy SourceFiles="@(Reference)" DestinationFolder="$(OutDir)References" />
     <Exec Command="$(NSwagExe_Core30) aspnetcore2openapi /assembly:$(TargetDir)WarZoneWebApp.dll /output:swagger.json" />
     <Exec Command="$(NSwagExe_Core30) openapi2tsclient /input:swagger.json /output:ClientApp/src/ApiClient.ts" />
+    <RemoveDir Directories="$(OutDir)References" />
+  </Target>-->
+
+  <Target Name="NSwag" AfterTargets="Build">
+    <Copy SourceFiles="@(Reference)" DestinationFolder="$(OutDir)References" />
+    <Exec Command="$(NSwagExe_Core30) run nswag_config.json /variables:Configuration=$(Configuration)" />
     <RemoveDir Directories="$(OutDir)References" />
   </Target>
 

@@ -15,7 +15,7 @@ interface IReceiptPanelProps {
 }
 
 const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps> = (props: IReceiptPanelProps) => {
-    const [transactions, setTransactions] = useState<ITransaction[]>([]);
+    const [transactions, setTransactions] = useState<ITransaction[] | null>([]);
 
     useEffect(() => {
         new TransactionClient().getTransactions(props.receipt as Receipt).then((_transactions) => {

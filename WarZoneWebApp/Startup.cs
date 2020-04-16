@@ -43,7 +43,6 @@ namespace WarZoneWebApp {
             // configure DI for application services
             services.AddSingleton<IUserService, UserService> ();
             services.AddSingleton<IOperationContext, OperationContext> ();
-            services.AddSingleton<Context> ();
 
             services.ConfigureAddMvc ();
             services.ConfigureAddAuthentication ();

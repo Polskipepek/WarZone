@@ -22,6 +22,7 @@ public class UsersController : ControllerBase {
     }
 
     [HttpPost]
+    [Route ("[action]")]
     [AllowAnonymous]
     public ActionResult<AppUser> Authenticate ([FromHeader] string login, [FromHeader] string password) {
         var success = UserService.Authenticate (login, password, out AppUser appUser);
@@ -45,6 +46,7 @@ public class UsersController : ControllerBase {
     }
 
     [HttpPost]
+    [Route ("[action]")]
     [AllowAnonymous]
     public ActionResult<bool> IsAuthorized () {
         return Request.Cookies.ContainsKey ("auth_WarZoneWebApp");

@@ -20,7 +20,7 @@ namespace WarZoneWebApp.Controllers {
 
         [HttpPost]
         [Route ("[action]")]
-        public async Task<IActionResult> AddReceipt (Customer customer) {
+        public async Task<IActionResult> AddReceipt ([FromBody]Customer customer) {
 
             await context.Receipts.AddAsync (new Receipt { CreationDate = DateTime.Now, ModifyDate = DateTime.Now, Customer = customer });
             await context.SaveChangesAsync ();

@@ -8,7 +8,9 @@ const CustomerList: React.FunctionComponent = props => {
     const GetCustomers = () => {
         new CustomerClient().getCustomers().then(e => {
             console.log("premise:");
-            setCustomers(e);
+            if (e) {
+                setCustomers(e);
+            }
         });
     }
 

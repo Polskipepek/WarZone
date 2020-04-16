@@ -1,8 +1,25 @@
+import ConsentForm from './pages/ConsentForm';
+import Home from './pages/Home';
 import MenuItem from 'antd/lib/menu/MenuItem';
-import React, { useEffect, useState } from 'react';
+import Offer from './pages/Offer';
+import React, { Component, useEffect, useState } from 'react';
 import Resources from '../Resources';
-import { Layout, Menu } from 'antd';
-import { RouteComponentProps, withRouter } from 'react-router';
+import {
+    Breadcrumb,
+    Button,
+    Layout,
+    Menu
+    } from 'antd';
+import { BrowserRouter } from 'react-router-dom';
+import { IReceiptsProps } from './pages/Receipts';
+import { JSXElement } from '@babel/types';
+import {
+    Route,
+    RouteComponentProps,
+    Switch,
+    withRouter
+    } from 'react-router';
+
 
 const { Header, Content, Footer } = Layout;
 
@@ -61,38 +78,34 @@ const WarzoneLayoutInner: React.FunctionComponent<RouteComponentProps> = (props)
                     }}
                     theme="dark"
                 >
-                    <Menu.Item onClick={() => changePage(Resources.pageAdresses.home)} key="1">
+                    <Menu.Item onClick={() => changePage(Resources.pageAdresses.home)}
+                        key="1">
                         Strona Główna
-					</Menu.Item>
+						</Menu.Item>
                     <Menu.Item
                         onClick={() => changePage(Resources.pageAdresses.consent)}
                         key="2"
                     >
                         Regulamin
-					</Menu.Item>
+						</Menu.Item>
                     <Menu.Item
                         onClick={() => changePage(Resources.pageAdresses.offer)}
                         key="3"
                     >
                         Oferta
-					</Menu.Item>
+						</Menu.Item>
                     <Menu.Item
                         onClick={() => changePage(Resources.pageAdresses.receipts)}
                         key="4"
                     >
                         Otwarte rachunki
-					</Menu.Item>
-
-                    {/* {props.chosenReceipt &&
+						</Menu.Item>
+                    {/*                     {props.selectedReceipt &&
                         <MenuItem>
-                            Wybrany rachunek: {console.log(props.chosenReceipt.id + "\n" + props.chosenReceipt.totalPrice)}
+                            Wybrany rachunek: {console.log(props.selectedReceipt.id + "\n" + props.selectedReceipt.totalPrice)}
                         </MenuItem>
-                    }  */}
-                    }
+                    } */}
                 </Menu>
-                <div>
-
-                </div>
             </Header>
             <Content style={{ padding: '80px 25px' }}>
                 <div style={{ background: '#fff', padding: 24, minHeight: window.screen.availHeight * .9 }}>
