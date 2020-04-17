@@ -1,3 +1,4 @@
 ﻿namespace Logic.OperationContext {
-    public interface IOperationContext { }
+    public interface IOperationContext {
+    }
 }

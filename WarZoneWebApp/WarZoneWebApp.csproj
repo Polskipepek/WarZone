@@ -48,6 +48,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <TypeScriptCompile Remove="ClientApp\api-client.extensions.ts" />
     <TypeScriptCompile Remove="ClientApp\src\components\model\Customer.ts" />
     <TypeScriptCompile Remove="ClientApp\src\components\model\ModelBase.ts" />
     <TypeScriptCompile Remove="ClientApp\src\components\model\Receipt.ts" />

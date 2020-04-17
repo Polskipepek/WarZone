@@ -3,13 +3,22 @@
 namespace Logic.OperationContext {
     public class OperationContext : IOperationContext {
 
-        public static AppUser CurrentUser { get; set; }
+        public AppUser CurrentUser { get; private set; }
 
-        public static bool IsAdmin { get; set; }
+        public bool IsAdmin { get; private set; }
 
-        public static void ClearContextData () {
+        public void ClearContextData () {
             CurrentUser = null;
             IsAdmin = false;
+        }
+
+        public void SetContext (AppUser appUser) { // 17.04.2020 ohacel - tu rozbudowywac kontext jakby co - nie dawac public setow
+            if (appUser == null) {
+                ClearContextData ();
+                return;
+            }
+            this.CurrentUser = appUser;
+            IsAdmin = appUser.Id == 0;
         }
     }
 }

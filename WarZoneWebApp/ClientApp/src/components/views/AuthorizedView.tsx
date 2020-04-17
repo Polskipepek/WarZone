@@ -1,4 +1,4 @@
-import React, { Children } from 'react';
+import React, { Children, useEffect } from 'react';
 import { RouteComponentProps, withRouter } from 'react-router';
 
 interface IAuthorizedViewProps {
@@ -9,6 +9,9 @@ interface IAuthorizedViewProps {
 type IMergedAuthorizedViewProps = IAuthorizedViewProps & RouteComponentProps;
 
 const AuthorizedView: React.FunctionComponent<IMergedAuthorizedViewProps> = (props: IAuthorizedViewProps) => {
+    useEffect(() => {
+        console.log("AuthorizedView user zautoryzowany: " + props.authorized);
+    }, [])
 
     return (
         <>

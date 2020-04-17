@@ -1,4 +1,5 @@
 ﻿using Helpers;
+using Logic.OperationContext;
 using Logic.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Model;
 using Model.Database;
 using System;
+using System.Linq;
 using System.Security.Claims;
 using WarZoneWebApp.Constants;
 
@@ -15,10 +17,12 @@ using WarZoneWebApp.Constants;
 public class UsersController : ControllerBase {
     private IUserService UserService { get; set; }
     private Context context;
+    private IOperationContext operationContext;
 
-    public UsersController (Context context, IUserService userService) {
+    public UsersController (Context context, IUserService userService, IOperationContext operationContext) {
         this.context = context;
         UserService = userService;
+        this.operationContext = operationContext;
     }
 
     [HttpPost]
@@ -28,18 +32,28 @@ public class UsersController : ControllerBase {
         var success = UserService.Authenticate (login, password, out AppUser appUser);
 
         if (!success)
-            return new AppUser () { Id = -1 };
+            return BadRequest ();
 
-        SignIn (appUser);
-        return appUser.WithoutSensitiveData ();
+        SignIn (ref appUser);
+
+        return appUser;
     }
 
-    private void SignIn (AppUser appUser) {
-        string token = CreateToken ();
+    private void SignIn (ref AppUser appUser) {
+        var token = CreateToken ();
         var claimsIdentity = CreateClaimsIdentity (token, appUser);
 
         var taskSignResult = HttpContext.SignInAsync (CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal (claimsIdentity));
         taskSignResult.GetAwaiter ().GetResult ();
+
+        appUser.Token = token;
+
+        context.SaveChanges ();
+        context.AppUsers.Update (appUser);
+
+        if (operationContext is OperationContext oc) {
+            oc.SetContext (appUser);
+        }
 
         //HttpContext.Session.Clear ();
         // UserContextInitializer.Init (appUser, token);
@@ -47,9 +61,15 @@ public class UsersController : ControllerBase {
 
     [HttpPost]
     [Route ("[action]")]
-    [AllowAnonymous]
-    public ActionResult<bool> IsAuthorized () {
-        return Request.Cookies.ContainsKey ("auth_WarZoneWebApp");
+    public ActionResult<AppUser> Authorize (string token) {
+        if (!string.IsNullOrEmpty (token) && operationContext is OperationContext oc) {
+            var appUser = context.AppUsers.FirstOrDefault (e => e.Token == token);
+
+            oc.SetContext (appUser);
+            return appUser.WithoutSensitiveData ();
+        }
+        return null;
+
     }
 
     private static string CreateToken () {

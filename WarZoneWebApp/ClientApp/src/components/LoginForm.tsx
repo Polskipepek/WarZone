@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { AppUserContext, IAppUserContext } from '../App';
 import {
     Button,
     Form,
@@ -6,24 +7,30 @@ import {
     Input
     } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
-import { UsersClient } from '../ApiClient';
-
-
+import { IAppUser, UsersClient } from '../ApiClient';
 
 function hasErrors(fieldsError: { [x: string]: any; }) {
     return Object.keys(fieldsError).some(field => fieldsError[field]);
 }
 
+export interface ILoginFormProps extends FormComponentProps {
+    TryLogin: (username: string, password: string) => void;
+}
+
+
 interface ILoginFormState {
     username: string;
     password: string;
+    refresh: boolean;
 }
 
-class InnerLoginForm extends React.Component<FormComponentProps, ILoginFormState> {
+class InnerLoginForm extends React.Component<ILoginFormProps, ILoginFormState> {
     state = {
         username: "",
-        password: ""
+        password: "",
+        refresh: false
     }
+
     DisplayForms = () => {
         const { getFieldDecorator, getFieldsError, getFieldError, isFieldTouched } = this.props.form;
         const isCorrectName = isFieldTouched('username') && getFieldError('username');
@@ -62,9 +69,8 @@ class InnerLoginForm extends React.Component<FormComponentProps, ILoginFormState
                 <Form.Item>
                     <Button type="primary" htmlType="submit" disabled={hasErrors(getFieldsError())} size="large"
                         onClick={() => {
-                            new UsersClient().authenticate(this.state.username, this.state.password).then(resp => {
-                                console.log(resp);
-                            });
+                            console.log(this.props.TryLogin);
+                            this.props.TryLogin(this.state.username, this.state.password);
                         }}>
                         Log in
                     </Button>
@@ -96,5 +102,5 @@ class InnerLoginForm extends React.Component<FormComponentProps, ILoginFormState
 
 
 }
-const LoginForm = Form.create()(InnerLoginForm);
+const LoginForm = Form.create<ILoginFormProps>()(InnerLoginForm);
 export default LoginForm;

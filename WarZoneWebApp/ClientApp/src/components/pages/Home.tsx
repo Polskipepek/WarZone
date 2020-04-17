@@ -1,10 +1,14 @@
-import LoginForm from '../LoginForm';
+import LoginForm, { ILoginFormProps } from '../LoginForm';
 import React, { Component } from 'react';
 import { Form } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import { RouteComponentProps } from 'react-router';
 
-class HomeInner extends Component<RouteComponentProps & FormComponentProps> {
+export interface HomeProps extends ILoginFormProps {
+
+}
+
+class HomeInner extends Component<RouteComponentProps & HomeProps> {
     constructor(props: any) {
         super(props);
         this.state = {
@@ -15,10 +19,12 @@ class HomeInner extends Component<RouteComponentProps & FormComponentProps> {
     render() {
         return (
             <div className="kliven-centered" style={{ marginTop: window.screen.availHeight * 0.2 }}>
-                <LoginForm />
+                <LoginForm TryLogin={this.props.TryLogin} />
             </div>
         );
     }
+
+
 
 
     handleSubmit = (e: { preventDefault: () => void; }) => {
@@ -34,7 +40,7 @@ class HomeInner extends Component<RouteComponentProps & FormComponentProps> {
 function hasErrors(fieldsError: { [x: string]: any; }) {
     return Object.keys(fieldsError).some(field => fieldsError[field]);
 }
-const Home = Form.create()(HomeInner);
+const Home = Form.create<HomeProps>()(HomeInner);
 export default Home;
 
 /* DisplayPageSelectionButtons = () => {
