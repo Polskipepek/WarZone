@@ -4,12 +4,14 @@ using Logic.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Model;
 using Model.Database;
 using System;
 using System.Linq;
 using System.Security.Claims;
+using WarZoneWebApp;
 using WarZoneWebApp.Constants;
 
 [ApiController]
@@ -43,11 +45,12 @@ public class UsersController : ControllerBase {
         var token = CreateToken ();
         var claimsIdentity = CreateClaimsIdentity (token, appUser);
 
+
         var taskSignResult = HttpContext.SignInAsync (CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal (claimsIdentity));
         taskSignResult.GetAwaiter ().GetResult ();
 
-        appUser.Token = token;
-
+        GetCookieValueFromResponse (ConfigureAddAuthenticationExtension.AuthCookieName, out string cookieToken);
+        appUser.Token = cookieToken;
         context.AppUsers.Update (appUser);
         context.SaveChanges ();
 
@@ -61,12 +64,14 @@ public class UsersController : ControllerBase {
 
     [HttpPost]
     [Route ("[action]")]
-    public ActionResult<AppUser> Authorize (string token) {
-        if (!string.IsNullOrEmpty (token) && operationContext is OperationContext oc) {
-            var appUser = context.AppUsers.FirstOrDefault (e => e.Token == token);
+    public ActionResult<AppUser> Authorize () {
+        if (Request.Cookies.TryGetValue (ConfigureAddAuthenticationExtension.AuthCookieName, out string token)) {
+            if (!string.IsNullOrEmpty (token) && operationContext is OperationContext oc) {
+                var appUser = context.AppUsers.FirstOrDefault (e => e.Token == token);
 
-            oc.SetContext (appUser);
-            return appUser.WithoutSensitiveData ();
+                oc.SetContext (appUser);
+                return appUser.WithoutSensitiveData ();
+            }
         }
         return null;
 
@@ -82,6 +87,18 @@ public class UsersController : ControllerBase {
         claimsIdentity.AddClaim (new Claim (CookieAuthenticationConst.TokenClaimType, token));
 
         return claimsIdentity;
+    }
+
+    private bool GetCookieValueFromResponse (string cookieName, out string value) {
+        value = null;
+        foreach (var headers in Response.Headers.Values)
+            foreach (var header in headers)
+                if (header.StartsWith ($"{cookieName}=")) {
+                    var p1 = header.IndexOf ('=');
+                    var p2 = header.IndexOf (';');
+                    value = header.Substring (p1 + 1, p2 - p1 - 1); //innewartosci=${value};inenznaczki
+                }
+        return false;
     }
 }
 

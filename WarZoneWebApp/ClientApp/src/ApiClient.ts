@@ -58,12 +58,8 @@ export class UsersClient extends ClientBase {
         return Promise.resolve<AppUser | null>(<any>null);
     }
 
-    authorize(token: string | null): Promise<AppUser | null> {
-        let url_ = this.baseUrl + "/api/Users/Authorize?";
-        if (token === undefined)
-            throw new Error("The parameter 'token' must be defined.");
-        else
-            url_ += "token=" + encodeURIComponent("" + token) + "&"; 
+    authorize(): Promise<AppUser | null> {
+        let url_ = this.baseUrl + "/api/Users/Authorize";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ = <RequestInit>{

@@ -47,17 +47,16 @@ const App: React.FunctionComponent = () => {
 
   const [authorized, setAuthorized] = useState<boolean>();
   const { usePersistentState } = useContext<IPersistentState>(PersistentStateContext);
-  const [appUserToken, setAppUserToken] = usePersistentState(Resources.persistentKeys.appUser, undefined);
+  /*   const [appUserToken, setAppUserToken] = usePersistentState(Resources.persistentKeys.appUser, undefined); */
 
   const toggleAppUser = (newAppUser: IAppUser | undefined) => {
     //console.log("toggleAppUser: authorized = " + authorized + ", authorizedCtx = " + authorizedCtx);
-    setAppUserToken(newAppUser ? newAppUser.token : undefined);
+    /*     setAppUserToken(newAppUser ? newAppUser.token : undefined); */
     setAuthorized(newAppUser !== undefined);
   };
 
   const CheckIfAuthorized = () => {
-    new UsersClient().authorize(appUserToken ? appUserToken : "").then(appUser => {
-      alert("Probuje autoryzowac z " + appUserToken);
+    new UsersClient().authorize().then(appUser => {
       toggleAppUser(appUser ? appUser : undefined);
     }).catch(ex => {
       if (SwaggerException.isSwaggerException(ex) && (ex as SwaggerException).status === 401) {
