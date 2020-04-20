@@ -1,5 +1,4 @@
 import React, { useContext } from 'react';
-import { AppUserContext, IAppUserContext } from '../App';
 import {
     Button,
     Form,
@@ -8,6 +7,7 @@ import {
     } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import { IAppUser, UsersClient } from '../ApiClient';
+import { PersistentStateContext } from '../App';
 
 function hasErrors(fieldsError: { [x: string]: any; }) {
     return Object.keys(fieldsError).some(field => fieldsError[field]);

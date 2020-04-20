@@ -17,6 +17,7 @@ namespace Logic.OperationContext {
                 ClearContextData ();
                 return;
             }
+
             this.CurrentUser = appUser;
             IsAdmin = appUser.Id == 0;
         }

@@ -1,5 +1,4 @@
 import React, { useContext, useState } from 'react';
-import { AppUserContext, IAppUserContext } from '../../App';
 import { Card, Typography } from 'antd';
 import { IWeapon } from '../../ApiClient';
 
@@ -8,7 +7,6 @@ interface IWeaponPanelProps {
 }
 const WeaponPanel: React.FunctionComponent<IWeaponPanelProps> = props => {
 
-    const { appUserCtx } = useContext<IAppUserContext>(AppUserContext);
 
     return (
 
@@ -22,8 +20,7 @@ const WeaponPanel: React.FunctionComponent<IWeaponPanelProps> = props => {
             }}
             title={
                 <Typography.Text ellipsis style={{ color: "black" }} >
-                    {/* {props.weapon.weaponName} */}
-                    {appUserCtx!.token}
+                    {props.weapon.weaponName}
                 </Typography.Text>
             }
             cover={

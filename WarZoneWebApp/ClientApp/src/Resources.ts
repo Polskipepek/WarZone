@@ -9,4 +9,7 @@ export default class Resources {
     public static buttons = {
         accept: "Akceptuję"
     }
+    public static persistentKeys = {
+        appUser: "appUser",
+    }
 }

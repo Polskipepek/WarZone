@@ -25,6 +25,7 @@ namespace Logic.Services {
 
                 context.AppUsers.Update (user);
 
+
                 return true;
             }
         }

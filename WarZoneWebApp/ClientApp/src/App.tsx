@@ -18,36 +18,46 @@ import { Route, Switch } from 'react-router';
 import './styles/warzone.css';
 import 'antd/dist/antd.css';
 
-export interface IAppUserContext {
-  appUserCtx: IAppUser | undefined;
-  authorizedCtx: boolean | undefined;
-  toggleAppUser: any;
+const usePersistentState = (key: string, defaultValue: any) => {
+  const _key = `persistent_state_${key}`;
+  const [getPersistentState, setPersistentState] = useState(
+    localStorage.getItem(_key) || defaultValue
+  );
+  useEffect(() => {
+    localStorage.setItem(_key, getPersistentState);
+  }, [key, getPersistentState]);
+  return [getPersistentState, setPersistentState];
 }
 
-export const AppUserContext = createContext<IAppUserContext>({ appUserCtx: undefined, toggleAppUser: undefined, authorizedCtx: false });
+export interface IPersistentState {
+  usePersistentState: (key: string, defaultValue: any) => any[];
+}
+
+export interface IAppContext {
+  toggleAppUser: ((newAppUser: IAppUser | undefined) => void) | undefined;
+}
+
+export const PersistentStateContext = createContext<IPersistentState>({ usePersistentState: usePersistentState });
+export const AppContext = createContext<IAppContext>({ toggleAppUser: undefined });
 
 const App: React.FunctionComponent = () => {
   useEffect(() => {
     CheckIfAuthorized();
   }, [])
 
-
-
   const [authorized, setAuthorized] = useState<boolean>();
-  const [appUser, setAppUser] = useState<IAppUser>();// nie uzywac appUser, uzyj appUserCtx
-
-  const { appUserCtx, authorizedCtx } = useContext<IAppUserContext>(AppUserContext);
+  const { usePersistentState } = useContext<IPersistentState>(PersistentStateContext);
+  const [appUserToken, setAppUserToken] = usePersistentState(Resources.persistentKeys.appUser, undefined);
 
   const toggleAppUser = (newAppUser: IAppUser | undefined) => {
-    console.log("toggleAppUser: authorized = " + authorized + ", authorizedCtx = " + authorizedCtx);
-
-    setAppUser(newAppUser);
-    setAuthorized(newAppUser ? true : false);
-
+    //console.log("toggleAppUser: authorized = " + authorized + ", authorizedCtx = " + authorizedCtx);
+    setAppUserToken(newAppUser ? newAppUser.token : undefined);
+    setAuthorized(newAppUser !== undefined);
   };
 
   const CheckIfAuthorized = () => {
-    new UsersClient().authorize(appUserCtx && appUserCtx.token ? appUserCtx.token : null).then(appUser => {
+    new UsersClient().authorize(appUserToken ? appUserToken : "").then(appUser => {
+      alert("Probuje autoryzowac z " + appUserToken);
       toggleAppUser(appUser ? appUser : undefined);
     }).catch(ex => {
       if (SwaggerException.isSwaggerException(ex) && (ex as SwaggerException).status === 401) {
@@ -69,22 +79,24 @@ const App: React.FunctionComponent = () => {
 
   return (
     <BrowserRouter>
-      <AppUserContext.Provider value={{ appUserCtx, toggleAppUser, authorizedCtx }}>
-        <WarzoneLayout>
-          <Switch>
-            <Route
-              path={Resources.pageAdresses.home}
-              exact
-              render={(props) => <Home {...props} TryLogin={TryLogin} />}
-            />
-            <AuthorizedView authorized={authorizedCtx}>
-              <Route path={Resources.pageAdresses.consent} component={ConsentContent} />
-              <Route path={Resources.pageAdresses.offer} component={Offer} />
-              <Route path={Resources.pageAdresses.receipts} component={Receipts} />
-            </AuthorizedView>
-          </Switch>
-        </WarzoneLayout>
-      </AppUserContext.Provider>
+      <PersistentStateContext.Provider value={{ usePersistentState }}>
+        <AppContext.Provider value={{ toggleAppUser }}>
+          <WarzoneLayout>
+            <Switch>
+              <Route
+                path={Resources.pageAdresses.home}
+                exact
+                render={(props) => <Home {...props} TryLogin={TryLogin} />}
+              />
+              <AuthorizedView authorized={authorized}>
+                <Route path={Resources.pageAdresses.consent} component={ConsentContent} />
+                <Route path={Resources.pageAdresses.offer} component={Offer} />
+                <Route path={Resources.pageAdresses.receipts} component={Receipts} />
+              </AuthorizedView>
+            </Switch>
+          </WarzoneLayout>
+        </AppContext.Provider>
+      </PersistentStateContext.Provider>
     </BrowserRouter>
   );
 

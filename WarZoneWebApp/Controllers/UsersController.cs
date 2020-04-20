@@ -48,8 +48,8 @@ public class UsersController : ControllerBase {
 
         appUser.Token = token;
 
-        context.SaveChanges ();
         context.AppUsers.Update (appUser);
+        context.SaveChanges ();
 
         if (operationContext is OperationContext oc) {
             oc.SetContext (appUser);
