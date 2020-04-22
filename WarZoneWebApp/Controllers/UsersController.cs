@@ -38,7 +38,7 @@ public class UsersController : ControllerBase {
 
         SignIn (ref appUser);
 
-        return appUser;
+        return appUser.WithoutSensitiveData ();
     }
 
     private void SignIn (ref AppUser appUser) {
@@ -96,7 +96,7 @@ public class UsersController : ControllerBase {
                 if (header.StartsWith ($"{cookieName}=")) {
                     var p1 = header.IndexOf ('=');
                     var p2 = header.IndexOf (';');
-                    value = header.Substring (p1 + 1, p2 - p1 - 1); //innewartosci=${value};inenznaczki
+                    value = header.Substring (p1 + 1, p2 - p1 - 1);
                 }
         return false;
     }

@@ -13,7 +13,7 @@ function hasErrors(fieldsError: { [x: string]: any; }) {
     return Object.keys(fieldsError).some(field => fieldsError[field]);
 }
 
-export interface ILoginFormProps extends FormComponentProps {
+export interface ILoginFormProps {
     TryLogin: (username: string, password: string) => void;
 }
 
@@ -24,7 +24,9 @@ interface ILoginFormState {
     refresh: boolean;
 }
 
-class InnerLoginForm extends React.Component<ILoginFormProps, ILoginFormState> {
+type ILoginFormJoinedProps = ILoginFormProps & FormComponentProps;
+
+class InnerLoginForm extends React.Component<ILoginFormJoinedProps, ILoginFormState> {
     state = {
         username: "",
         password: "",
@@ -102,5 +104,5 @@ class InnerLoginForm extends React.Component<ILoginFormProps, ILoginFormState> {
 
 
 }
-const LoginForm = Form.create<ILoginFormProps>()(InnerLoginForm);
+const LoginForm = Form.create<ILoginFormJoinedProps>()(InnerLoginForm);
 export default LoginForm;

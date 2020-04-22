@@ -19,7 +19,7 @@ namespace Logic.OperationContext {
             }
 
             this.CurrentUser = appUser;
-            IsAdmin = appUser.Id == 0;
+            IsAdmin = appUser.Id == 1;
         }
     }
 }

@@ -4,16 +4,20 @@ import { Form } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import { RouteComponentProps } from 'react-router';
 
-export interface IHomeProps {
+export interface ILoginProps extends ILoginFormProps {
 
 }
 
-const Home: FunctionComponent<IHomeProps> = (props: IHomeProps) => {
+type ILoginJoinedProps = RouteComponentProps & ILoginProps;
+
+const Login: React.FunctionComponent<ILoginJoinedProps> = (props: ILoginJoinedProps) => {
+
     return (
         <div className="kliven-centered" style={{ marginTop: window.screen.availHeight * 0.2 }}>
-            {"\n\n\n\DUPA"}
+            <LoginForm TryLogin={props.TryLogin} />
         </div>
     );
+
 }
 
-export default Home;
+export default Login;

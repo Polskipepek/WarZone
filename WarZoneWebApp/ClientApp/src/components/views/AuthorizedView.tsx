@@ -15,7 +15,7 @@ const AuthorizedView: React.FunctionComponent<IMergedAuthorizedViewProps> = (pro
 
     return (
         <>
-            {props.authorized && props.children}
+            {props.authorized ? props.children : ""}
         </>
     );
 }
