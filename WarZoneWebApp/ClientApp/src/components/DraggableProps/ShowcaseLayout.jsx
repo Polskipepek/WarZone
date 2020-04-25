@@ -44,6 +44,8 @@ export default class BasicLayout extends React.PureComponent {
         });
     }
 
+
+
     onLayoutChange(layout) {
         this.props.onLayoutChange(layout);
     }

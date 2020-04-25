@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Logic.DtoMappers;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Model;
 using Model.Database;
+using Model.Dto;
 using System.Linq;
 
 namespace WarZoneWebApp.Controllers {
@@ -18,14 +20,14 @@ namespace WarZoneWebApp.Controllers {
 
         [HttpPost]
         [Route ("[action]")]
-        public ActionResult<Transaction[]> GetTransactions ([FromBody]Receipt receipt) {
+        public ActionResult<TransactionListDto[]> GetTransactions ([FromBody]Receipt receipt) {
             if (receipt == null || receipt.Customer == null) {
                 return BadRequest ();
             }
             context.Transactions.Include (e => e.Customer).Include (e => e.Service).Include (e => e.Receipt).Load ();
             var transactions = context.Transactions.Where (e => e.Receipt == receipt).OrderBy (e => e.ServiceId).ToArray ();
 
-            return transactions;
+            return new TransactionListDtoMapper ().Map (transactions);
         }
 
 

@@ -350,7 +350,7 @@ export class TransactionClient extends ClientBase {
         this.baseUrl = baseUrl ? baseUrl : "";
     }
 
-    getTransactions(receipt: Receipt | null): Promise<Transaction[] | null> {
+    getTransactions(receipt: Receipt | null): Promise<TransactionListDto[] | null> {
         let url_ = this.baseUrl + "/api/Transaction/GetTransactions";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -372,7 +372,7 @@ export class TransactionClient extends ClientBase {
         });
     }
 
-    protected processGetTransactions(response: Response): Promise<Transaction[] | null> {
+    protected processGetTransactions(response: Response): Promise<TransactionListDto[] | null> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -382,7 +382,7 @@ export class TransactionClient extends ClientBase {
             if (Array.isArray(resultData200)) {
                 result200 = [] as any;
                 for (let item of resultData200)
-                    result200!.push(Transaction.fromJS(item));
+                    result200!.push(TransactionListDto.fromJS(item));
             }
             return result200;
             });
@@ -391,7 +391,7 @@ export class TransactionClient extends ClientBase {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<Transaction[] | null>(<any>null);
+        return Promise.resolve<TransactionListDto[] | null>(<any>null);
     }
 }
 
@@ -603,78 +603,33 @@ export interface IWeapon extends IModelBase {
     weaponName?: string | undefined;
 }
 
-export class Transaction extends ModelBase implements ITransaction {
-    customerId!: number;
-    serviceId!: number;
-    receiptId!: number;
-    customer?: Customer | undefined;
-    service?: Service | undefined;
-    receipt?: Receipt | undefined;
+export class TransactionListDto implements ITransactionListDto {
+    serviceName?: string | undefined;
+    price!: number;
+    count!: number;
+    totalPrice!: number;
 
-    constructor(data?: ITransaction) {
-        super(data);
-    }
-
-    init(_data?: any) {
-        super.init(_data);
-        if (_data) {
-            this.customerId = _data["customerId"];
-            this.serviceId = _data["serviceId"];
-            this.receiptId = _data["receiptId"];
-            this.customer = _data["customer"] ? Customer.fromJS(_data["customer"]) : <any>undefined;
-            this.service = _data["service"] ? Service.fromJS(_data["service"]) : <any>undefined;
-            this.receipt = _data["receipt"] ? Receipt.fromJS(_data["receipt"]) : <any>undefined;
+    constructor(data?: ITransactionListDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
         }
     }
 
-    static fromJS(data: any): Transaction {
-        data = typeof data === 'object' ? data : {};
-        let result = new Transaction();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["customerId"] = this.customerId;
-        data["serviceId"] = this.serviceId;
-        data["receiptId"] = this.receiptId;
-        data["customer"] = this.customer ? this.customer.toJSON() : <any>undefined;
-        data["service"] = this.service ? this.service.toJSON() : <any>undefined;
-        data["receipt"] = this.receipt ? this.receipt.toJSON() : <any>undefined;
-        super.toJSON(data);
-        return data; 
-    }
-}
-
-export interface ITransaction extends IModelBase {
-    customerId: number;
-    serviceId: number;
-    receiptId: number;
-    customer?: Customer | undefined;
-    service?: Service | undefined;
-    receipt?: Receipt | undefined;
-}
-
-export class Service extends ModelBase implements IService {
-    serviceName?: string | undefined;
-    servicePrice!: number;
-
-    constructor(data?: IService) {
-        super(data);
-    }
-
     init(_data?: any) {
-        super.init(_data);
         if (_data) {
             this.serviceName = _data["serviceName"];
-            this.servicePrice = _data["servicePrice"];
+            this.price = _data["price"];
+            this.count = _data["count"];
+            this.totalPrice = _data["totalPrice"];
         }
     }
 
-    static fromJS(data: any): Service {
+    static fromJS(data: any): TransactionListDto {
         data = typeof data === 'object' ? data : {};
-        let result = new Service();
+        let result = new TransactionListDto();
         result.init(data);
         return result;
     }
@@ -682,15 +637,18 @@ export class Service extends ModelBase implements IService {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["serviceName"] = this.serviceName;
-        data["servicePrice"] = this.servicePrice;
-        super.toJSON(data);
+        data["price"] = this.price;
+        data["count"] = this.count;
+        data["totalPrice"] = this.totalPrice;
         return data; 
     }
 }
 
-export interface IService extends IModelBase {
+export interface ITransactionListDto {
     serviceName?: string | undefined;
-    servicePrice: number;
+    price: number;
+    count: number;
+    totalPrice: number;
 }
 
 export interface FileResponse {

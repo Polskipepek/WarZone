@@ -1,4 +1,5 @@
 import BasicLayout from '../DraggableProps/ShowcaseLayout';
+import DraggableField from '../draggable/DraggableField';
 import LoginForm, { ILoginFormProps } from '../LoginForm';
 import React, { Component, FunctionComponent } from 'react';
 import { FormComponentProps } from 'antd/lib/form';
@@ -10,20 +11,21 @@ export interface IHomeProps {
 
 const defaultBasicLayoutProps = {
     className: "layout",
-    items: 5,
+    items: [
+        "raz", "dwa", "trzy"
+    ],
     rowHeight: 30,
-    onLayoutChange: () => { },
     cols: 5,
-    h: 0,
+    h: 10,
     i: "",
-    w: 0,
+    w: 20,
     x: 0,
     y: 0
 }
 
 const Home: FunctionComponent<IHomeProps> = (props: IHomeProps) => {
     return (
-        <BasicLayout {...defaultBasicLayoutProps} />
+        <DraggableField {...defaultBasicLayoutProps} />
         /*         <div className="kliven-centered" style={{ marginTop: window.screen.availHeight * 0.2 }}>
         
                 </div> */

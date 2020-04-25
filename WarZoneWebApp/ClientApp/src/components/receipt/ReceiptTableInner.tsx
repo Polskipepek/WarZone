@@ -1,10 +1,10 @@
 import React from 'react';
-import { ITransaction } from '../../ApiClient';
-import { Table } from 'antd';
-import './receipt.css';
+import ReceiptPanel from './ReceiptPanel';
+import { ITransactionListDto } from '../../ApiClient';
+import { Pagination, Table } from 'antd';
 
 interface IReceiptPanelProps {
-    transactions: ITransaction[];
+    transactions: ITransactionListDto[];
 }
 
 const ReceiptTableInner: React.FunctionComponent<IReceiptPanelProps> = props => {
@@ -14,56 +14,27 @@ const ReceiptTableInner: React.FunctionComponent<IReceiptPanelProps> = props => 
             title: 'Nazwa usługi',
             dataIndex: 'name',
             key: 'name',
-            width: colWidth,
+            width: "40%",
             render: (text: React.ReactNode) => <a>{text}</a>
         },
         {
             title: 'Cena',
             dataIndex: 'price',
             key: 'price',
-            width: colWidth
+            width: "20%",
         },
         {
-            title: 'Tag',
-            key: 'tags',
-            dataIndex: 'tags',
-            width: colWidth,
-            render: (tags: any[]) => (
-                <span>
-                    {/*  {tags.map((tag: string) => {
-                        let color = tag.length > 5 ? 'geekblue' : 'green';
-                        if (tag === 'weapon') {
-                            color = 'volcano';
-                        }
-                        if (tag === 'wejsciowka') {
-                            color = 'black';
-                        }
-
-                        return (
-                            <Tag color={color} key={tag}>
-                                {tag.toUpperCase()}
-                            </Tag>
-                        );
-                    })} */}
-                </span>
-            ),
-        },
-    ];
-
-    const dataa = [
-        {
-            key: '1',
-            name: 'John Brown',
-            price: 32,
-            tags: ['nice', 'developer'],
+            title: 'Ilość',
+            dataIndex: 'count',
+            key: 'count',
+            width: "20%",
         },
         {
-            key: '2',
-            name: 'Jim Green',
-            price: 42,
-            tags: ['weapon'],
+            title: 'Razem',
+            dataIndex: 'totalPrice',
+            key: 'totalPrice',
+            width: "20%",
         },
-
     ];
 
 
@@ -73,8 +44,10 @@ const ReceiptTableInner: React.FunctionComponent<IReceiptPanelProps> = props => 
         props.transactions.map((transaction, index) => {
             data.push({
                 key: index,
-                name: transaction.service!.serviceName,
-                price: transaction.service!.servicePrice,
+                name: transaction.serviceName,
+                price: transaction.price,
+                count: transaction.count,
+                totalPrice: transaction.totalPrice,
             });
         })
         return data;
@@ -82,7 +55,7 @@ const ReceiptTableInner: React.FunctionComponent<IReceiptPanelProps> = props => 
 
 
     return (
-        <Table columns={columns} dataSource={genData()} />
+        <Table columns={columns} dataSource={genData()} scroll={{ y: "30vh" }} pagination={false} />
     );
 };
 

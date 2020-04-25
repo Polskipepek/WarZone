@@ -1,13 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import ReceiptTableInner from './ReceiptTableInner';
-import { Collapse, Icon, Typography } from 'antd';
+import {
+    Button,
+    Card,
+    Col,
+    Collapse,
+    Icon,
+    Typography
+    } from 'antd';
 import {
     IReceipt,
-    ITransaction,
+    ITransactionListDto,
     Receipt,
     TransactionClient
     } from '../../ApiClient';
-import './receipt.css';
 
 interface IReceiptPanelProps {
     receipt: IReceipt;
@@ -15,7 +21,7 @@ interface IReceiptPanelProps {
 }
 
 const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps> = (props: IReceiptPanelProps) => {
-    const [transactions, setTransactions] = useState<ITransaction[] | null>([]);
+    const [transactions, setTransactions] = useState<ITransactionListDto[] | null>([]);
 
     useEffect(() => {
         new TransactionClient().getTransactions(props.receipt as Receipt).then((_transactions) => {
@@ -47,14 +53,20 @@ const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps> = (props: IRecei
     return (
         <div className="receiptPanel">
             {transactions &&
-                <Collapse>
-                    <Collapse.Panel header={getHeader()} key={props.id} extra={genExtra()}>
+                <Col span={8}>
+                    <Card title={getHeader()} key={props.id} style={{ width: "30vw", height: "50vh" }}>
                         <ReceiptTableInner transactions={transactions} />
-                    </Collapse.Panel>
-                </Collapse>
+                        <Button size="large" icon="edit">Edycja</Button>
+
+                    </Card>
+                </Col>
             }
         </div>)
-
+    /* <Collapse>
+                        <Collapse.Panel header={getHeader()} key={props.id} extra={genExtra()}>
+                            <ReceiptTableInner transactions={transactions} />
+                        </Collapse.Panel>
+                    </Collapse> */
 }
 
 export default ReceiptPanel;

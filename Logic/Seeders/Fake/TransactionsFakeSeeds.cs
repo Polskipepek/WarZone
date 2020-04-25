@@ -6,11 +6,11 @@ namespace Logic.Seeders.Fake {
     class TransactionsFakeSeeds : SeedBase {
         public override void Seed (Context context) {
             var tempTransactions = new List<Transaction> ();
-            for (int t = 0; t < 50; t++) {
+            for (int t = 0; t < 350; t++) {
                 tempTransactions.Add (new Transaction {
-                    CustomerId = Faker.Generators.Numbers.Int (1, 50),
+                    CustomerId = Faker.Generators.Numbers.Int (1, 20),
                     ServiceId = Faker.Generators.Numbers.Int (1, 55),
-                    ReceiptId = Faker.Generators.Numbers.Int (1, 50)
+                    ReceiptId = Faker.Generators.Numbers.Int (1, 25)
                 });
             }
 
