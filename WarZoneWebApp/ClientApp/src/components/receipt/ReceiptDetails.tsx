@@ -1,7 +1,7 @@
 import React from 'react';
+import { Col, Row, Typography } from 'antd';
 import { FunctionComponent } from 'react';
 import { IReceipt, Receipt } from '../../ApiClient';
-import { Typography } from 'antd';
 
 export interface IReceiptDetailsProps {
     receipt: IReceipt;
@@ -13,13 +13,24 @@ const ReceiptDetails: FunctionComponent<IReceiptDetailsProps> = (props: IReceipt
 
     return (
         <>
-            <Typography.Paragraph>
-                Godność: {customerName} {customerSurname}, całe te: {totalPrice}zl
-            </Typography.Paragraph>
-            <Typography.Paragraph>
-                Stworzony: {creationDate}, Zmodyfikowany: {modifyDate}
-            </Typography.Paragraph>
-
+            <Row>
+                <Col flex="auto">
+                    <span style={{ paddingLeft: 10 }}>
+                        <b>Imię i nazwisko:</b> {customerName} {customerSurname}
+                    </span>
+                    <span style={{ paddingRight: 10 }}>
+                        <b>Wartość koszyka:</b> {totalPrice}zł
+                </span>
+                </Col>
+                <Col flex="auto">
+                    <span style={{ paddingLeft: 10 }}>
+                        <b>Zmodyfikowany:</b> {modifyDate.toLocaleDateString()} {modifyDate.toLocaleTimeString()}
+                    </span>
+                    <span style={{ paddingRight: 10 }}>
+                        <b>Stworzony:</b> {creationDate.toLocaleDateString()} {creationDate.toLocaleTimeString()}
+                    </span>
+                </Col>
+            </Row>
         </>
     );
 }

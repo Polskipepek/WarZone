@@ -1,3 +1,12 @@
+html * {
+    font-family: 'Open Sans', sans-serif;
+
+}
+
+html * :not(b) {
+    font-weight: normal !important;
+}
+
 .ant-layout-header {
     min-height: 75px;
     float: left;

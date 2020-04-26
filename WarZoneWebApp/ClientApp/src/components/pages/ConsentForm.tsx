@@ -1,9 +1,8 @@
-import React, { Component } from 'react';
+import React, { Component, FunctionComponent } from 'react';
 import {
     Button,
     Checkbox,
     Form,
-    Icon,
     Input
     } from 'antd';
 import {
@@ -12,33 +11,26 @@ import {
     ICustomer,
     ReceiptClient
     } from '../../ApiClient';
-import { FormComponentProps } from 'antd/lib/form';
 
 function hasErrors(fieldsError: { [x: string]: any; }) {
     return Object.keys(fieldsError).some(field => fieldsError[field]);
 }
 
-export class InnerConsentForm extends Component<FormComponentProps> {
+const InnerConsentForm: FunctionComponent = () => {
+    const [form] = Form.useForm();
+
     formValues: any;
     constructor(props: any) {
         super(props);
 
-        this.formValues = {
+        constformValues = {
             Imię: "",
             Nazwisko: ""
         };
     }
-    render() {
-        return (
-            <div>
-                {this.DisplayForms()}
-            </div>
-        );
-    }
 
-
-    submitForm = () => {
-        if (this.formValues.Imię != "" && this.formValues.Nazwisko != "") {
+    const submitForm = () => {
+        if (form.field.Imię != "" && this.formValues.Nazwisko != "") {
             const customer: ICustomer = {
                 id: 0,
                 customerName: this.formValues.Imię,
@@ -53,9 +45,9 @@ export class InnerConsentForm extends Component<FormComponentProps> {
 
 
 
-    handleSubmit = (e: { preventDefault: () => void; }) => {
+    const handleSubmit = (e: { preventDefault: () => void; }) => {
         e.preventDefault();
-        this.props.form.validateFields((err: any, values: any) => {
+        this.form.validateFields((err: any, values: any) => {
             if (!err) {
                 console.log('Received values of form: ', values);
             }
@@ -63,7 +55,7 @@ export class InnerConsentForm extends Component<FormComponentProps> {
     };
 
 
-    DisplayForms = () => {
+    const DisplayForms = () => {
         const { getFieldDecorator, getFieldsError, getFieldError, isFieldTouched } = this.props.form;
 
         // const surname = isFieldTouched("surname") && getFieldError("surname");
@@ -83,7 +75,7 @@ export class InnerConsentForm extends Component<FormComponentProps> {
         );
     }
 
-    DisplayInputField = (fieldName: string, fieldType: string, placeholder: string, iconType: string, errorMessage: string, validator: () => boolean) => {
+    const DisplayInputField = (fieldName: string, fieldType: string, placeholder: string, iconType: string, errorMessage: string, validator: () => boolean) => {
         const { getFieldDecorator, getFieldsError, getFieldError, isFieldTouched } = this.props.form;
         return (
             <Form.Item validateStatus={validator() ? "" : 'error'} help={""}>
@@ -101,6 +93,10 @@ export class InnerConsentForm extends Component<FormComponentProps> {
         );
     }
 
+    return (
+        <div>
+            {this.DisplayForms()}
+        </div>
+    );
 }
-const ConsentForm = Form.create()(InnerConsentForm);
 export default ConsentForm;

@@ -26,7 +26,7 @@ const Receipts: React.FunctionComponent<IReceiptsProps> = (props: IReceiptsProps
 
     return (
         <>
-            <Row>
+            <Row >
                 {receipts && receipts.map((receipt, index) => {
                     return (
                         <React.Fragment>

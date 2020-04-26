@@ -19,7 +19,7 @@ const EditReceiptPanelModal: FunctionComponent<IEditReceiptPanelModalProps> = (p
 
     return (
         <Modal
-            title="Edycja rachunku"
+            title={<big><b>{`Edycja rachunku #${selectedReceipt ? selectedReceipt.id : ""}`}</b></big>}
             visible={selectedReceipt !== undefined}
             onOk={() => OnOkay()}
             onCancel={() => toggleSelectedReceipt!(undefined)}
