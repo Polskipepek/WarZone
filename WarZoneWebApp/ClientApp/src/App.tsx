@@ -16,6 +16,7 @@ import WarzoneLayout from './components/WarzoneLayout';
 import {
   AppUser,
   IAppUser,
+  IReceipt,
   SwaggerException,
   UsersClient
   } from './ApiClient';
@@ -51,23 +52,35 @@ export interface IPersistentState {
 export interface IAppContext {
   toggleAppUser: ((newAppUser: IAppUser | undefined) => void) | undefined;
   appUser: IAppUser | undefined;
+  selectedReceipt?: IReceipt | undefined;
+  toggleSelectedReceipt: ((receipt: IReceipt | undefined) => void) | undefined;
 }
 
 export const PersistentStateContext = createContext<IPersistentState>({ usePersistentState: usePersistentState });
-export const AppContext = createContext<IAppContext>({ toggleAppUser: undefined, appUser: undefined });
+const defaultAppContext: IAppContext = {
+  toggleAppUser: undefined,
+  appUser: undefined,
+  selectedReceipt: undefined,
+  toggleSelectedReceipt: undefined
+}
+export const AppContext = createContext<IAppContext>(defaultAppContext);
 
 const App: React.FunctionComponent = () => {
   useEffect(() => {
     CheckIfAuthorized();
   }, [])
 
-  const [authorized, setAuthorized] = useState<boolean>();
   const { usePersistentState } = useContext<IPersistentState>(PersistentStateContext);
   const [appUser, setAppUser] = usePersistentState(Resources.persistentKeys.appUser, undefined);
+  const [selectedReceipt, setSelectedReceipt] = useState<IReceipt | undefined>(undefined);
 
   const toggleAppUser = (newAppUser: IAppUser | undefined) => {
     /*     setAppUserToken(newAppUser ? newAppUser.token : undefined); */
     setAppUser(newAppUser);
+  };
+
+  const toggleSelectedReceipt = (receipt: IReceipt | undefined) => {
+    setSelectedReceipt(receipt);
   };
 
   const CheckIfAuthorized = () => {
@@ -95,7 +108,7 @@ const App: React.FunctionComponent = () => {
   return (
     <BrowserRouter>
       <PersistentStateContext.Provider value={{ usePersistentState }}>
-        <AppContext.Provider value={{ toggleAppUser, appUser }}>
+        <AppContext.Provider value={{ toggleAppUser, appUser, selectedReceipt, toggleSelectedReceipt }}>
           <WarzoneLayout>
             <AuthorizedView authorized={appUser}> {/* USER PAGES */}
               <Switch>

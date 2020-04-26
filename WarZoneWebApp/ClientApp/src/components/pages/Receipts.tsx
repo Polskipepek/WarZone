@@ -1,3 +1,4 @@
+import EditReceiptPanelModal from '../receipt/EditReceiptPanelModal';
 import React, { useEffect, useState } from 'react';
 import ReceiptPanel from '../receipt/ReceiptPanel';
 import { IReceipt, ReceiptClient } from '../../ApiClient';
@@ -27,7 +28,6 @@ const Receipts: React.FunctionComponent<IReceiptsProps> = (props: IReceiptsProps
         <>
             <Row>
                 {receipts && receipts.map((receipt, index) => {
-                    const data = receipt.creationDate;
                     return (
                         <React.Fragment>
                             <ReceiptPanel receipt={receipt} id={index} />
@@ -35,6 +35,7 @@ const Receipts: React.FunctionComponent<IReceiptsProps> = (props: IReceiptsProps
                     );
                 })}
             </Row>
+            <EditReceiptPanelModal />
         </>
 
     );

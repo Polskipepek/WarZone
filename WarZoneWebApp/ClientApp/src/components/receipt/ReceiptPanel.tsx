@@ -1,5 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import EditReceiptPanelModal from './EditReceiptPanelModal';
+import React, { useContext, useEffect, useState } from 'react';
+import ReceiptDetails from './ReceiptDetails';
 import ReceiptTableInner from './ReceiptTableInner';
+import { AppContext, IAppContext } from '../../App';
 import {
     Button,
     Card,
@@ -22,6 +25,7 @@ interface IReceiptPanelProps {
 
 const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps> = (props: IReceiptPanelProps) => {
     const [transactions, setTransactions] = useState<ITransactionListDto[] | null>([]);
+    const { selectedReceipt, toggleSelectedReceipt } = useContext<IAppContext>(AppContext);
 
     useEffect(() => {
         new TransactionClient().getTransactions(props.receipt as Receipt).then((_transactions) => {
@@ -42,21 +46,29 @@ const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps> = (props: IRecei
 
 
     const getHeader = () => {
-        return (
-            <Typography.Title style={{ textAlign: "center", fontSize: 25 }}>
-                {`${props.receipt.customer!.customerName} ${props.receipt.customer!.customerSurname} ${props.receipt.creationDate.toLocaleDateString("pl-PL")}
+        if (selectedReceipt === undefined) {
+            return (
+                <Typography.Title style={{ textAlign: "center", fontSize: 25 }}>
+                    {`${props.receipt.customer!.customerName} ${props.receipt.customer!.customerSurname} ${props.receipt.creationDate.toLocaleDateString("pl-PL")}
                 ${props.receipt.creationDate.toLocaleTimeString("pl-PL")}  ${props.receipt.totalPrice} zł`}
-            </Typography.Title>
-        );
+                </Typography.Title>
+            );
+        } else {
+            return (
+                <ReceiptDetails receipt={props.receipt} />
+            );
+        }
     }
 
     return (
         <div className="receiptPanel">
             {transactions &&
                 <Col span={8}>
-                    <Card title={getHeader()} key={props.id} style={{ width: "30vw", height: "50vh" }}>
+                    <Card title={getHeader()} key={props.id} style={{ width: "30vw", height: "auto", maxHeight: "60vh" }}>
                         <ReceiptTableInner transactions={transactions} />
-                        <Button size="large" icon="edit">Edycja</Button>
+                        <Button size="large" icon="edit" onClick={() => {
+                            toggleSelectedReceipt!(props.receipt);
+                        }}>Edycja</Button>
 
                     </Card>
                 </Col>

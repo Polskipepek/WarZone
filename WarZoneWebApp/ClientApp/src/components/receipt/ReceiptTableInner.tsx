@@ -55,7 +55,7 @@ const ReceiptTableInner: React.FunctionComponent<IReceiptPanelProps> = props => 
 
 
     return (
-        <Table columns={columns} dataSource={genData()} scroll={{ y: "30vh" }} pagination={false} />
+        <Table columns={columns} dataSource={genData()} scroll={{ y: "40vh" }} pagination={false} />
     );
 };
 
