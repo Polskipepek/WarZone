@@ -95,56 +95,6 @@ export class UsersClient extends ClientBase {
     }
 }
 
-export class ConsentClient extends ClientBase {
-    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
-    private baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
-
-    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
-        super();
-        this.http = http ? http : <any>window;
-        this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    addCustomer(customer: Customer | null): Promise<FileResponse | null> {
-        let url_ = this.baseUrl + "/api/Consent/AddCustomer";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(customer);
-
-        let options_ = <RequestInit>{
-            body: content_,
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json"
-            }
-        };
-
-        return this.transformOptions(options_).then(transformedOptions_ => {
-            return this.http.fetch(url_, transformedOptions_);
-        }).then((_response: Response) => {
-            return this.transformResult(url_, _response, (_response: Response) => this.processAddCustomer(_response));
-        });
-    }
-
-    protected processAddCustomer(response: Response): Promise<FileResponse | null> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200 || status === 206) {
-            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
-            const fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
-            const fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
-            return response.blob().then(blob => { return { fileName: fileName, data: blob, status: status, headers: _headers }; });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<FileResponse | null>(<any>null);
-    }
-}
-
 export class CustomerClient extends ClientBase {
     private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
     private baseUrl: string;
@@ -480,43 +430,6 @@ export interface IAppUser extends IModelBase {
     password?: string | undefined;
 }
 
-export class Customer extends ModelBase implements ICustomer {
-    customerName?: string | undefined;
-    customerSurname?: string | undefined;
-
-    constructor(data?: ICustomer) {
-        super(data);
-    }
-
-    init(_data?: any) {
-        super.init(_data);
-        if (_data) {
-            this.customerName = _data["customerName"];
-            this.customerSurname = _data["customerSurname"];
-        }
-    }
-
-    static fromJS(data: any): Customer {
-        data = typeof data === 'object' ? data : {};
-        let result = new Customer();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["customerName"] = this.customerName;
-        data["customerSurname"] = this.customerSurname;
-        super.toJSON(data);
-        return data; 
-    }
-}
-
-export interface ICustomer extends IModelBase {
-    customerName?: string | undefined;
-    customerSurname?: string | undefined;
-}
-
 export class Receipt extends ModelBase implements IReceipt {
     creationDate!: Date;
     modifyDate!: Date;
@@ -568,6 +481,43 @@ export interface IReceipt extends IModelBase {
     totalPrice: number;
     customerId: number;
     customer?: Customer | undefined;
+}
+
+export class Customer extends ModelBase implements ICustomer {
+    customerName?: string | undefined;
+    customerSurname?: string | undefined;
+
+    constructor(data?: ICustomer) {
+        super(data);
+    }
+
+    init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.customerName = _data["customerName"];
+            this.customerSurname = _data["customerSurname"];
+        }
+    }
+
+    static fromJS(data: any): Customer {
+        data = typeof data === 'object' ? data : {};
+        let result = new Customer();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["customerName"] = this.customerName;
+        data["customerSurname"] = this.customerSurname;
+        super.toJSON(data);
+        return data; 
+    }
+}
+
+export interface ICustomer extends IModelBase {
+    customerName?: string | undefined;
+    customerSurname?: string | undefined;
 }
 
 export class Weapon extends ModelBase implements IWeapon {

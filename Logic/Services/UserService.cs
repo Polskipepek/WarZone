@@ -15,10 +15,13 @@ namespace Logic.Services {
 
         public bool Authenticate (string username, string password, out AppUser user) {
             user = null;
+            if (string.IsNullOrEmpty (username) || string.IsNullOrEmpty (password)) {
+                return false;
+            }
             using (var context = new Context ()) {
                 user = context.AppUsers.FirstOrDefault (user => user.Login.ToLower () == username.ToLower ());
 
-                if (user == null || StringHelper.CompareSha256 (password + user.Salt, user.Hash) == false)
+                if (user == null || StringHelper.CompareSha256 (password + user.Salt, user.Hash) == false)  
                     return false;
 
                 user.Token = Faker.Generators.Strings.GenerateAlphaNumericString (16, 16);

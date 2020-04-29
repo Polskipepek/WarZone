@@ -1,13 +1,11 @@
-import React, { useContext } from 'react';
+import Icon from '@ant-design/icons/lib/components/Icon';
+import React, { FunctionComponent, useContext } from 'react';
+import { Store } from 'antd/lib/form/interface';
 import {
     Button,
     Form,
-    Icon,
-    Input
-    } from 'antd';
-import { FormComponentProps } from 'antd/lib/form';
-import { IAppUser, UsersClient } from '../ApiClient';
-import { PersistentStateContext } from '../App';
+    Input,
+} from 'antd';
 
 function hasErrors(fieldsError: { [x: string]: any; }) {
     return Object.keys(fieldsError).some(field => fieldsError[field]);
@@ -17,92 +15,90 @@ export interface ILoginFormProps {
     TryLogin: (username: string, password: string) => void;
 }
 
-
-interface ILoginFormState {
-    username: string;
-    password: string;
-    refresh: boolean;
+export interface ILoginFormValues {
+    username?: string;
+    password?: string;
 }
 
-type ILoginFormJoinedProps = ILoginFormProps & FormComponentProps;
+type ILoginFormJoinedProps = ILoginFormProps;
 
-class InnerLoginForm extends React.Component<ILoginFormJoinedProps, ILoginFormState> {
-    state = {
-        username: "",
-        password: "",
-        refresh: false
-    }
+const LoginForm: FunctionComponent<ILoginFormJoinedProps> = (props: ILoginFormJoinedProps) => {
+    const [form] = Form.useForm();
 
-    DisplayForms = () => {
-        const { getFieldDecorator, getFieldsError, getFieldError, isFieldTouched } = this.props.form;
+    const validateMessages = {
+        required: '${label} is required!',
+        types: {
+            email: '${label} is not validate email!',
+            number: '${label} is not a validate number!',
+        },
+        number: {
+            range: '${label} must be between ${min} and ${max}',
+        },
+    };
+
+    const DisplayForms = () => {
+        const { getFieldsError, getFieldError, isFieldTouched } = form;
         const isCorrectName = isFieldTouched('username') && getFieldError('username');
         const isCorrectPassword = isFieldTouched('password') && getFieldError('password');
 
         return (
-            <Form layout="inline" onSubmit={this.handleSubmit}>
-                <Form.Item validateStatus={isCorrectName ? 'error' : ''} help={isCorrectName || ''}>
-                    {getFieldDecorator('username', {
-                        rules: [{ required: true, message: 'Please input your username!' }],
-                    })(
-                        <Input size="large"
+            <div>
+                <Form layout="inline" validateMessages={validateMessages} onFinish={(values: ILoginFormValues) => {
+                    props.TryLogin(values.username!, values.password!);
+                }}>
+                    <Form.Item
+                        name="username"
+                        validateStatus={isCorrectName ? 'error' : ''}
+                        help={isCorrectName || ''}
+                        rules={[{
+                            required: true,
+                            type: "string",
+                            message: validateMessages.required
+                        }]}>
+                        <Input
+                            size="large"
                             prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
-                            placeholder="Username"
-                            onChange={(event) => {
-                                this.setState({ username: event.target.value });
-                            }}
-                        />,
-                    )}
-                </Form.Item>
-
-                <Form.Item validateStatus={isCorrectPassword ? 'error' : ''} help={isCorrectPassword || ''}>
-                    {getFieldDecorator('password', {
-                        rules: [{ required: true, message: 'Please input your Password!' }],
-                    })(
+                            type="text"
+                            placeholder="Login"
+                        /* onChange={(event) => {
+                            form.setFieldsValue({ password: event.target.value });
+                        }} */
+                        />
+                    </Form.Item>
+                    <Form.Item
+                        name="password"
+                        validateStatus={isCorrectPassword ? 'error' : ''}
+                        help={isCorrectPassword || ''}
+                        rules={[{
+                            required: true,
+                            message: validateMessages.required
+                        }]}>
                         <Input size="large"
                             prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
                             type="password"
-                            placeholder="Password"
-                            onChange={(event) => {
-                                this.setState({ password: event.target.value });
-                            }}
-                        />,
-                    )}
-                </Form.Item>
-                <Form.Item>
-                    <Button type="primary" htmlType="submit" disabled={hasErrors(getFieldsError())} size="large"
-                        onClick={() => {
-                            console.log(this.props.TryLogin);
-                            this.props.TryLogin(this.state.username, this.state.password);
-                        }}>
-                        Log in
+                            placeholder="Hasło"
+                        /* onChange={(event) => {
+                            form.setFieldsValue({ password: event.target.value });
+                        }} */
+                        />
+                    </Form.Item>
+                    <Form.Item>
+                        <Button type="primary" htmlType="submit" disabled={hasErrors(getFieldsError())} size="large">
+                            Log in
                     </Button>
-                </Form.Item>
-            </Form >
-
-        );
-    }
-
-
-
-    handleSubmit = (e: { preventDefault: () => void; }) => {
-        e.preventDefault();
-        this.props.form.validateFields((err: any, values: any) => {
-            if (!err) {
-                console.log('Received values of form: ', values);
-            }
-        });
-    };
-
-
-    render() {
-        return (
-            <div>
-                {this.DisplayForms()}
+                    </Form.Item>
+                </Form >
             </div>
         );
     }
 
-
+    return (
+        <div>
+            {DisplayForms()}
+        </div>
+    );
 }
-const LoginForm = Form.create<ILoginFormJoinedProps>()(InnerLoginForm);
+
+
+
 export default LoginForm;

@@ -10,16 +10,6 @@ const ConsentContent: React.FunctionComponent = (props) => {
         setVisible(true)
     }
 
-    // const handleOk = (e: any) => {
-    //     setVisible(false);
-    //     alert("handleok " + visible)
-    // };
-
-    // const handleCancel = (e: any) => {
-    //     setVisible(false)
-    // };
-
-
     const DisplayRegulations = () => {
         return (
             <div>
@@ -89,15 +79,15 @@ const ConsentContent: React.FunctionComponent = (props) => {
                 <Modal
                     title="Dane Osobowe"
                     visible={visible}
-                    onOk={() => setVisible(false)}
                     onCancel={() => setVisible(false)}
+                    okButtonProps={{ disabled: true }}
                 >
                     <ConsentForm />
                 </Modal>
 
 
             </div>
-        </div>
+        </div >
     );
 }
 export default ConsentContent;

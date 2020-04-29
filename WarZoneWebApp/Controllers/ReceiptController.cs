@@ -4,7 +4,6 @@ using Model;
 using Model.Database;
 using System;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace WarZoneWebApp.Controllers {
 
@@ -20,10 +19,17 @@ namespace WarZoneWebApp.Controllers {
 
         [HttpPost]
         [Route ("[action]")]
-        public async Task<IActionResult> AddReceipt ([FromBody]Customer customer) {
-
-            await context.Receipts.AddAsync (new Receipt { CreationDate = DateTime.Now, ModifyDate = DateTime.Now, Customer = customer });
-            await context.SaveChangesAsync ();
+        public IActionResult AddReceipt ([FromBody]Customer customer) {
+            if (string.IsNullOrWhiteSpace (customer?.CustomerName) || string.IsNullOrWhiteSpace (customer?.CustomerSurname)) {
+                return BadRequest ();
+            }
+            Customer existingCustomer = context.Customers.FirstOrDefault (c => c.CustomerName == customer.CustomerName && c.CustomerSurname == customer.CustomerSurname);
+            if (existingCustomer == null) {
+                context.Receipts.Add (new Receipt { CreationDate = DateTime.Now, ModifyDate = DateTime.Now, Customer = customer });
+            } else {
+                context.Receipts.Add (new Receipt { CreationDate = DateTime.Now, ModifyDate = DateTime.Now, CustomerId = existingCustomer.Id });
+            }
+            context.SaveChanges ();
             return Ok ();
         }
         [HttpGet]

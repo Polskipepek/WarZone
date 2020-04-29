@@ -1,4 +1,5 @@
 import EditReceiptPanelModal from './EditReceiptPanelModal';
+import Icon from '@ant-design/icons/lib/components/Icon';
 import React, { useContext, useEffect, useState } from 'react';
 import ReceiptDetails from './ReceiptDetails';
 import ReceiptTableInner from './ReceiptTableInner';
@@ -8,7 +9,6 @@ import {
     Card,
     Col,
     Collapse,
-    Icon,
     Typography
     } from 'antd';
 import {
@@ -43,8 +43,6 @@ const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps> = (props: IRecei
         />
     );
 
-
-
     const getHeader = () => {
         if (selectedReceipt === undefined) {
             return (
@@ -74,11 +72,6 @@ const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps> = (props: IRecei
                 </Col>
             }
         </div>)
-    /* <Collapse>
-                        <Collapse.Panel header={getHeader()} key={props.id} extra={genExtra()}>
-                            <ReceiptTableInner transactions={transactions} />
-                        </Collapse.Panel>
-                    </Collapse> */
 }
 
 export default ReceiptPanel;

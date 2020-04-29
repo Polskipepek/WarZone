@@ -2,7 +2,6 @@ import BasicLayout from '../DraggableProps/ShowcaseLayout';
 import DraggableField from '../draggable/DraggableField';
 import LoginForm, { ILoginFormProps } from '../LoginForm';
 import React, { Component, FunctionComponent } from 'react';
-import { FormComponentProps } from 'antd/lib/form';
 import { RouteComponentProps } from 'react-router';
 
 export interface IHomeProps {
