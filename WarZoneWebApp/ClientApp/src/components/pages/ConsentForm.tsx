@@ -30,19 +30,38 @@ const InnerConsentForm: FunctionComponent = () => {
         new ReceiptClient().addReceipt(customer as Customer);
     }
 
+    const layout = {
+        labelCol: {
+            span: 8,
+        },
+        wrapperCol: {
+            span: 16,
+        },
+    };
+    const tailLayout = {
+        wrapperCol: {
+            offset: 8,
+            span: 16,
+        },
+    };
 
     const DisplayForms = () => {
         return (
             <div className="kliven-centered">
-                <Form layout="inline" onFinish={(values: IFormValues) => submitForm(values.name!, values.surname!)}>
+                <Form
+                    {...layout}
+                    onFinish={(values: IFormValues) => submitForm(values.name!, values.surname!)}>
                     <Form.Item
                         name="name"
                         label="Imię"
                         rules={[{
                             required: true,
                             message: "Proszę podać swoje imię.",
+                        },
+                        {
                             min: 2,
                             max: 50,
+                            message: "Nieprawidłowa długość"
                         }]}>
                         <Input
                             size="large"
@@ -65,7 +84,7 @@ const InnerConsentForm: FunctionComponent = () => {
                             placeholder={"Nazwisko"}
                         />
                     </Form.Item>
-                    <Form.Item>
+                    <Form.Item {...tailLayout}>
                         <Button defaultChecked={false} size="large" type="primary" htmlType="submit">
                             Dalej
                     </Button>

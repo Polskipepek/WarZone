@@ -44,7 +44,5 @@ namespace WarZoneWebApp.Controllers {
             return receipts.ToArray ();
         }
 
-
-
     }
 }

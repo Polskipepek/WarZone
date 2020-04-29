@@ -27,8 +27,6 @@ const EditReceiptPanelModal: FunctionComponent<IEditReceiptPanelModalProps> = (p
             cancelText="Anuluj"
             okText="Zapisz"
             width="auto"
-
-
             bodyStyle={{ height: "60vh" }}
         >
             {selectedReceipt && (

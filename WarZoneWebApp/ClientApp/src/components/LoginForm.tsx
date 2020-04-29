@@ -1,12 +1,17 @@
 import Icon from '@ant-design/icons/lib/components/Icon';
-import React, { FunctionComponent, useContext } from 'react';
+import React, {
+    FunctionComponent,
+    useContext,
+    useEffect,
+    useState
+    } from 'react';
+import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Store } from 'antd/lib/form/interface';
 import {
     Button,
     Form,
     Input,
 } from 'antd';
-
 function hasErrors(fieldsError: { [x: string]: any; }) {
     return Object.keys(fieldsError).some(field => fieldsError[field]);
 }
@@ -41,54 +46,61 @@ const LoginForm: FunctionComponent<ILoginFormJoinedProps> = (props: ILoginFormJo
         const isCorrectName = isFieldTouched('username') && getFieldError('username');
         const isCorrectPassword = isFieldTouched('password') && getFieldError('password');
 
+        const [, forceUpdate] = useState();
+
+        useEffect(() => {
+            forceUpdate({});
+        }, []);
+
+
         return (
-            <div>
-                <Form layout="inline" validateMessages={validateMessages} onFinish={(values: ILoginFormValues) => {
+            <Form
+                form={form}
+                name="horizontal_login"
+                layout="inline"
+                onFinish={(values: ILoginFormValues) => {
                     props.TryLogin(values.username!, values.password!);
                 }}>
-                    <Form.Item
-                        name="username"
-                        validateStatus={isCorrectName ? 'error' : ''}
-                        help={isCorrectName || ''}
-                        rules={[{
-                            required: true,
-                            type: "string",
-                            message: validateMessages.required
-                        }]}>
-                        <Input
+                <Form.Item
+                    name="username"
+                    rules={[{
+                        required: true,
+                        message: 'Please input your username!'
+                    }]}
+                >
+                    <Input
+                        size="large"
+                        prefix={<UserOutlined style={{ color: 'rgba(0,0,0,.25)' }} />}
+                        placeholder="Login" />
+                </Form.Item>
+                <Form.Item
+                    name="password"
+                    rules={[{
+                        required: true,
+                        message: 'Please input your password!'
+                    }]}>
+                    <Input
+                        size="large"
+                        prefix={<LockOutlined style={{ color: 'rgba(0,0,0,.25)' }} />}
+                        type="password"
+                        placeholder="Password"
+                    />
+                </Form.Item>
+                <Form.Item shouldUpdate={true}>
+                    {() => (
+                        <Button
                             size="large"
-                            prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
-                            type="text"
-                            placeholder="Login"
-                        /* onChange={(event) => {
-                            form.setFieldsValue({ password: event.target.value });
-                        }} */
-                        />
-                    </Form.Item>
-                    <Form.Item
-                        name="password"
-                        validateStatus={isCorrectPassword ? 'error' : ''}
-                        help={isCorrectPassword || ''}
-                        rules={[{
-                            required: true,
-                            message: validateMessages.required
-                        }]}>
-                        <Input size="large"
-                            prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
-                            type="password"
-                            placeholder="Hasło"
-                        /* onChange={(event) => {
-                            form.setFieldsValue({ password: event.target.value });
-                        }} */
-                        />
-                    </Form.Item>
-                    <Form.Item>
-                        <Button type="primary" htmlType="submit" disabled={hasErrors(getFieldsError())} size="large">
-                            Log in
-                    </Button>
-                    </Form.Item>
-                </Form >
-            </div>
+                            type="primary"
+                            htmlType="submit"
+                            disabled={
+                                !form.isFieldsTouched(true) ||
+                                form.getFieldsError().filter(({ errors }) => errors.length).length > 0
+                            }
+                        >
+                            Zaloguj
+                    </Button>)}
+                </Form.Item>
+            </Form>
         );
     }
 
