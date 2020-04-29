@@ -1,14 +1,38 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import ReceiptPanel from './ReceiptPanel';
 import { ITransactionListDto } from '../../ApiClient';
 import { Pagination, Table } from 'antd';
 
 interface IReceiptPanelProps {
     transactions: ITransactionListDto[];
+
+}
+
+export interface IReceiptTableValues {
+    key?: number | undefined;
+    name?: string | undefined;
+    price?: number | undefined;
+    count?: number | undefined;
+    totalPrice?: number | undefined;
 }
 
 const ReceiptTableInner: React.FunctionComponent<IReceiptPanelProps> = props => {
-    const colWidth = "100px";
+    const genData = () => {
+        let data: IReceiptTableValues[] = [];
+        props.transactions.map((transaction, index) => {
+            data.push({
+                key: index,
+                name: transaction.serviceName,
+                price: transaction.price,
+                count: transaction.count,
+                totalPrice: transaction.totalPrice,
+            });
+        })
+        return data;
+
+    }
+    const [valuesState, setValuesState] = useState<IReceiptTableValues[] | undefined>(genData());
+
     const columns = [
         {
             title: 'Nazwa usługi',
@@ -38,24 +62,15 @@ const ReceiptTableInner: React.FunctionComponent<IReceiptPanelProps> = props => 
     ];
 
 
-
-    const genData = () => {
-        let data: any[] = [];
-        props.transactions.map((transaction, index) => {
-            data.push({
-                key: index,
-                name: transaction.serviceName,
-                price: transaction.price,
-                count: transaction.count,
-                totalPrice: transaction.totalPrice,
-            });
-        })
-        return data;
-    }
-
-
     return (
-        <Table columns={columns} dataSource={genData()} scroll={{ y: "40vh" }} pagination={false} />
+        <>
+            {
+                valuesState ?
+                    <Table columns={columns} dataSource={valuesState} scroll={{ y: "39vh" }} pagination={false} />
+                    :
+                    ""
+            }
+        </>
     );
 };
 

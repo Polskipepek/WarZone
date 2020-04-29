@@ -25,7 +25,12 @@ namespace WarZoneWebApp.Controllers {
             }
             Customer existingCustomer = context.Customers.FirstOrDefault (c => c.CustomerName == customer.CustomerName && c.CustomerSurname == customer.CustomerSurname);
             if (existingCustomer == null) {
-                context.Receipts.Add (new Receipt { CreationDate = DateTime.Now, ModifyDate = DateTime.Now, Customer = customer });
+                var receipt = new Receipt {
+                    CreationDate = DateTime.Now,
+                    ModifyDate = DateTime.Now,
+                    Customer = customer
+                };
+                context.Transactions.Add (new Transaction { Customer = customer, Receipt = receipt, ServiceId = GetEntryServiceId () });
             } else {
                 context.Receipts.Add (new Receipt { CreationDate = DateTime.Now, ModifyDate = DateTime.Now, CustomerId = existingCustomer.Id });
             }
@@ -43,6 +48,22 @@ namespace WarZoneWebApp.Controllers {
 
             return receipts.ToArray ();
         }
+
+        private int GetEntryServiceId () {
+            switch (DateTime.Now.DayOfWeek) {
+                case DayOfWeek.Monday:
+                case DayOfWeek.Tuesday:
+                case DayOfWeek.Wednesday:
+                case DayOfWeek.Thursday:
+                case DayOfWeek.Friday:
+                    return 1;
+                case DayOfWeek.Saturday:
+                case DayOfWeek.Sunday:
+                    return 2;
+            }
+            return 1;
+        }
+
 
     }
 }

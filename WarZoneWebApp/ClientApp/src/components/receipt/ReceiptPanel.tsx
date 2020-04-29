@@ -11,6 +11,7 @@ import {
     Collapse,
     Typography
     } from 'antd';
+import { EditOutlined } from '@ant-design/icons';
 import {
     IReceipt,
     ITransactionListDto,
@@ -60,11 +61,11 @@ const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps> = (props: IRecei
 
     return (
         <div className="receiptPanel">
-            {transactions &&
+            {transactions && transactions.length > 0 &&
                 <Col span={8}>
-                    <Card title={getHeader()} key={props.id} style={{ width: "30vw", height: "auto", maxHeight: "60vh" }}>
+                    <Card title={getHeader()} key={props.id} style={{ width: "28vw", height: "auto", maxHeight: "60vh" }}>
                         <ReceiptTableInner transactions={transactions} />
-                        <Button size="large" icon="edit" onClick={() => {
+                        <Button size="large" prefix="a " onClick={() => {
                             toggleSelectedReceipt!(props.receipt);
                         }}>Edycja</Button>
 

@@ -8,7 +8,7 @@
             "type": "chrome",
             "request": "attach",
             "name": "Attach to Chrome",
-            "url": "https://localhost:44301/",
+            "url": "https://localhost:44301/receipts",
             "port": 9222,
             "webRoot": "${workspaceFolder}"
         },
