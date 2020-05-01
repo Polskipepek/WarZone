@@ -37,7 +37,6 @@ const ReceiptDetails: FunctionComponent<IReceiptDetailsProps> = (props: IReceipt
                         </div>)}>
                             <span>{getDescriptionShortcut(`${customerName} ${customerSurname}`)}</span>
                         </Tooltip>
-
                     </span>
                 </Col>
                 <Col span={6} >

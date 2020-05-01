@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import ReceiptPanel from './ReceiptPanel';
 import { AppContext, IAppContext } from '../../App';
 import { FunctionComponent } from 'react';
-import { IReceipt } from '../../ApiClient';
+import { IReceipt, ReceiptClient, TransactionClient } from '../../ApiClient';
 import { Modal } from 'antd';
 
 export interface IEditReceiptPanelModalProps {
@@ -13,7 +13,6 @@ const EditReceiptPanelModal: FunctionComponent<IEditReceiptPanelModalProps> = (p
     const { selectedReceipt, toggleSelectedReceipt } = useContext<IAppContext>(AppContext);
 
     const OnOkay = () => {
-        //TODO
         toggleSelectedReceipt!(undefined);
     }
 
@@ -30,7 +29,7 @@ const EditReceiptPanelModal: FunctionComponent<IEditReceiptPanelModalProps> = (p
             bodyStyle={{ height: "60vh" }}
         >
             {selectedReceipt && (
-                <ReceiptPanel receipt={selectedReceipt} id={0} />)
+                <ReceiptPanel receipt={selectedReceipt} id={0} editMode />)
             }
         </Modal>
     );

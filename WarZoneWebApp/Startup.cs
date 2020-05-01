@@ -1,3 +1,4 @@
+using Logic.ControllersLogic;
 using Logic.OperationContext;
 using Logic.Seeders;
 using Logic.Services;
@@ -43,6 +44,7 @@ namespace WarZoneWebApp {
             // configure DI for application services
             services.AddSingleton<IUserService, UserService> ();
             services.AddSingleton<IOperationContext, OperationContext> ();
+            services.AddTransient<TransactionControllerLogic> ();
 
             services.ConfigureAddMvc ();
             services.ConfigureAddAuthentication ();

@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import ReceiptPanel from './ReceiptPanel';
+import { Button, Pagination, Table } from 'antd';
 import { ITransactionListDto } from '../../ApiClient';
-import { Pagination, Table } from 'antd';
 
 interface IReceiptPanelProps {
-    transactions: ITransactionListDto[];
-
+    tableValues: IReceiptTableValues[];
+    editMode?: boolean;
+    changeCountValue: (id: number, newValue: number) => void;
 }
 
 export interface IReceiptTableValues {
-    key?: number | undefined;
+    key: number;
     name?: string | undefined;
     price?: number | undefined;
     count?: number | undefined;
@@ -17,21 +18,6 @@ export interface IReceiptTableValues {
 }
 
 const ReceiptTableInner: React.FunctionComponent<IReceiptPanelProps> = props => {
-    const genData = () => {
-        let data: IReceiptTableValues[] = [];
-        props.transactions.map((transaction, index) => {
-            data.push({
-                key: index,
-                name: transaction.serviceName,
-                price: transaction.price,
-                count: transaction.count,
-                totalPrice: transaction.totalPrice,
-            });
-        })
-        return data;
-
-    }
-    const [valuesState, setValuesState] = useState<IReceiptTableValues[] | undefined>(genData());
 
     const columns = [
         {
@@ -52,6 +38,18 @@ const ReceiptTableInner: React.FunctionComponent<IReceiptPanelProps> = props => 
             dataIndex: 'count',
             key: 'count',
             width: "20%",
+            render: (value: number, record: IReceiptTableValues) => {
+                return (
+                    props.editMode ? (
+                        <span>
+                            <Button size="small" onClick={() => { props.changeCountValue(record.key, Number(record.count) - 1) }}>-</Button>
+                            &ensp;{`${record.count}`}&ensp;
+                        <Button size="small" onClick={() => { props.changeCountValue(record.key, Number(record.count) + 1) }}>+</Button>
+                        </span >
+                    ) : (record.count)
+                );
+
+            }
         },
         {
             title: 'Razem',
@@ -62,11 +60,12 @@ const ReceiptTableInner: React.FunctionComponent<IReceiptPanelProps> = props => 
     ];
 
 
+
     return (
         <>
             {
-                valuesState ?
-                    <Table columns={columns} dataSource={valuesState} scroll={{ y: "39vh" }} pagination={false} />
+                props.tableValues ?
+                    <Table columns={columns} dataSource={props.tableValues} scroll={{ y: "39vh" }} pagination={false} />
                     :
                     ""
             }

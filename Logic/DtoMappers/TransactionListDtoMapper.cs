@@ -13,6 +13,7 @@ namespace Logic.DtoMappers {
             foreach (var serviceId in servicesCategories) {
                 var services = transactions.Where (t => t.ServiceId == serviceId);
                 TransactionListDto tld = new TransactionListDto () {
+                    ServiceId = services.Select (t => t.Service.Id).First (),
                     Count = services.Count (),
                     Price = services.Select (t => t.Service.ServicePrice).First (),
                     ServiceName = services.Select (t => t.Service.ServiceName).First (),

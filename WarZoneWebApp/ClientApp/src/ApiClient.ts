@@ -287,6 +287,48 @@ export class ReceiptClient extends ClientBase {
         }
         return Promise.resolve<Receipt[] | null>(<any>null);
     }
+
+    updateReceipt(receiptId: number, transactionListDtos: TransactionListDto[] | null): Promise<FileResponse | null> {
+        let url_ = this.baseUrl + "/api/Receipt/UpdateReceipt?";
+        if (receiptId === undefined || receiptId === null)
+            throw new Error("The parameter 'receiptId' must be defined and cannot be null.");
+        else
+            url_ += "receiptId=" + encodeURIComponent("" + receiptId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(transactionListDtos);
+
+        let options_ = <RequestInit>{
+            body: content_,
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.transformResult(url_, _response, (_response: Response) => this.processUpdateReceipt(_response));
+        });
+    }
+
+    protected processUpdateReceipt(response: Response): Promise<FileResponse | null> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200 || status === 206) {
+            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
+            const fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
+            const fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
+            return response.blob().then(blob => { return { fileName: fileName, data: blob, status: status, headers: _headers }; });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<FileResponse | null>(<any>null);
+    }
 }
 
 export class TransactionClient extends ClientBase {
@@ -554,6 +596,7 @@ export interface IWeapon extends IModelBase {
 }
 
 export class TransactionListDto implements ITransactionListDto {
+    serviceId!: number;
     serviceName?: string | undefined;
     price!: number;
     count!: number;
@@ -570,6 +613,7 @@ export class TransactionListDto implements ITransactionListDto {
 
     init(_data?: any) {
         if (_data) {
+            this.serviceId = _data["serviceId"];
             this.serviceName = _data["serviceName"];
             this.price = _data["price"];
             this.count = _data["count"];
@@ -586,6 +630,7 @@ export class TransactionListDto implements ITransactionListDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["serviceId"] = this.serviceId;
         data["serviceName"] = this.serviceName;
         data["price"] = this.price;
         data["count"] = this.count;
@@ -595,6 +640,7 @@ export class TransactionListDto implements ITransactionListDto {
 }
 
 export interface ITransactionListDto {
+    serviceId: number;
     serviceName?: string | undefined;
     price: number;
     count: number;

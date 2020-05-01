@@ -2,7 +2,7 @@ import EditReceiptPanelModal from './EditReceiptPanelModal';
 import Icon from '@ant-design/icons/lib/components/Icon';
 import React, { useContext, useEffect, useState } from 'react';
 import ReceiptDetails from './ReceiptDetails';
-import ReceiptTableInner from './ReceiptTableInner';
+import ReceiptTableInner, { IReceiptTableValues } from './ReceiptTableInner';
 import { AppContext, IAppContext } from '../../App';
 import {
     Button,
@@ -22,17 +22,53 @@ import {
 interface IReceiptPanelProps {
     receipt: IReceipt;
     id: number;
+    editMode?: boolean;
 }
 
 const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps> = (props: IReceiptPanelProps) => {
     const [transactions, setTransactions] = useState<ITransactionListDto[] | null>([]);
     const { selectedReceipt, toggleSelectedReceipt } = useContext<IAppContext>(AppContext);
+    const [valuesState, setValuesState] = useState<IReceiptTableValues[] | undefined>(undefined);
 
     useEffect(() => {
         new TransactionClient().getTransactions(props.receipt as Receipt).then((_transactions) => {
             setTransactions(_transactions);
+            if (_transactions)
+                setValuesState(mapTransactionsToValues(_transactions));
         })
     }, []);
+
+
+    const changeCountValue = (id: number, newValue: number) => {
+        if (newValue < 0)
+            return;
+        if (valuesState) {
+            let newState: IReceiptTableValues[] = [];
+            valuesState[id].count = newValue;
+            valuesState[id].totalPrice = newValue * valuesState[id].price!;
+            try {
+                newState = JSON.parse(JSON.stringify(valuesState));
+            } catch { }
+
+            if (newState.length > 0)
+                setValuesState(newState);
+        }
+    }
+
+    const mapTransactionsToValues = (transactions: ITransactionListDto[]) => {
+        let data: IReceiptTableValues[] = [];
+        transactions.map((transaction, index) => {
+            data.push({
+                key: index,
+                name: transaction.serviceName,
+                price: transaction.price,
+                count: transaction.count,
+                totalPrice: transaction.totalPrice,
+            });
+        })
+        return data;
+    }
+
 
     const genExtra = () => (
         <Icon
@@ -45,16 +81,16 @@ const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps> = (props: IRecei
     );
 
     const getHeader = () => {
-        if (selectedReceipt === undefined) {
+        if (!!props.editMode) {
+            return (
+                <ReceiptDetails receipt={props.receipt} />
+            );
+        } else {
             return (
                 <Typography.Title style={{ textAlign: "center", fontSize: 25 }}>
                     {`${props.receipt.customer!.customerName} ${props.receipt.customer!.customerSurname} ${props.receipt.creationDate.toLocaleDateString("pl-PL")}
                 ${props.receipt.creationDate.toLocaleTimeString("pl-PL")}  ${props.receipt.totalPrice} zł`}
                 </Typography.Title>
-            );
-        } else {
-            return (
-                <ReceiptDetails receipt={props.receipt} />
             );
         }
     }
@@ -64,10 +100,12 @@ const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps> = (props: IRecei
             {transactions && transactions.length > 0 &&
                 <Col span={8}>
                     <Card title={getHeader()} key={props.id} style={{ width: "28vw", height: "auto", maxHeight: "60vh" }}>
-                        <ReceiptTableInner transactions={transactions} />
-                        <Button size="large" prefix="a " onClick={() => {
-                            toggleSelectedReceipt!(props.receipt);
-                        }}>Edycja</Button>
+                        <ReceiptTableInner {...props} tableValues={valuesState!} changeCountValue={changeCountValue} />
+                        {props.editMode !== true && (
+                            <Button size="large" prefix="a " onClick={() => {
+                                toggleSelectedReceipt!(props.receipt);
+                            }}>Edycja</Button>
+                        )}
 
                     </Card>
                 </Col>
