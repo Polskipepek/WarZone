@@ -8,7 +8,7 @@ namespace Logic.ControllersLogic {
     public class TransactionControllerLogic {
         readonly Context context;
 
-        TransactionControllerLogic (Context context) {
+        public TransactionControllerLogic (Context context) {
             this.context = context;
         }
 
