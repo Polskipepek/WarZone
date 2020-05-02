@@ -300,7 +300,7 @@ export class ReceiptClient extends ClientBase {
 
         let options_ = <RequestInit>{
             body: content_,
-            method: "GET",
+            method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "Accept": "application/json"

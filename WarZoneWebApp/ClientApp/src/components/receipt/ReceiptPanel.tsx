@@ -23,6 +23,8 @@ interface IReceiptPanelProps {
     receipt: IReceipt;
     id: number;
     editMode?: boolean;
+    setParentTableValues?: (newValues: IReceiptTableValues[]) => void;
+    setReceiptRefreshFunction: any;
 }
 
 const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps> = (props: IReceiptPanelProps) => {
@@ -31,17 +33,22 @@ const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps> = (props: IRecei
     const [valuesState, setValuesState] = useState<IReceiptTableValues[] | undefined>(undefined);
 
     useEffect(() => {
+        receiptRefreshFunc();
+    }, []);
+
+    const receiptRefreshFunc = () => {
         new TransactionClient().getTransactions(props.receipt as Receipt).then((_transactions) => {
             setTransactions(_transactions);
             if (_transactions)
                 setValuesState(mapTransactionsToValues(_transactions));
         })
-    }, []);
+    }
 
 
-    const changeCountValue = (id: number, newValue: number) => {
-        if (newValue < 0)
+    const changeCountValue = (id: number, newValue: number, serviceId: number) => {
+        if (newValue < 0 || serviceId < 3 && newValue < 1)
             return;
+
         if (valuesState) {
             let newState: IReceiptTableValues[] = [];
             valuesState[id].count = newValue;
@@ -50,22 +57,21 @@ const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps> = (props: IRecei
                 newState = JSON.parse(JSON.stringify(valuesState));
             } catch { }
 
-            if (newState.length > 0)
+            if (newState.length > 0) {
                 setValuesState(newState);
+
+                if (props.setParentTableValues) {
+                    props.setParentTableValues(newState);
+                }
+            }
         }
     }
 
     const mapTransactionsToValues = (transactions: ITransactionListDto[]) => {
         let data: IReceiptTableValues[] = [];
         transactions.map((transaction, index) => {
-            data.push({
-                key: index,
-                name: transaction.serviceName,
-                price: transaction.price,
-                count: transaction.count,
-                totalPrice: transaction.totalPrice,
-            });
-        })
+            data.push({ ...transaction, key: index });
+        });
         return data;
     }
 
@@ -104,6 +110,7 @@ const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps> = (props: IRecei
                         {props.editMode !== true && (
                             <Button size="large" prefix="a " onClick={() => {
                                 toggleSelectedReceipt!(props.receipt);
+                                props.setReceiptRefreshFunction(() => receiptRefreshFunc)
                             }}>Edycja</Button>
                         )}
 

@@ -11,6 +11,7 @@ export interface IReceiptsProps {
 
 const Receipts: React.FunctionComponent<IReceiptsProps> = (props: IReceiptsProps) => {
     const [receipts, setReceipts] = useState<IReceipt[] | null>();
+    const [receiptRefreshFunc, setReceiptRefreshFunction] = useState<(() => void) | undefined>(undefined);
 
     const CreateReceipt = () => {
         console.log("szukamm");
@@ -30,12 +31,12 @@ const Receipts: React.FunctionComponent<IReceiptsProps> = (props: IReceiptsProps
                 {receipts && receipts.map((receipt, index) => {
                     return (
                         <React.Fragment>
-                            <ReceiptPanel receipt={receipt} id={index} />
+                            <ReceiptPanel receipt={receipt} id={index} setReceiptRefreshFunction={setReceiptRefreshFunction} />
                         </React.Fragment>
                     );
                 })}
             </Row>
-            <EditReceiptPanelModal />
+            <EditReceiptPanelModal receiptRefreshFunc={receiptRefreshFunc} setReceiptRefreshFunc={setReceiptRefreshFunction} />
         </>
 
     );

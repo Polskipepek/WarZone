@@ -6,15 +6,11 @@ import { ITransactionListDto } from '../../ApiClient';
 interface IReceiptPanelProps {
     tableValues: IReceiptTableValues[];
     editMode?: boolean;
-    changeCountValue: (id: number, newValue: number) => void;
+    changeCountValue: (id: number, newValue: number, serviceId: number) => void;
 }
 
-export interface IReceiptTableValues {
+export interface IReceiptTableValues extends ITransactionListDto {
     key: number;
-    name?: string | undefined;
-    price?: number | undefined;
-    count?: number | undefined;
-    totalPrice?: number | undefined;
 }
 
 const ReceiptTableInner: React.FunctionComponent<IReceiptPanelProps> = props => {
@@ -22,8 +18,8 @@ const ReceiptTableInner: React.FunctionComponent<IReceiptPanelProps> = props => 
     const columns = [
         {
             title: 'Nazwa usługi',
-            dataIndex: 'name',
-            key: 'name',
+            dataIndex: 'serviceName',
+            key: 'serviceName',
             width: "40%",
             render: (text: React.ReactNode) => <a>{text}</a>
         },
@@ -40,11 +36,11 @@ const ReceiptTableInner: React.FunctionComponent<IReceiptPanelProps> = props => 
             width: "20%",
             render: (value: number, record: IReceiptTableValues) => {
                 return (
-                    props.editMode ? (
+                    (props.editMode) ? (
                         <span>
-                            <Button size="small" onClick={() => { props.changeCountValue(record.key, Number(record.count) - 1) }}>-</Button>
+                            <Button size="small" onClick={() => { props.changeCountValue(record.key, Number(record.count) - 1, record.serviceId) }}>-</Button>
                             &ensp;{`${record.count}`}&ensp;
-                        <Button size="small" onClick={() => { props.changeCountValue(record.key, Number(record.count) + 1) }}>+</Button>
+                        <Button size="small" onClick={() => { props.changeCountValue(record.key, Number(record.count) + 1, record.serviceId) }}>+</Button>
                         </span >
                     ) : (record.count)
                 );

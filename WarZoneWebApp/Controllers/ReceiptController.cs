@@ -5,6 +5,7 @@ using Model;
 using Model.Database;
 using Model.Dto;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace WarZoneWebApp.Controllers {
@@ -54,7 +55,7 @@ namespace WarZoneWebApp.Controllers {
             return receipts.ToArray ();
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route ("[action]")]
         public ActionResult UpdateReceipt (int receiptId, [FromBody]TransactionListDto[] transactionListDtos) {
             if (transactionListDtos == null || !transactionListDtos.Any ())
@@ -74,7 +75,9 @@ namespace WarZoneWebApp.Controllers {
                 var originalDto = originalTransactionsDtos.Select ((t) => (t.ServiceId, t.Count)).FirstOrDefault ((_tuple) => _tuple.ServiceId == serviceId);
                 var newDto = transactionListDtos.Select ((t) => (t.ServiceId, t.Count)).FirstOrDefault ((_tuple) => _tuple.ServiceId == serviceId);
 
-                var delta = originalDto.Count - newDto.Count;
+                var delta = newDto.Count - originalDto.Count;
+
+                List<int> removedTransactionIds = new List<int> ();
 
                 if (delta == 0)
                     continue;
@@ -85,7 +88,9 @@ namespace WarZoneWebApp.Controllers {
 
                 } else if (delta < 0) {
                     for (int i = delta; i < 0; i++) {
-                        context.Transactions.Remove (receiptTransactions.First (t => t.ServiceId == serviceId));
+                        var transactionToRemove = receiptTransactions.First (t => t.ServiceId == serviceId && !removedTransactionIds.Any (usedId => usedId == t.Id));
+                        removedTransactionIds.Add (transactionToRemove.Id);
+                        context.Transactions.Remove (transactionToRemove);
                     }
                 }
             }
