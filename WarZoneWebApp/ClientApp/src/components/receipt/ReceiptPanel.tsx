@@ -101,11 +101,28 @@ const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps> = (props: IRecei
         }
     }
 
+    const addSearchRow = () => {
+        if (valuesState) {
+            valuesState.push(
+                {
+                    key: valuesState.length + 1,
+                    count: 0,
+                    price: 0,
+                    serviceId: 2137,
+                    totalPrice: 0,
+                    serviceName: "janpaweł"
+                }
+            );
+            //setValuesState(valuesState);
+        }
+    }
+
     return (
         <div className="receiptPanel">
             {transactions && transactions.length > 0 &&
                 <Col span={8}>
                     <Card title={getHeader()} key={props.id} style={{ width: "28vw", height: "auto", maxHeight: "60vh" }}>
+                        {/* {props.editMode === true && addSearchRow()} */}
                         <ReceiptTableInner {...props} tableValues={valuesState!} changeCountValue={changeCountValue} />
                         {props.editMode !== true && (
                             <Button size="large" prefix="a " onClick={() => {

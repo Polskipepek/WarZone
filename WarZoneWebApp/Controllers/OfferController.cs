@@ -15,15 +15,9 @@ namespace WarZoneWebApp.Controllers {
         }
 
         [HttpPost]
+        [Route ("[action]")]
         public ActionResult<Weapon[]> GetWeapons () {
-            //3. Handle request
-            //4. return value
-
             return context.Weapons.Where (e => e.Id != -1).OrderBy (e => e.WeaponName).ToArray ();
         }
-
-
-
-
     }
 }

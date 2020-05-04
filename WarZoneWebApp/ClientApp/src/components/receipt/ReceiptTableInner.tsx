@@ -37,11 +37,18 @@ const ReceiptTableInner: React.FunctionComponent<IReceiptPanelProps> = props => 
             render: (value: number, record: IReceiptTableValues) => {
                 return (
                     (props.editMode) ? (
-                        <span>
-                            <Button size="small" onClick={() => { props.changeCountValue(record.key, Number(record.count) - 1, record.serviceId) }}>-</Button>
-                            &ensp;{`${record.count}`}&ensp;
-                        <Button size="small" onClick={() => { props.changeCountValue(record.key, Number(record.count) + 1, record.serviceId) }}>+</Button>
-                        </span >
+                        (record.serviceId === 2137) ? (
+                            <>
+                                dodaj bron kurwa
+                            </>
+                        ) : (
+                                <span>
+                                    <Button size="small" onClick={() => { props.changeCountValue(record.key, Number(record.count) - 1, record.serviceId) }}>-</Button>
+                                    &ensp;{`${record.count}`}&ensp;
+                                    <Button size="small" onClick={() => { props.changeCountValue(record.key, Number(record.count) + 1, record.serviceId) }}>+</Button>
+                                </span >
+                            )
+
                     ) : (record.count)
                 );
 
@@ -54,8 +61,6 @@ const ReceiptTableInner: React.FunctionComponent<IReceiptPanelProps> = props => 
             width: "20%",
         },
     ];
-
-
 
     return (
         <>

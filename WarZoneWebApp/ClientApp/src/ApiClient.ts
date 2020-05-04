@@ -159,7 +159,7 @@ export class OfferClient extends ClientBase {
     }
 
     getWeapons(): Promise<Weapon[] | null> {
-        let url_ = this.baseUrl + "/api/Offer";
+        let url_ = this.baseUrl + "/api/Offer/GetWeapons";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ = <RequestInit>{
@@ -328,6 +328,50 @@ export class ReceiptClient extends ClientBase {
             });
         }
         return Promise.resolve<FileResponse | null>(<any>null);
+    }
+
+    searchServicesByName(searchPhrase: string | null): Promise<Service[] | null> {
+        let url_ = this.baseUrl + "/api/Receipt/SearchServicesByName?";
+        if (searchPhrase === undefined)
+            throw new Error("The parameter 'searchPhrase' must be defined.");
+        else
+            url_ += "searchPhrase=" + encodeURIComponent("" + searchPhrase) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "POST",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.transformResult(url_, _response, (_response: Response) => this.processSearchServicesByName(_response));
+        });
+    }
+
+    protected processSearchServicesByName(response: Response): Promise<Service[] | null> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(Service.fromJS(item));
+            }
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<Service[] | null>(<any>null);
     }
 }
 
@@ -645,6 +689,43 @@ export interface ITransactionListDto {
     price: number;
     count: number;
     totalPrice: number;
+}
+
+export class Service extends ModelBase implements IService {
+    serviceName?: string | undefined;
+    servicePrice!: number;
+
+    constructor(data?: IService) {
+        super(data);
+    }
+
+    init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.serviceName = _data["serviceName"];
+            this.servicePrice = _data["servicePrice"];
+        }
+    }
+
+    static fromJS(data: any): Service {
+        data = typeof data === 'object' ? data : {};
+        let result = new Service();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["serviceName"] = this.serviceName;
+        data["servicePrice"] = this.servicePrice;
+        super.toJSON(data);
+        return data; 
+    }
+}
+
+export interface IService extends IModelBase {
+    serviceName?: string | undefined;
+    servicePrice: number;
 }
 
 export interface FileResponse {
