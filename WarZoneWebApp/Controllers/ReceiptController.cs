@@ -94,11 +94,23 @@ namespace WarZoneWebApp.Controllers {
                     }
                 }
             }
+            receipt.ModifyDate = DateTime.Now;
+            context.Receipts.Update (receipt);
             context.SaveChanges ();
 
             return Ok ();
-
         }
+
+
+        [HttpPost]
+        [Route ("[action]")]
+        public ActionResult<Receipt> GetReceipt (int receiptId) {
+            context.Receipts.Include (e => e.Customer).Load ();
+            var receipt = context.Receipts.Find (receiptId);
+            receipt.GetTotalPrice (context);
+            return receipt;
+        }
+
 
         [HttpPost]
         [Route ("[action]")]

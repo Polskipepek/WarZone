@@ -16,6 +16,7 @@ import {
     IReceipt,
     ITransactionListDto,
     Receipt,
+    ReceiptClient,
     TransactionClient
     } from '../../ApiClient';
 
@@ -24,7 +25,7 @@ interface IReceiptPanelProps {
     id: number;
     editMode?: boolean;
     setParentTableValues?: (newValues: IReceiptTableValues[]) => void;
-    setReceiptRefreshFunction: any;
+
 }
 
 const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps> = (props: IReceiptPanelProps) => {
@@ -33,16 +34,12 @@ const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps> = (props: IRecei
     const [valuesState, setValuesState] = useState<IReceiptTableValues[] | undefined>(undefined);
 
     useEffect(() => {
-        receiptRefreshFunc();
-    }, []);
-
-    const receiptRefreshFunc = () => {
         new TransactionClient().getTransactions(props.receipt as Receipt).then((_transactions) => {
             setTransactions(_transactions);
             if (_transactions)
                 setValuesState(mapTransactionsToValues(_transactions));
         })
-    }
+    }, [props.receipt]);
 
 
     const changeCountValue = (id: number, newValue: number, serviceId: number) => {
@@ -127,7 +124,6 @@ const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps> = (props: IRecei
                         {props.editMode !== true && (
                             <Button size="large" prefix="a " onClick={() => {
                                 toggleSelectedReceipt!(props.receipt);
-                                props.setReceiptRefreshFunction(() => receiptRefreshFunc)
                             }}>Edycja</Button>
                         )}
 

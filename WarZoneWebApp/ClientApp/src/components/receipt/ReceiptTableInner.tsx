@@ -39,19 +39,17 @@ const ReceiptTableInner: React.FunctionComponent<IReceiptPanelProps> = props => 
                     (props.editMode) ? (
                         (record.serviceId === 2137) ? (
                             <>
-                                dodaj bron kurwa
-                            </>
+                                dodaj bron kur
+                        </>
                         ) : (
                                 <span>
                                     <Button size="small" onClick={() => { props.changeCountValue(record.key, Number(record.count) - 1, record.serviceId) }}>-</Button>
                                     &ensp;{`${record.count}`}&ensp;
                                     <Button size="small" onClick={() => { props.changeCountValue(record.key, Number(record.count) + 1, record.serviceId) }}>+</Button>
-                                </span >
+                                </span>
                             )
-
                     ) : (record.count)
                 );
-
             }
         },
         {

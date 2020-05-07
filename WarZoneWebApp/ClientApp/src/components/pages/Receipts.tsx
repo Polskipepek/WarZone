@@ -1,6 +1,7 @@
 import EditReceiptPanelModal from '../receipt/EditReceiptPanelModal';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import ReceiptPanel from '../receipt/ReceiptPanel';
+import { AppContext, IAppContext } from '../../App';
 import { IReceipt, ReceiptClient } from '../../ApiClient';
 import { Row } from 'antd';
 
@@ -11,7 +12,9 @@ export interface IReceiptsProps {
 
 const Receipts: React.FunctionComponent<IReceiptsProps> = (props: IReceiptsProps) => {
     const [receipts, setReceipts] = useState<IReceipt[] | null>();
-    const [receiptRefreshFunc, setReceiptRefreshFunction] = useState<(() => void) | undefined>(undefined);
+    const { selectedReceipt, toggleSelectedReceipt } = useContext<IAppContext>(AppContext);
+
+    let refreshRetriesLeft = 5;
 
     const CreateReceipt = () => {
         console.log("szukamm");
@@ -19,6 +22,24 @@ const Receipts: React.FunctionComponent<IReceiptsProps> = (props: IReceiptsProps
             console.log(e);
             setReceipts(e);
         });
+    }
+
+    const RefreshReceipt = () => {
+        if (refreshRetriesLeft > 0 && selectedReceipt) {
+            new ReceiptClient().getReceipt(selectedReceipt.id).then(receipt => {
+                if (receipt && receipts && receipt.modifyDate > selectedReceipt.modifyDate) {
+                    refreshRetriesLeft = 0;
+                    const receiptIndex = receipts.indexOf(selectedReceipt);
+                    const newReceipts = receipts.filter(r => r.id != receipt.id);
+                    newReceipts.splice(receiptIndex, 0, receipt);
+                    setReceipts(newReceipts);
+                    return;
+                } else {
+                    refreshRetriesLeft--;
+                    setTimeout(() => RefreshReceipt(), 500);
+                }
+            });
+        }
     }
 
     useEffect(() => {
@@ -31,12 +52,12 @@ const Receipts: React.FunctionComponent<IReceiptsProps> = (props: IReceiptsProps
                 {receipts && receipts.map((receipt, index) => {
                     return (
                         <React.Fragment>
-                            <ReceiptPanel receipt={receipt} id={index} setReceiptRefreshFunction={setReceiptRefreshFunction} />
+                            <ReceiptPanel receipt={receipt} id={index} />
                         </React.Fragment>
                     );
                 })}
             </Row>
-            <EditReceiptPanelModal receiptRefreshFunc={receiptRefreshFunc} setReceiptRefreshFunc={setReceiptRefreshFunction} />
+            <EditReceiptPanelModal receiptRefreshFunc={RefreshReceipt} />
         </>
 
     );

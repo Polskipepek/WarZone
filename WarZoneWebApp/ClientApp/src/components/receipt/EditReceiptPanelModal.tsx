@@ -13,19 +13,21 @@ import { IReceiptTableValues } from './ReceiptTableInner';
 import { Modal } from 'antd';
 
 export interface IEditReceiptPanelModalProps {
-    setReceiptRefreshFunc: any;
     receiptRefreshFunc?: () => void | undefined;
+    refreshHeaderFunc?: (() => void) | undefined;
 }
 
 const EditReceiptPanelModal: FunctionComponent<IEditReceiptPanelModalProps> = (props: IEditReceiptPanelModalProps) => {
     const { selectedReceipt, toggleSelectedReceipt } = useContext<IAppContext>(AppContext);
     const [saveButtonEnabled, setSaveButtonEnabled] = useState<boolean>(false);
-
-    let tableValues: IReceiptTableValues[] = [];
+    const [tableValues, setStateTableValues] = useState<IReceiptTableValues[]>([]);
 
     const setTableValues = (newValues: IReceiptTableValues[]) => {
-        tableValues = newValues;
+        setStateTableValues(newValues);
         setSaveButtonEnabled(true);
+        if (props.refreshHeaderFunc) {
+            props.refreshHeaderFunc();
+        }
     }
 
     const mapTableValuesToTransactionListDtos = (transactions: IReceiptTableValues[]) => {
@@ -39,15 +41,12 @@ const EditReceiptPanelModal: FunctionComponent<IEditReceiptPanelModalProps> = (p
     const OnOkay = () => {
         if (selectedReceipt && tableValues.length > 0) {
             new ReceiptClient().updateReceipt(selectedReceipt.id, mapTableValuesToTransactionListDtos(tableValues) as TransactionListDto[]);
-            let timerId = setInterval(() => {
-                if (props.receiptRefreshFunc) {
-                    props.receiptRefreshFunc()
-                }
-            }, 500);
-
-            setTimeout(() => {
-                clearInterval(timerId);
-            }, 3000);
+            if (props.receiptRefreshFunc) {
+                setTimeout(() =>
+                    props.receiptRefreshFunc!(),
+                    300
+                );
+            }
         }
         OnCancel();
     }
@@ -71,7 +70,7 @@ const EditReceiptPanelModal: FunctionComponent<IEditReceiptPanelModalProps> = (p
             okButtonProps={{ disabled: !saveButtonEnabled }}
         >
             {selectedReceipt && (
-                <ReceiptPanel receipt={selectedReceipt} id={0} editMode setParentTableValues={setTableValues} setReceiptRefreshFunction={props.setReceiptRefreshFunc} />)
+                <ReceiptPanel receipt={selectedReceipt} id={0} editMode setParentTableValues={setTableValues} />)
             }
         </Modal>
     );
