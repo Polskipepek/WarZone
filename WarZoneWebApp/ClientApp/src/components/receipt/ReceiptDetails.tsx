@@ -10,6 +10,7 @@ import { IReceipt, Receipt } from '../../ApiClient';
 
 export interface IReceiptDetailsProps {
     receipt: IReceipt;
+    totalPrice?: number | undefined;
 }
 
 const ReceiptDetails: FunctionComponent<IReceiptDetailsProps> = (props: IReceiptDetailsProps) => {
@@ -41,7 +42,7 @@ const ReceiptDetails: FunctionComponent<IReceiptDetailsProps> = (props: IReceipt
                 </Col>
                 <Col span={6} >
                     <span style={{ paddingRight: 5 }}>
-                        <b>Wartość koszyka:</b> {totalPrice}zł
+                        <b>Wartość koszyka:</b> {props.totalPrice ? props.totalPrice : totalPrice}zł
                 </span>
                 </Col>
             </Row>

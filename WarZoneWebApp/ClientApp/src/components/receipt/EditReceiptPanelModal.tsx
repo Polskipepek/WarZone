@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import ReceiptPanel from './ReceiptPanel';
 import { AppContext, IAppContext } from '../../App';
 import { FunctionComponent } from 'react';
@@ -14,20 +14,31 @@ import { Modal } from 'antd';
 
 export interface IEditReceiptPanelModalProps {
     receiptRefreshFunc?: () => void | undefined;
-    refreshHeaderFunc?: (() => void) | undefined;
 }
 
 const EditReceiptPanelModal: FunctionComponent<IEditReceiptPanelModalProps> = (props: IEditReceiptPanelModalProps) => {
     const { selectedReceipt, toggleSelectedReceipt } = useContext<IAppContext>(AppContext);
     const [saveButtonEnabled, setSaveButtonEnabled] = useState<boolean>(false);
-    const [tableValues, setStateTableValues] = useState<IReceiptTableValues[]>([]);
+    const [tableValues, setStateTableValues] = useState<IReceiptTableValues[] | undefined>([]);
+
+    const calculateCurrentTotalPrice = (_tableValues?: IReceiptTableValues[]) => {
+        if (!_tableValues) {
+            _tableValues = tableValues;
+        }
+        let sum: number = 0;
+        if (_tableValues) {
+            _tableValues.map(e => e.totalPrice).forEach(partialSum => sum += partialSum);
+            return sum;
+        }
+        return undefined;
+    }
+
+    const [currentTotalPrice, setCurrentTotalPrice] = useState<number | undefined>(calculateCurrentTotalPrice());
 
     const setTableValues = (newValues: IReceiptTableValues[]) => {
         setStateTableValues(newValues);
         setSaveButtonEnabled(true);
-        if (props.refreshHeaderFunc) {
-            props.refreshHeaderFunc();
-        }
+        setCurrentTotalPrice(calculateCurrentTotalPrice(newValues));
     }
 
     const mapTableValuesToTransactionListDtos = (transactions: IReceiptTableValues[]) => {
@@ -39,7 +50,7 @@ const EditReceiptPanelModal: FunctionComponent<IEditReceiptPanelModalProps> = (p
     }
 
     const OnOkay = () => {
-        if (selectedReceipt && tableValues.length > 0) {
+        if (selectedReceipt && tableValues) {
             new ReceiptClient().updateReceipt(selectedReceipt.id, mapTableValuesToTransactionListDtos(tableValues) as TransactionListDto[]);
             if (props.receiptRefreshFunc) {
                 setTimeout(() =>
@@ -54,6 +65,8 @@ const EditReceiptPanelModal: FunctionComponent<IEditReceiptPanelModalProps> = (p
     const OnCancel = () => {
         toggleSelectedReceipt!(undefined);
         setSaveButtonEnabled(false);
+        setStateTableValues(undefined);
+        setCurrentTotalPrice(undefined);
     }
 
     return (
@@ -70,7 +83,7 @@ const EditReceiptPanelModal: FunctionComponent<IEditReceiptPanelModalProps> = (p
             okButtonProps={{ disabled: !saveButtonEnabled }}
         >
             {selectedReceipt && (
-                <ReceiptPanel receipt={selectedReceipt} id={0} editMode setParentTableValues={setTableValues} />)
+                <ReceiptPanel receipt={selectedReceipt} id={0} editMode setParentTableValues={setTableValues} totalPrice={currentTotalPrice} />)
             }
         </Modal>
     );

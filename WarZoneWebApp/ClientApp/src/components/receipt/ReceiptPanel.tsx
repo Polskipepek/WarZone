@@ -25,7 +25,7 @@ interface IReceiptPanelProps {
     id: number;
     editMode?: boolean;
     setParentTableValues?: (newValues: IReceiptTableValues[]) => void;
-
+    totalPrice?: number;
 }
 
 const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps> = (props: IReceiptPanelProps) => {
@@ -86,7 +86,7 @@ const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps> = (props: IRecei
     const getHeader = () => {
         if (!!props.editMode) {
             return (
-                <ReceiptDetails receipt={props.receipt} />
+                <ReceiptDetails receipt={props.receipt} totalPrice={props.totalPrice} />
             );
         } else {
             return (
