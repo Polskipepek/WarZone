@@ -30,28 +30,13 @@ type ILoginFormJoinedProps = ILoginFormProps;
 const LoginForm: FunctionComponent<ILoginFormJoinedProps> = (props: ILoginFormJoinedProps) => {
     const [form] = Form.useForm();
 
-    const validateMessages = {
-        required: '${label} is required!',
-        types: {
-            email: '${label} is not validate email!',
-            number: '${label} is not a validate number!',
-        },
-        number: {
-            range: '${label} must be between ${min} and ${max}',
-        },
-    };
-
     const DisplayForms = () => {
-        const { getFieldsError, getFieldError, isFieldTouched } = form;
-        const isCorrectName = isFieldTouched('username') && getFieldError('username');
-        const isCorrectPassword = isFieldTouched('password') && getFieldError('password');
 
         const [, forceUpdate] = useState();
 
         useEffect(() => {
             forceUpdate({});
         }, []);
-
 
         return (
             <Form
@@ -110,7 +95,5 @@ const LoginForm: FunctionComponent<ILoginFormJoinedProps> = (props: ILoginFormJo
         </div>
     );
 }
-
-
 
 export default LoginForm;

@@ -11,14 +11,24 @@ import {
     Form,
     Input
     } from 'antd';
-import { Customer, ICustomer, ReceiptClient } from '../../ApiClient';
+import {
+    Customer,
+    ICustomer,
+    IReceipt,
+    ReceiptClient
+    } from '../../ApiClient';
 
 export interface IFormValues {
     name?: string
     surname?: string
 }
+interface IInnerConsentForm {
+    setVisible?: any;
+    pullReceipts?: () => void;
+    visible?: boolean;
+}
 
-const InnerConsentForm: FunctionComponent = () => {
+const InnerConsentForm: FunctionComponent<IInnerConsentForm> = (props) => {
     const [form] = Form.useForm();
 
     const submitForm = (name: string, surname: string) => {
@@ -28,6 +38,10 @@ const InnerConsentForm: FunctionComponent = () => {
             customerSurname: surname
         };
         new ReceiptClient().addReceipt(customer as Customer);
+        props.setVisible();
+        if (props.pullReceipts) {
+            setTimeout(() => props.pullReceipts!(), 500);
+        }
     }
 
     const layout = {
@@ -38,6 +52,7 @@ const InnerConsentForm: FunctionComponent = () => {
             span: 16,
         },
     };
+
     const tailLayout = {
         wrapperCol: {
             offset: 8,
@@ -46,11 +61,23 @@ const InnerConsentForm: FunctionComponent = () => {
     };
 
     const DisplayForms = () => {
+        const [, forceUpdate] = useState();
+
+        useEffect(() => {
+            forceUpdate({});
+        }, []);
+
+        useEffect(() => form.resetFields(), [props.visible]);
+
         return (
             <div className="kliven-centered">
                 <Form
                     {...layout}
-                    onFinish={(values: IFormValues) => submitForm(values.name!, values.surname!)}>
+                    onFinish={(values: IFormValues) => {
+                        submitForm(values.name!, values.surname!);
+                    }}
+                    form={form}
+                >
                     <Form.Item
                         name="name"
                         label="Imię"
@@ -84,20 +111,23 @@ const InnerConsentForm: FunctionComponent = () => {
                             placeholder={"Nazwisko"}
                         />
                     </Form.Item>
-                    <Form.Item {...tailLayout}>
-                        <Button defaultChecked={false} size="large" type="primary" htmlType="submit">
+                    <Form.Item {...tailLayout} shouldUpdate={true}>
+                        <Button
+                            size="large"
+                            type="primary"
+                            htmlType="submit"
+                        >
                             Dalej
-                    </Button>
+                            </Button>
+
                     </Form.Item>
                 </Form>
             </div>
         );
     }
 
-    return (
-        <div>
-            {DisplayForms()}
-        </div>
-    );
+    return (<>
+        {DisplayForms()}
+    </>);
 }
 export default InnerConsentForm;

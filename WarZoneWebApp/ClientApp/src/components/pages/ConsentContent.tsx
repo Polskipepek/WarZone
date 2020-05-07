@@ -67,7 +67,6 @@ const ConsentContent: React.FunctionComponent = (props) => {
             </div>
         );
 
-
     }
     return (
         <div>
@@ -81,6 +80,7 @@ const ConsentContent: React.FunctionComponent = (props) => {
                     visible={visible}
                     onCancel={() => setVisible(false)}
                     okButtonProps={{ disabled: true }}
+                    footer={null}
                 >
                     <ConsentForm />
                 </Modal>

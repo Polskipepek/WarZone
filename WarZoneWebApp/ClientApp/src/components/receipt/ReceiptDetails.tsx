@@ -18,8 +18,9 @@ const ReceiptDetails: FunctionComponent<IReceiptDetailsProps> = (props: IReceipt
     const { customerName, customerSurname } = props.receipt.customer!;
 
     const getDescriptionShortcut = (description: string) => {
-        if (description.length > 30) {
-            return `${description.substring(0, 30)}...`;
+        const maxLength = 18;
+        if (description.length > maxLength) {
+            return `${description.substring(0, maxLength)}...`;
         }
         else {
             return description;
@@ -54,7 +55,7 @@ const ReceiptDetails: FunctionComponent<IReceiptDetailsProps> = (props: IReceipt
                 </Col>
                 <Col span={6}>
                     <span style={{ paddingRight: 5 }}>
-                        <b>Stworzony:</b> {creationDate.toLocaleDateString()} {creationDate.toLocaleTimeString()}
+                        <b>Stworzony:</b> {creationDate.toLocaleDateString()} {creationDate.toLocaleTimeString().substring(0, 5)}
                     </span>
                 </Col>
             </Row>

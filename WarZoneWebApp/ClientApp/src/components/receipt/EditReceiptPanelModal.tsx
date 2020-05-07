@@ -89,5 +89,4 @@ const EditReceiptPanelModal: FunctionComponent<IEditReceiptPanelModalProps> = (p
     );
 }
 
-
 export default EditReceiptPanelModal;

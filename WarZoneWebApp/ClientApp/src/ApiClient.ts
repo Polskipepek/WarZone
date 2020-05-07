@@ -107,7 +107,7 @@ export class CustomerClient extends ClientBase {
     }
 
     getCustomers(): Promise<Receipt[] | null> {
-        let url_ = this.baseUrl + "/api/Customer/getcustomers";
+        let url_ = this.baseUrl + "/api/Customer/GetCustomers";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ = <RequestInit>{

@@ -1,3 +1,4 @@
+import AddReceiptPanel from '../receipt/AddReceiptPanel';
 import EditReceiptPanelModal from '../receipt/EditReceiptPanelModal';
 import React, { useContext, useEffect, useState } from 'react';
 import ReceiptPanel from '../receipt/ReceiptPanel';
@@ -6,7 +7,6 @@ import { IReceipt, ReceiptClient } from '../../ApiClient';
 import { Row } from 'antd';
 
 export interface IReceiptsProps {
-    // receipts: IReceipt[],
     selectedReceipt: IReceipt | undefined
 }
 
@@ -16,13 +16,15 @@ const Receipts: React.FunctionComponent<IReceiptsProps> = (props: IReceiptsProps
 
     let refreshRetriesLeft = 5;
 
-    const CreateReceipt = () => {
-        console.log("szukamm");
+    const PullReceipts = () => {
         new ReceiptClient().getReceipts().then(e => {
-            console.log(e);
             setReceipts(e);
         });
     }
+
+    useEffect(() => {
+        PullReceipts();
+    }, []);
 
     const RefreshReceipt = () => {
         if (refreshRetriesLeft > 0 && selectedReceipt) {
@@ -42,25 +44,21 @@ const Receipts: React.FunctionComponent<IReceiptsProps> = (props: IReceiptsProps
         }
     }
 
-    useEffect(() => {
-        CreateReceipt();
-    }, []);
 
-    return (
-        <>
-            <Row >
-                {receipts && receipts.map((receipt, index) => {
-                    return (
-                        <React.Fragment>
-                            <ReceiptPanel receipt={receipt} id={index} />
-                        </React.Fragment>
-                    );
-                })}
-            </Row>
-            <EditReceiptPanelModal receiptRefreshFunc={RefreshReceipt} />
-        </>
 
-    );
+    return (<>
+        <Row>
+            <AddReceiptPanel pullReceipts={PullReceipts} />
+            {receipts && receipts.map((receipt, index) => {
+                return (
+                    <React.Fragment>
+                        <ReceiptPanel receipt={receipt} id={index} />
+                    </React.Fragment>
+                );
+            })}
+        </Row>
+        <EditReceiptPanelModal receiptRefreshFunc={RefreshReceipt} />
+    </>);
 }
 
 export default Receipts;

@@ -14,24 +14,13 @@ namespace WarZoneWebApp.Controllers {
             this.context = context;
         }
 
-        //[HttpPost]
-        //[Route("addcustomer")]
-        //public async Task<IActionResult> AddCustomer (Customer customer) {
-
-        //    await context.Receipts.AddAsync(new Receipt { CreationDate = DateTime.Now, ModifyDate = DateTime.Now, Customer = customer });
-        //    await context.SaveChangesAsync();
-        //    return Ok();
-        //}
         [HttpPost]
-        [Route ("getcustomers")]
+        [Route ("[action]")]
         public ActionResult<Receipt[]> GetCustomers () {
             //3. Handle request
             //4. return value
 
             return context.Receipts.Where (e => e.CloseDate == null).OrderByDescending (e => e.ModifyDate).ToArray ();
         }
-
-
-
     }
 }

@@ -1,4 +1,3 @@
-import EditReceiptPanelModal from './EditReceiptPanelModal';
 import Icon from '@ant-design/icons/lib/components/Icon';
 import React, { useContext, useEffect, useState } from 'react';
 import ReceiptDetails from './ReceiptDetails';
@@ -9,6 +8,8 @@ import {
     Card,
     Col,
     Collapse,
+    Divider,
+    Tooltip,
     Typography
     } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
@@ -41,7 +42,6 @@ const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps> = (props: IRecei
         })
     }, [props.receipt]);
 
-
     const changeCountValue = (id: number, newValue: number, serviceId: number) => {
         if (newValue < 0 || serviceId < 3 && newValue < 1)
             return;
@@ -72,29 +72,45 @@ const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps> = (props: IRecei
         return data;
     }
 
-
-    const genExtra = () => (
-        <Icon
-            type="setting"
-            onClick={event => {
-                // If you don't want click extra trigger collapse, you can prevent this:
-                event.stopPropagation();
-            }}
-        />
-    );
-
     const getHeader = () => {
         if (!!props.editMode) {
             return (
                 <ReceiptDetails receipt={props.receipt} totalPrice={props.totalPrice} />
             );
         } else {
+            const cname = `${props.receipt.customer!.customerName} ${props.receipt.customer!.customerSurname}`;
             return (
-                <Typography.Title style={{ textAlign: "center", fontSize: 25 }}>
-                    {`${props.receipt.customer!.customerName} ${props.receipt.customer!.customerSurname} ${props.receipt.creationDate.toLocaleDateString("pl-PL")}
-                ${props.receipt.creationDate.toLocaleTimeString("pl-PL")}  ${props.receipt.totalPrice} zł`}
-                </Typography.Title>
+                <div className="kliven-centered" style={{ fontSize: 20 }}>
+                    <Tooltip overlayClassName="tooltip-box" placement="bottomRight" title={(<div>
+                        <span className="tooltip-title">{<b>Imię i nazwisko</b>}</span>
+                        <div>{cname.length > 30 && cname}</div>
+                    </div>)}>
+                        <span>{getDescriptionShortcut(cname)}</span>
+                    </Tooltip>
+                    <Divider type="vertical" style={{ height: "2vh" }} />
+                    <Tooltip overlayClassName="tooltip-box" placement="bottomRight" title={(<div>
+                        <span className="tooltip-title">{"Godzina ostatniej modyfikacji"}</span>
+                    </div>)}>
+                        <div>{`${props.receipt.creationDate.toLocaleTimeString("pl-PL").substring(0, 5)}`}</div>
+                    </Tooltip>
+                    <Divider type="vertical" style={{ height: "2vh" }} />
+                    <Tooltip overlayClassName="tooltip-box" placement="bottomRight" title={(<div>
+                        <span className="tooltip-title">{"Należność"}</span>
+                    </div>)}>
+                        <div>{`${props.receipt.totalPrice} zł`}</div>
+                    </Tooltip>
+
+                </div>
             );
+        }
+    }
+
+    const getDescriptionShortcut = (description: string) => {
+        if (description.length > 30) {
+            return `${description.substring(0, 30)}...`;
+        }
+        else {
+            return description;
         }
     }
 
@@ -110,27 +126,26 @@ const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps> = (props: IRecei
                     serviceName: "janpaweł"
                 }
             );
-            //setValuesState(valuesState);
         }
     }
 
-    return (
-        <div className="receiptPanel">
-            {transactions && transactions.length > 0 &&
-                <Col span={8}>
-                    <Card title={getHeader()} key={props.id} style={{ width: "28vw", height: "auto", maxHeight: "60vh" }}>
-                        {/* {props.editMode === true && addSearchRow()} */}
-                        <ReceiptTableInner {...props} tableValues={valuesState!} changeCountValue={changeCountValue} />
-                        {props.editMode !== true && (
-                            <Button size="large" prefix="a " onClick={() => {
+    return (<>
+        {transactions && transactions.length > 0 &&
+            <Col span={8}>
+                <Card title={getHeader()} key={props.id} style={{ width: "28vw", height: "auto", maxHeight: "60vh" }}>
+                    <ReceiptTableInner {...props} tableValues={valuesState!} changeCountValue={changeCountValue} />
+                    {props.editMode !== true && (
+                        <Button
+                            size="large"
+                            style={{ marginTop: "1vh" }}
+                            onClick={() => {
                                 toggleSelectedReceipt!(props.receipt);
                             }}>Edycja</Button>
-                        )}
+                    )}
 
-                    </Card>
-                </Col>
-            }
-        </div>)
+                </Card>
+            </Col>
+        }
+    </>)
 }
-
 export default ReceiptPanel;
