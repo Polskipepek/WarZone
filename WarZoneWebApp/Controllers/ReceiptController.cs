@@ -111,13 +111,6 @@ namespace WarZoneWebApp.Controllers {
             return receipt;
         }
 
-
-        [HttpPost]
-        [Route ("[action]")]
-        public ActionResult<Service[]> SearchServicesByName (string searchPhrase) {
-            return context.Services.Where (e => e.ServiceName == searchPhrase || e.Id.ToString () == searchPhrase).OrderBy (e => e.ServiceName).ToArray ();
-        }
-
         private int GetEntryServiceId () {
             switch (DateTime.Now.DayOfWeek) {
                 case DayOfWeek.Monday:

@@ -51,7 +51,7 @@ const Receipts: React.FunctionComponent<IReceiptsProps> = (props: IReceiptsProps
             <AddReceiptPanel pullReceipts={PullReceipts} />
             {receipts && receipts.map((receipt, index) => {
                 return (
-                    <React.Fragment>
+                    <React.Fragment key={index}>
                         <ReceiptPanel receipt={receipt} id={index} />
                     </React.Fragment>
                 );

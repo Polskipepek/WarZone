@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import ReceiptPanel from './ReceiptPanel';
+import ServiceFinder from './ServiceFinder';
 import { Button, Pagination, Table } from 'antd';
-import { ITransactionListDto } from '../../ApiClient';
+import { IService, ITransactionListDto } from '../../ApiClient';
 
 interface IReceiptPanelProps {
     tableValues: IReceiptTableValues[];
     editMode?: boolean;
-    changeCountValue: (id: number, newValue: number, serviceId: number) => void;
+    changeCountValue: (newValue: number, service: IService) => void;
 }
 
 export interface IReceiptTableValues extends ITransactionListDto {
@@ -21,7 +22,15 @@ const ReceiptTableInner: React.FunctionComponent<IReceiptPanelProps> = props => 
             dataIndex: 'serviceName',
             key: 'serviceName',
             width: "40%",
-            render: (text: React.ReactNode) => <a>{text}</a>
+            render: (value: string, record: IReceiptTableValues) => {
+                return (
+                    (props.editMode) ? (
+                        (record.serviceId === 2137) ? (<>
+                            <ServiceFinder changeCountValue={props.changeCountValue} />
+                        </>) : (record.serviceName)
+                    ) : (record.serviceName)
+                )
+            }
         },
         {
             title: 'Cena',
@@ -35,21 +44,13 @@ const ReceiptTableInner: React.FunctionComponent<IReceiptPanelProps> = props => 
             key: 'count',
             width: "20%",
             render: (value: number, record: IReceiptTableValues) => {
-                return (
-                    (props.editMode) ? (
-                        (record.serviceId === 2137) ? (
-                            <>
-                                dodaj bron kur
-                        </>
-                        ) : (
-                                <span>
-                                    <Button size="small" onClick={() => { props.changeCountValue(record.key, Number(record.count) - 1, record.serviceId) }}>-</Button>
-                                    &ensp;{`${record.count}`}&ensp;
-                                    <Button size="small" onClick={() => { props.changeCountValue(record.key, Number(record.count) + 1, record.serviceId) }}>+</Button>
-                                </span>
-                            )
-                    ) : (record.count)
-                );
+                return (record.serviceId != 2137 && (
+                    <span>
+                        <Button size="small" onClick={() => { props.changeCountValue(Number(record.count) - 1, { ...record, servicePrice: record.price, id: record.serviceId } as IService) }}>-</Button>
+                        &ensp;{`${record.count}`}&ensp;
+                    <Button size="small" onClick={() => { props.changeCountValue(Number(record.count) + 1, { ...record, servicePrice: record.price, id: record.serviceId } as IService) }}>+</Button>
+                    </span>
+                ));
             }
         },
         {

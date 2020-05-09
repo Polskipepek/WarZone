@@ -369,9 +369,21 @@ export class ReceiptClient extends ClientBase {
         }
         return Promise.resolve<Receipt | null>(<any>null);
     }
+}
+
+export class ServiceClient extends ClientBase {
+    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
+        super();
+        this.http = http ? http : <any>window;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
 
     searchServicesByName(searchPhrase: string | null): Promise<Service[] | null> {
-        let url_ = this.baseUrl + "/api/Receipt/SearchServicesByName?";
+        let url_ = this.baseUrl + "/api/Service/SearchServicesByName?";
         if (searchPhrase === undefined)
             throw new Error("The parameter 'searchPhrase' must be defined.");
         else
@@ -393,6 +405,50 @@ export class ReceiptClient extends ClientBase {
     }
 
     protected processSearchServicesByName(response: Response): Promise<Service[] | null> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(Service.fromJS(item));
+            }
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<Service[] | null>(<any>null);
+    }
+
+    searchServicesById(searchId: number): Promise<Service[] | null> {
+        let url_ = this.baseUrl + "/api/Service/SearchServicesById?";
+        if (searchId === undefined || searchId === null)
+            throw new Error("The parameter 'searchId' must be defined and cannot be null.");
+        else
+            url_ += "searchId=" + encodeURIComponent("" + searchId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "POST",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.transformResult(url_, _response, (_response: Response) => this.processSearchServicesById(_response));
+        });
+    }
+
+    protected processSearchServicesById(response: Response): Promise<Service[] | null> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {

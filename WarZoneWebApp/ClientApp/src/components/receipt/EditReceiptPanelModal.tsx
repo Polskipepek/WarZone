@@ -44,7 +44,8 @@ const EditReceiptPanelModal: FunctionComponent<IEditReceiptPanelModalProps> = (p
     const mapTableValuesToTransactionListDtos = (transactions: IReceiptTableValues[]) => {
         let data: ITransactionListDto[] = [];
         transactions.map((transaction, index) => {
-            data.push({ ...transaction })
+            if (transaction.serviceId != 2137)
+                data.push({ ...transaction })
         });
         return data;
     }

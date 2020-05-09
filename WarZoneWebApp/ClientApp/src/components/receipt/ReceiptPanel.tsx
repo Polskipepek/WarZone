@@ -15,11 +15,13 @@ import {
 import { EditOutlined } from '@ant-design/icons';
 import {
     IReceipt,
+    IService,
     ITransactionListDto,
     Receipt,
     ReceiptClient,
     TransactionClient
     } from '../../ApiClient';
+import { openErrorNotification } from '../../helpers/NotificationHelper';
 
 interface IReceiptPanelProps {
     receipt: IReceipt;
@@ -42,14 +44,58 @@ const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps> = (props: IRecei
         })
     }, [props.receipt]);
 
-    const changeCountValue = (id: number, newValue: number, serviceId: number) => {
-        if (newValue < 0 || serviceId < 3 && newValue < 1)
+    useEffect(() => {
+        if (props.editMode) {
+            if (valuesState === undefined) {
+                setValuesState([])
+            }
+        }
+    }, []);
+
+    useEffect(() => {
+        if (props.editMode && valuesState) {
+            if (valuesState.length > 0 && valuesState[valuesState.length - 1].serviceId != 2137)
+                addSearchRow();
+        }
+    }, [valuesState])
+
+    const changeCountValue = (newValue: number, service: IService) => {
+        if (service.id < 3 && newValue == -2137) { // próba dodania nowej wejsciowki poprzez searchService
+            openErrorNotification("Błąd przy dodawaniu usługi",
+                <>
+                    <div>
+                        Nie można dodać 'wejściówki' poprzez pole wyszukiwania.
+                    </div>
+                    <div><b>
+                        Użyj przycisków +/-
+                    </b></div>
+                </>)
+        }
+
+        if (newValue != -2137 && newValue < 0 || service.id < 3 && newValue < 1) {
             return;
+        }
 
         if (valuesState) {
             let newState: IReceiptTableValues[] = [];
-            valuesState[id].count = newValue;
-            valuesState[id].totalPrice = newValue * valuesState[id].price!;
+            let valueState = valuesState.find(receiptValue => receiptValue.serviceId == service.id);
+            if (valueState) {
+                if (newValue == -2137) {
+                    newValue = valueState.count + 1;
+                }
+                const id = valueState.key;
+                valuesState[id].count = newValue;
+                valuesState[id].totalPrice = newValue * valuesState[id].price!;
+            } else {
+                valuesState[valuesState.length - 1] = {
+                    count: 1,
+                    key: valuesState.length,
+                    price: service.servicePrice,
+                    serviceId: service.id,
+                    totalPrice: service.servicePrice,
+                    serviceName: service.serviceName
+                };
+            }
             try {
                 newState = JSON.parse(JSON.stringify(valuesState));
             } catch { }
@@ -89,7 +135,14 @@ const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps> = (props: IRecei
                     </Tooltip>
                     <Divider type="vertical" style={{ height: "2vh" }} />
                     <Tooltip overlayClassName="tooltip-box" placement="bottomRight" title={(<div>
-                        <span className="tooltip-title">{"Godzina ostatniej modyfikacji"}</span>
+                        <span className="tooltip-title">
+                            <div>
+                                {`Godzina stworzenia: ${props.receipt.creationDate.toLocaleTimeString("pl-PL").substring(0, 5)}`}
+                            </div>
+                            <div>
+                                {`Godzina modyfikacji: ${props.receipt.modifyDate.toLocaleTimeString("pl-PL").substring(0, 5)}`}
+                            </div>
+                        </span>
                     </div>)}>
                         <div>{`${props.receipt.creationDate.toLocaleTimeString("pl-PL").substring(0, 5)}`}</div>
                     </Tooltip>
@@ -116,16 +169,16 @@ const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps> = (props: IRecei
 
     const addSearchRow = () => {
         if (valuesState) {
-            valuesState.push(
-                {
-                    key: valuesState.length + 1,
-                    count: 0,
-                    price: 0,
-                    serviceId: 2137,
-                    totalPrice: 0,
-                    serviceName: "janpaweł"
-                }
-            );
+            const newValuesState = [...valuesState, {
+                key: valuesState.length + 1,
+                count: 0,
+                price: 0,
+                serviceId: 2137,
+                totalPrice: 0,
+                serviceName: "janpaweł"
+            }];
+
+            setValuesState(newValuesState);
         }
     }
 
