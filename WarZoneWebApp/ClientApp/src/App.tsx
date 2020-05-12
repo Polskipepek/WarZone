@@ -21,6 +21,7 @@ import {
   UsersClient
   } from './ApiClient';
 import { BrowserRouter } from 'react-router-dom';
+import { openErrorNotification, openNotification } from './helpers/NotificationHelper';
 import { Redirect, Route, Switch } from 'react-router';
 import './styles/warzone.css';
 import 'antd/dist/antd.css';
@@ -96,10 +97,11 @@ const App: React.FunctionComponent = () => {
   const TryLogin = (username: string, password: string) => {
     new UsersClient().authenticate(username, password).then(resp => {
       toggleAppUser(resp ? resp : undefined);
+      openNotification(`Zalogowano!`, `Witaj użytkowniku.`);
     }).catch(ex => {
       if (SwaggerException.isSwaggerException(ex) && (ex as SwaggerException).status === 400) {
         toggleAppUser(undefined);
-        alert("zly login lub haslo");
+        openErrorNotification(`Błąd!`, `Nieprawidłowe dane logowania.`)
       }
     });
   }

@@ -11,6 +11,7 @@ import {
     } from '../../ApiClient';
 import { IReceiptTableValues } from './ReceiptTableInner';
 import { Modal } from 'antd';
+import { openErrorNotification, openNotification } from '../../helpers/NotificationHelper';
 
 export interface IEditReceiptPanelModalProps {
     receiptRefreshFunc?: () => void | undefined;
@@ -52,7 +53,13 @@ const EditReceiptPanelModal: FunctionComponent<IEditReceiptPanelModalProps> = (p
 
     const OnOkay = () => {
         if (selectedReceipt && tableValues) {
-            new ReceiptClient().updateReceipt(selectedReceipt.id, mapTableValuesToTransactionListDtos(tableValues) as TransactionListDto[]);
+            new ReceiptClient().updateReceipt(selectedReceipt.id, mapTableValuesToTransactionListDtos(tableValues) as TransactionListDto[]).then(e => {
+                if (e && e.status == 200) {
+                    openNotification(`Edycja rachunku`, `Pomyślnie edytowano rachunek.`);
+                } else {
+                    openErrorNotification(`Edycja rachunku`, `Błąd podczas edytowania rachunka.`);
+                }
+            });
             if (props.receiptRefreshFunc) {
                 setTimeout(() =>
                     props.receiptRefreshFunc!(),

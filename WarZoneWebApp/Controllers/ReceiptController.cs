@@ -45,11 +45,19 @@ namespace WarZoneWebApp.Controllers {
 
         [HttpGet]
         [Route ("[action]")]
-        public ActionResult<Receipt[]> GetReceipts () {
-            //3. Handle request
-            //4. return value
+        public ActionResult<Receipt[]> GetOpenReceipts () {
             context.Receipts.Include (e => e.Customer).Load ();
-            var receipts = context.Receipts.Where (e => e.Id != -1).OrderByDescending (e => e.ModifyDate).ToList ();
+            var receipts = context.Receipts.Where (e => e.Id != -1 && !e.CloseDate.HasValue).OrderByDescending (e => e.ModifyDate).ToList ();
+            receipts.ForEach (e => e.GetTotalPrice (context));
+
+            return receipts.ToArray ();
+        }
+
+        [HttpGet]
+        [Route ("[action]")]
+        public ActionResult<Receipt[]> GetClosedReceipts () {
+            context.Receipts.Include (e => e.Customer).Load ();
+            var receipts = context.Receipts.Where (e => e.Id != -1 && e.CloseDate.HasValue).OrderByDescending (e => e.ModifyDate).ToList ();
             receipts.ForEach (e => e.GetTotalPrice (context));
 
             return receipts.ToArray ();
@@ -107,8 +115,20 @@ namespace WarZoneWebApp.Controllers {
         public ActionResult<Receipt> GetReceipt (int receiptId) {
             context.Receipts.Include (e => e.Customer).Load ();
             var receipt = context.Receipts.Find (receiptId);
-            receipt.GetTotalPrice (context);
+            receipt?.GetTotalPrice (context);
             return receipt;
+        }
+
+        [HttpPost]
+        [Route ("[action]")]
+        public ActionResult<Receipt> CloseReceipt (int receiptId) {
+            var receipt = context.Receipts.Find (receiptId);
+            if (receipt != null) {
+                receipt.CloseDate = DateTime.Now;
+                context.Receipts.Update (receipt);
+                context.SaveChanges ();
+            }
+            return Ok ();
         }
 
         private int GetEntryServiceId () {

@@ -2,8 +2,14 @@ import ConsentForm from './pages/ConsentForm';
 import Home from './pages/Home';
 import MenuItem from 'antd/lib/menu/MenuItem';
 import Offer from './pages/Offer';
-import React, { Component, useEffect, useState } from 'react';
+import React, {
+    Component,
+    useContext,
+    useEffect,
+    useState
+    } from 'react';
 import Resources from '../Resources';
+import { AppContext, IAppContext } from '../App';
 import {
     Breadcrumb,
     Button,
@@ -25,6 +31,8 @@ const { Header, Content, Footer } = Layout;
 
 const WarzoneLayoutInner: React.FunctionComponent<RouteComponentProps> = (props) => {
     const [chosenReceipt, setChosenReceipt] = useState<string>("");
+    const { appUser } = useContext<IAppContext>(AppContext);
+
     const changePage = (page: string) => {
         props.history.push(page);
     }
@@ -82,24 +90,26 @@ const WarzoneLayoutInner: React.FunctionComponent<RouteComponentProps> = (props)
                         key="1">
                         Strona Główna
 						</Menu.Item>
-                    <Menu.Item
-                        onClick={() => changePage(Resources.pageAdresses.consent)}
-                        key="2"
-                    >
-                        Regulamin
-						</Menu.Item>
+                    {appUser &&
+                        <Menu.Item
+                            onClick={() => changePage(Resources.pageAdresses.consent)}
+                            key="2"
+                        >
+                            Regulamin
+						</Menu.Item>}
                     <Menu.Item
                         onClick={() => changePage(Resources.pageAdresses.offer)}
                         key="3"
                     >
                         Oferta
 						</Menu.Item>
-                    <Menu.Item
-                        onClick={() => changePage(Resources.pageAdresses.receipts)}
-                        key="4"
-                    >
-                        Otwarte rachunki
-						</Menu.Item>
+                    {appUser && appUser.id == 1 &&
+                        <Menu.Item
+                            onClick={() => changePage(Resources.pageAdresses.receipts)}
+                            key="4"
+                        >
+                            Otwarte rachunki
+						</Menu.Item>}
                     {/*                     {props.selectedReceipt &&
                         <MenuItem>
                             Wybrany rachunek: {console.log(props.selectedReceipt.id + "\n" + props.selectedReceipt.totalPrice)}

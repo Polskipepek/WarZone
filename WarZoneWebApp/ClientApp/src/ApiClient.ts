@@ -248,8 +248,8 @@ export class ReceiptClient extends ClientBase {
         return Promise.resolve<FileResponse | null>(<any>null);
     }
 
-    getReceipts(): Promise<Receipt[] | null> {
-        let url_ = this.baseUrl + "/api/Receipt/GetReceipts";
+    getOpenReceipts(): Promise<Receipt[] | null> {
+        let url_ = this.baseUrl + "/api/Receipt/GetOpenReceipts";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ = <RequestInit>{
@@ -262,11 +262,51 @@ export class ReceiptClient extends ClientBase {
         return this.transformOptions(options_).then(transformedOptions_ => {
             return this.http.fetch(url_, transformedOptions_);
         }).then((_response: Response) => {
-            return this.transformResult(url_, _response, (_response: Response) => this.processGetReceipts(_response));
+            return this.transformResult(url_, _response, (_response: Response) => this.processGetOpenReceipts(_response));
         });
     }
 
-    protected processGetReceipts(response: Response): Promise<Receipt[] | null> {
+    protected processGetOpenReceipts(response: Response): Promise<Receipt[] | null> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(Receipt.fromJS(item));
+            }
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<Receipt[] | null>(<any>null);
+    }
+
+    getClosedReceipts(): Promise<Receipt[] | null> {
+        let url_ = this.baseUrl + "/api/Receipt/GetClosedReceipts";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.transformResult(url_, _response, (_response: Response) => this.processGetClosedReceipts(_response));
+        });
+    }
+
+    protected processGetClosedReceipts(response: Response): Promise<Receipt[] | null> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -353,6 +393,46 @@ export class ReceiptClient extends ClientBase {
     }
 
     protected processGetReceipt(response: Response): Promise<Receipt | null> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? Receipt.fromJS(resultData200) : <any>null;
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<Receipt | null>(<any>null);
+    }
+
+    closeReceipt(receiptId: number): Promise<Receipt | null> {
+        let url_ = this.baseUrl + "/api/Receipt/CloseReceipt?";
+        if (receiptId === undefined || receiptId === null)
+            throw new Error("The parameter 'receiptId' must be defined and cannot be null.");
+        else
+            url_ += "receiptId=" + encodeURIComponent("" + receiptId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "POST",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.transformResult(url_, _response, (_response: Response) => this.processCloseReceipt(_response));
+        });
+    }
+
+    protected processCloseReceipt(response: Response): Promise<Receipt | null> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {

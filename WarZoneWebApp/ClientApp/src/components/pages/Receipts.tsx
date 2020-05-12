@@ -17,7 +17,7 @@ const Receipts: React.FunctionComponent<IReceiptsProps> = (props: IReceiptsProps
     let refreshRetriesLeft = 5;
 
     const PullReceipts = () => {
-        new ReceiptClient().getReceipts().then(e => {
+        new ReceiptClient().getOpenReceipts().then(e => {
             setReceipts(e);
         });
     }
@@ -43,8 +43,6 @@ const Receipts: React.FunctionComponent<IReceiptsProps> = (props: IReceiptsProps
             });
         }
     }
-
-
 
     return (<>
         <Row>
