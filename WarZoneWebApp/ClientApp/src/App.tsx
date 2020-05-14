@@ -1,5 +1,5 @@
 import AuthorizedView from './components/views/AuthorizedView';
-import ConsentContent from './components/pages/ConsentContent';
+import ConsentContent from './components/pages/Consent';
 import Home from './components/pages/Home';
 import Login from './components/pages/Login';
 import Offer from './components/pages/Offer';

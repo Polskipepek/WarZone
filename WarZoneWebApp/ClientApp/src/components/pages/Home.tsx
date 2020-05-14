@@ -1,5 +1,3 @@
-import BasicLayout from '../DraggableProps/ShowcaseLayout';
-import DraggableField from '../draggable/DraggableField';
 import LoginForm, { ILoginFormProps } from '../LoginForm';
 import React, { Component, FunctionComponent } from 'react';
 import { RouteComponentProps } from 'react-router';
@@ -23,12 +21,9 @@ const defaultBasicLayoutProps = {
 }
 
 const Home: FunctionComponent<IHomeProps> = (props: IHomeProps) => {
-    return (
-        <DraggableField {...defaultBasicLayoutProps} />
-        /*         <div className="kliven-centered" style={{ marginTop: window.screen.availHeight * 0.2 }}>
-        
-                </div> */
-    );
+    return (<>
+        HOME
+    </>);
 }
 
 export default Home;

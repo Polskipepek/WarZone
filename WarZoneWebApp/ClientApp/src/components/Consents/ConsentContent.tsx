@@ -1,15 +1,14 @@
-import ConsentForm from './ConsentForm';
-import React, { useState } from 'react';
-import Resources from '../../Resources';
-import { Button, Modal } from 'antd';
+import React from 'react';
+import { FunctionComponent } from 'react';
+import { Modal } from 'antd';
 
-const ConsentContent: React.FunctionComponent = (props) => {
-    const [visible, setVisible] = useState<boolean>(false);
+export interface IConsentContentModalProps {
+    modalVisible: boolean;
+    setModalVisible: (visible: boolean) => void;
 
-    const showModal = (e: any) => {
-        setVisible(true)
-    }
+}
 
+const ConsentContentModal: FunctionComponent<IConsentContentModalProps> = (props) => {
     const DisplayRegulations = () => {
         return (
             <div>
@@ -66,28 +65,16 @@ const ConsentContent: React.FunctionComponent = (props) => {
                 <h3>7. Dzieci mogą przebywać na strzelnicy wyłącznie pod bezpośrednim nadzorem rodziców lub opiekunów.</h3>
             </div>
         );
-
     }
-    return (
-        <div>
+    return (<>
+        <Modal
+            width="75vw"
+            visible={props.modalVisible}
+            onCancel={() => props.setModalVisible(false)}
+            footer={null}>
+
             {DisplayRegulations()}
-            <div className="kliven-centered">
-                <Button onClick={showModal} size="large">
-                    {Resources.buttons.accept}
-                </Button>
-                <Modal
-                    title="Dane Osobowe"
-                    visible={visible}
-                    onCancel={() => setVisible(false)}
-                    okButtonProps={{ disabled: true }}
-                    footer={null}
-                >
-                    <ConsentForm />
-                </Modal>
-
-
-            </div>
-        </div >
-    );
+        </Modal>
+    </>);
 }
-export default ConsentContent;
+export default ConsentContentModal;

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Form, Input, Select } from 'antd';
 import { FunctionComponent } from 'react';
-import { IFormValues } from '../pages/ConsentForm';
 import { IService, ServiceClient } from '../../ApiClient';
 
 interface IServiceFinderProps {

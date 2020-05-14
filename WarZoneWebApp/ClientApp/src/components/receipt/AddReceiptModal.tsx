@@ -1,4 +1,4 @@
-import InnerConsentForm from '../pages/ConsentForm';
+import InnerConsentForm from '../Consents/ConsentForm';
 import React, { FunctionComponent, useState } from 'react';
 import { IReceipt } from '../../ApiClient';
 import { Modal } from 'antd';

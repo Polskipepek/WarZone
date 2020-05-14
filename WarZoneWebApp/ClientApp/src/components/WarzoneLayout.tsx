@@ -1,7 +1,3 @@
-import ConsentForm from './pages/ConsentForm';
-import Home from './pages/Home';
-import MenuItem from 'antd/lib/menu/MenuItem';
-import Offer from './pages/Offer';
 import React, {
     Component,
     useContext,
@@ -16,15 +12,9 @@ import {
     Layout,
     Menu
     } from 'antd';
-import { BrowserRouter } from 'react-router-dom';
-import { IReceiptsProps } from './pages/Receipts';
-import { JSXElement } from '@babel/types';
-import {
-    Route,
-    RouteComponentProps,
-    Switch,
-    withRouter
-    } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router';
+
+
 
 
 const { Header, Content, Footer } = Layout;

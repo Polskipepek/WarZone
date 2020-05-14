@@ -1,3 +1,6 @@
+import ConsentContent from '../pages/Consent';
+import ConsentContentModal from './ConsentContent';
+import GdprContent from './GdprContent';
 import Icon from '@ant-design/icons/lib/components/Icon';
 import React, {
     Component,
@@ -17,6 +20,7 @@ import {
     IReceipt,
     ReceiptClient
     } from '../../ApiClient';
+import { Link } from 'react-router-dom';
 
 export interface IFormValues {
     name?: string
@@ -30,6 +34,11 @@ interface IInnerConsentForm {
 
 const InnerConsentForm: FunctionComponent<IInnerConsentForm> = (props) => {
     const [form] = Form.useForm();
+
+    const [consentModalVisible, setConsentModalVisible] = useState<boolean>(false);
+    const [gdprModalVisible, setGdprModalVisible] = useState<boolean>(false);
+
+
 
     const submitForm = (name: string, surname: string) => {
         const customer: ICustomer = {
@@ -59,6 +68,13 @@ const InnerConsentForm: FunctionComponent<IInnerConsentForm> = (props) => {
             span: 16,
         },
     };
+    const onConsentClick = () => {
+        setConsentModalVisible(true);
+    }
+
+    const onGDPRClick = () => {
+        setGdprModalVisible(true);
+    }
 
     const DisplayForms = () => {
         const [, forceUpdate] = useState();
@@ -102,14 +118,37 @@ const InnerConsentForm: FunctionComponent<IInnerConsentForm> = (props) => {
                         rules={[{
                             required: true,
                             message: "Proszę podać swoje nazwisko.",
+                        },
+                        {
                             min: 2,
-                            max: 100
+                            max: 50,
+                            message: "Nieprawidłowa długość"
                         }]}>
                         <Input
                             size="large"
                             type="text"
                             placeholder={"Nazwisko"}
                         />
+                    </Form.Item>
+
+                    <Form.Item
+                        name="consentAgreement"
+
+                        rules={[{ validator: (_, value) => value ? Promise.resolve() : Promise.reject('Wymagana zgoda'), required: true }]}
+                    >
+                        <Checkbox>
+                            Akceptuję <Link to="#" onClick={() => onConsentClick()}>regulamin</Link>
+                        </Checkbox>
+                    </Form.Item>
+
+                    <Form.Item
+                        name="gdprAgreement"
+                        rules={[{ validator: (_, value) => value ? Promise.resolve() : Promise.reject('Wymagana zgoda') }]}
+                        required={true}
+                    >
+                        <Checkbox>
+                            Akceptuję <Link to="#" onClick={() => onGDPRClick()}>RODO</Link>
+                        </Checkbox>
                     </Form.Item>
                     <Form.Item {...tailLayout} shouldUpdate={true}>
                         <Button
@@ -119,15 +158,17 @@ const InnerConsentForm: FunctionComponent<IInnerConsentForm> = (props) => {
                         >
                             Dalej
                             </Button>
-
                     </Form.Item>
                 </Form>
-            </div>
+            </div >
         );
     }
 
     return (<>
         {DisplayForms()}
+        <ConsentContentModal modalVisible={consentModalVisible} setModalVisible={setConsentModalVisible} />
+        <GdprContent modalVisible={gdprModalVisible} setModalVisible={setGdprModalVisible} />
+
     </>);
 }
 export default InnerConsentForm;
