@@ -9,6 +9,7 @@ export interface IConsentContentModalProps {
 }
 
 const ConsentContentModal: FunctionComponent<IConsentContentModalProps> = (props) => {
+
     const DisplayRegulations = () => {
         return (
             <div>
@@ -66,6 +67,7 @@ const ConsentContentModal: FunctionComponent<IConsentContentModalProps> = (props
             </div>
         );
     }
+
     return (<>
         <Modal
             width="75vw"
