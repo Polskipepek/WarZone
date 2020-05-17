@@ -1,3 +1,4 @@
+import MenuItem from 'antd/lib/menu/MenuItem';
 import React, {
     Component,
     useContext,
@@ -12,6 +13,7 @@ import {
     Layout,
     Menu
     } from 'antd';
+import { LogoutOutlined } from '@ant-design/icons';
 import { RouteComponentProps, withRouter } from 'react-router';
 
 
@@ -105,6 +107,14 @@ const WarzoneLayoutInner: React.FunctionComponent<RouteComponentProps> = (props)
                             Wybrany rachunek: {console.log(props.selectedReceipt.id + "\n" + props.selectedReceipt.totalPrice)}
                         </MenuItem>
                     } */}
+                    {appUser &&
+                        <MenuItem
+                            key="10"
+                            title="Wyloguj się!"
+                            style={{ float: "right" }}
+                        >
+                            <LogoutOutlined style={{ verticalAlign: "baseline" }} />Wyloguj
+                    </MenuItem>}
                 </Menu>
             </Header>
             <Content style={{ padding: '80px 25px' }}>
