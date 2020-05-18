@@ -62,10 +62,7 @@ public class UsersController : ControllerBase {
     [HttpPost]
     [Route ("[action]")]
     public ActionResult SignOut () {
-
         HttpContext.SignOutAsync (CookieAuthenticationDefaults.AuthenticationScheme);
-
-        HttpContext.Session.Clear ();
 
         return Ok ();
     }

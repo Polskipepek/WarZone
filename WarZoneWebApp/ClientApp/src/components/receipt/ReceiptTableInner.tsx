@@ -44,14 +44,14 @@ const ReceiptTableInner: React.FunctionComponent<IReceiptPanelProps> = props => 
             key: 'count',
             width: "23%",
             render: (value: number, record: IReceiptTableValues) => {
-                return (record.serviceId != 2137 && /* props.editMode && props.editMode === true ? */ (
-                    <span>
-                        <Button size="small" onClick={() => { props.changeCountValue(Number(record.count) - 1, { ...record, servicePrice: record.price, id: record.serviceId } as IService) }}>-</Button>
-                        &ensp;{`${record.count}`}&ensp;
+                return (props.editMode ? (
+                    record.serviceId != 2137 && (
+                        <span>
+                            <Button size="small" onClick={() => { props.changeCountValue(Number(record.count) - 1, { ...record, servicePrice: record.price, id: record.serviceId } as IService) }}>-</Button>
+                            &ensp;{`${record.count}`}&ensp;
                         <Button size="small" onClick={() => { props.changeCountValue(Number(record.count) + 1, { ...record, servicePrice: record.price, id: record.serviceId } as IService) }}>+</Button>
-                    </span>
-                ) /* : <span>&ensp;{`${record.count}`}&ensp;</span> */
-                );
+                        </span>)
+                ) : <span>&ensp;{`${record.count}`}&ensp;</span>);
             }
         },
         {

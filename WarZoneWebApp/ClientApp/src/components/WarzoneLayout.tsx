@@ -1,45 +1,31 @@
 import MenuItem from 'antd/lib/menu/MenuItem';
-import React, {
-    Component,
-    useContext,
-    useEffect,
-    useState
-    } from 'react';
 import Resources from '../Resources';
 import { AppContext, IAppContext } from '../App';
-import {
-    Breadcrumb,
-    Button,
-    Layout,
-    Menu
-    } from 'antd';
+import { Layout, Menu } from 'antd';
 import { LogoutOutlined } from '@ant-design/icons';
 import { RouteComponentProps, withRouter } from 'react-router';
-
-
-
+import { UsersClient } from '../ApiClient';
+import React, {
+    useContext, useState,
+} from 'react';
 
 const { Header, Content, Footer } = Layout;
 
 const WarzoneLayoutInner: React.FunctionComponent<RouteComponentProps> = (props) => {
-    const [chosenReceipt, setChosenReceipt] = useState<string>("");
-    const { appUser } = useContext<IAppContext>(AppContext);
+    const { toggleAppUser, appUser, refreshPage } = useContext<IAppContext>(AppContext);
 
     const changePage = (page: string) => {
         props.history.push(page);
+
     }
 
-    const currentReceiptReducer = null;
-
-    useEffect(() => {
-        const fetchData = async () => {
-            const res = await fetch('');
-            res.json().then(res => setChosenReceipt(res));
-        }
-    })
-
     const logout = () => {
-
+        new UsersClient().signOut().then(() => {
+            localStorage.clear();
+            if (toggleAppUser) {
+                toggleAppUser(undefined);
+            }
+        });
     }
 
     const getCurrentSelectedPage = () => {
@@ -115,7 +101,7 @@ const WarzoneLayoutInner: React.FunctionComponent<RouteComponentProps> = (props)
                             key="10"
                             title="Wyloguj się!"
                             style={{ float: "right" }}
-                            onClick={() => logout}
+                            onClick={() => logout()}
                         >
                             <LogoutOutlined style={{ verticalAlign: "baseline" }} />Wyloguj
                     </MenuItem>}

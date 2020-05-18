@@ -77,7 +77,6 @@ const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps> = (props: IRecei
         }
 
         if (valuesState) {
-            let newState: IReceiptTableValues[] = [];
             let valueState = valuesState.find(receiptValue => receiptValue.serviceId == service.id);
             if (valueState) {
                 if (newValue == -2137) {
@@ -89,16 +88,14 @@ const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps> = (props: IRecei
             } else {
                 valuesState[valuesState.length - 1] = {
                     count: 1,
-                    key: valuesState.length,
+                    key: valuesState.length - 1,
                     price: service.servicePrice,
                     serviceId: service.id,
                     totalPrice: service.servicePrice,
                     serviceName: service.serviceName
                 };
             }
-            try {
-                newState = JSON.parse(JSON.stringify(valuesState));
-            } catch { }
+            const newState: IReceiptTableValues[] = [...valuesState];
 
             if (newState.length > 0) {
                 setValuesState(newState);
