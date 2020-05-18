@@ -26,7 +26,7 @@ const AddReceiptPanel: FunctionComponent<IAddReceiptPanel> = (props) => {
                     >
                         <UserAddOutlined style={{ verticalAlign: "middle" }} />
                         Utwórz nowy rachunek
-            </Button>
+                    </Button>
                 </div>
             </Card>
             <AddReceiptModal isVisible={isModalShown} setVisible={toggleModalVisibility} pullReceipts={props.pullReceipts} />

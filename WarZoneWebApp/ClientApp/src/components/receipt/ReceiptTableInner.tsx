@@ -36,21 +36,22 @@ const ReceiptTableInner: React.FunctionComponent<IReceiptPanelProps> = props => 
             title: 'Cena',
             dataIndex: 'price',
             key: 'price',
-            width: "20%",
+            width: "17%",
         },
         {
             title: 'Ilość',
             dataIndex: 'count',
             key: 'count',
-            width: "20%",
+            width: "23%",
             render: (value: number, record: IReceiptTableValues) => {
-                return (record.serviceId != 2137 && (
+                return (record.serviceId != 2137 && /* props.editMode && props.editMode === true ? */ (
                     <span>
                         <Button size="small" onClick={() => { props.changeCountValue(Number(record.count) - 1, { ...record, servicePrice: record.price, id: record.serviceId } as IService) }}>-</Button>
                         &ensp;{`${record.count}`}&ensp;
-                    <Button size="small" onClick={() => { props.changeCountValue(Number(record.count) + 1, { ...record, servicePrice: record.price, id: record.serviceId } as IService) }}>+</Button>
+                        <Button size="small" onClick={() => { props.changeCountValue(Number(record.count) + 1, { ...record, servicePrice: record.price, id: record.serviceId } as IService) }}>+</Button>
                     </span>
-                ));
+                ) /* : <span>&ensp;{`${record.count}`}&ensp;</span> */
+                );
             }
         },
         {
@@ -61,16 +62,13 @@ const ReceiptTableInner: React.FunctionComponent<IReceiptPanelProps> = props => 
         },
     ];
 
-    return (
-        <>
-            {
-                props.tableValues ?
-                    <Table columns={columns} dataSource={props.tableValues} scroll={{ y: "39vh" }} pagination={false} />
-                    :
-                    ""
-            }
-        </>
-    );
+    return (<>
+        {props.tableValues ?
+            <Table columns={columns} dataSource={props.tableValues} scroll={{ y: "39vh" }} pagination={false} />
+            :
+            ""
+        }
+    </>);
 };
 
 export default ReceiptTableInner;

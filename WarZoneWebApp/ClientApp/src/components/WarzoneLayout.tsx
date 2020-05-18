@@ -38,6 +38,9 @@ const WarzoneLayoutInner: React.FunctionComponent<RouteComponentProps> = (props)
         }
     })
 
+    const logout = () => {
+
+    }
 
     const getCurrentSelectedPage = () => {
         //alert("SPRAWDZAM");
@@ -112,6 +115,7 @@ const WarzoneLayoutInner: React.FunctionComponent<RouteComponentProps> = (props)
                             key="10"
                             title="Wyloguj się!"
                             style={{ float: "right" }}
+                            onClick={() => logout}
                         >
                             <LogoutOutlined style={{ verticalAlign: "baseline" }} />Wyloguj
                     </MenuItem>}

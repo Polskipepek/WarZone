@@ -57,9 +57,17 @@ public class UsersController : ControllerBase {
         if (operationContext is OperationContext oc) {
             oc.SetContext (appUser);
         }
+    }
 
-        //HttpContext.Session.Clear ();
-        // UserContextInitializer.Init (appUser, token);
+    [HttpPost]
+    [Route ("[action]")]
+    public ActionResult SignOut () {
+
+        HttpContext.SignOutAsync (CookieAuthenticationDefaults.AuthenticationScheme);
+
+        HttpContext.Session.Clear ();
+
+        return Ok ();
     }
 
     [HttpPost]
@@ -101,35 +109,3 @@ public class UsersController : ControllerBase {
         return false;
     }
 }
-
-
-//private readonly Context context;
-//private readonly SignInManager<IdentityUser> signInManager;
-
-//public LoginController(SignInManager<IdentityUser> signInManager) {
-//    this.signInManager = signInManager;
-//}
-
-//[HttpPost]
-//public async Task<IActionResult> Login([FromBody]AppUser appUser) {
-//    if (ModelState.IsValid) {
-//        using (Context context = new Context()) {
-//            var salt = context.AppUsers.Where(user => user.Login == appUser.Login).Select(e => e.Hash).FirstOrDefault();
-//            if (string.IsNullOrEmpty(salt)) {
-//                ModelState.AddModelError(string.Empty, "Invalid Login Attempt");
-//                return BadRequest();
-//            }
-//            var saltedHashBytes = SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(appUser.Hash + salt));
-//            var saltedHash = Encoding.UTF8.GetString(saltedHashBytes);
-//            var result = await signInManager.PasswordSignInAsync(
-//                appUser.Login, saltedHash, true, false);
-
-//            if (result.Succeeded) {
-//                return RedirectToAction("index", "home");
-//            }
-
-//            ModelState.AddModelError(string.Empty, "Invalid Login Attempt");
-//        }
-//    }
-//    return BadRequest();
-//}
