@@ -24,7 +24,7 @@ const AddReceiptPanel: FunctionComponent<IAddReceiptPanel> = (props) => {
                         onClick={() => toggleModalVisibility()}
                         size="large"
                     >
-                        <UserAddOutlined style={{ verticalAlign: "middle" }} />
+                        <UserAddOutlined style={{ verticalAlign: "baseline" }} />
                         Utwórz nowy rachunek
                     </Button>
                 </div>
