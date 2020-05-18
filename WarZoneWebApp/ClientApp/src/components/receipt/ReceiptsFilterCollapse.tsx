@@ -6,20 +6,20 @@ import { FunctionComponent } from 'react';
 const { Panel } = Collapse;
 
 interface IReceiptFilterCollapseProps {
-    pullRequest: (bool: boolean) => void,
+    setClosedReceiptsSwitch: () => any;
 }
 
 const ReceiptFilterCollapse: FunctionComponent<IReceiptFilterCollapseProps> = (props) => {
 
-    const onReceiptsSwitchChange = (value: boolean) => {
-        props.pullRequest(value);
+    const onReceiptsSwitchChange = () => {
+        props.setClosedReceiptsSwitch();
     }
 
     return (<>
         <Collapse>
             <Panel header="Filtry" key="1">
                 <div>
-                    {Resources.filters.openReceipts} <Switch onChange={(value) => onReceiptsSwitchChange(value)} /> {Resources.filters.closedReceipts}
+                    {Resources.filters.openReceipts} <Switch onChange={() => onReceiptsSwitchChange()} /> {Resources.filters.closedReceipts}
                 </div>
             </Panel>
         </Collapse>

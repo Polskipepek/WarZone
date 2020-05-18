@@ -2,6 +2,7 @@ import Icon from '@ant-design/icons/lib/components/Icon';
 import React, { useContext, useEffect, useState } from 'react';
 import ReceiptDetails from './ReceiptDetails';
 import ReceiptTableInner, { IReceiptTableValues } from './ReceiptTableInner';
+import Resources from '../../Resources';
 import { AppContext, IAppContext } from '../../App';
 import {
     Button,
@@ -178,6 +179,12 @@ const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps> = (props: IRecei
             setValuesState(newValuesState);
         }
     }
+    const closeReceipt = () => {
+        var today = new Date();
+        var date = today.getFullYear() + '.' + (today.getMonth() + 1) + '.' + today.getDate();
+        var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+        props.receipt.closeDate = today;
+    }
 
     return (<>
         {transactions && transactions.length > 0 &&
@@ -191,6 +198,13 @@ const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps> = (props: IRecei
                             onClick={() => {
                                 toggleSelectedReceipt!(props.receipt);
                             }}>Edycja</Button>
+                    )}
+                    {props.receipt.closeDate === undefined && props.editMode && (
+                        <Button
+                            size="middle"
+                            style={{ marginLeft: "35%", marginBottom: "3vh", marginTop: "1vh" }}
+                            onClick={() => { closeReceipt() }}
+                        >{Resources.buttons.closeReceiptButton}</Button>
                     )}
 
                 </Card>

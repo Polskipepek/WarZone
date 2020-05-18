@@ -14,7 +14,7 @@ export interface IReceiptDetailsProps {
 }
 
 const ReceiptDetails: FunctionComponent<IReceiptDetailsProps> = (props: IReceiptDetailsProps) => {
-    const { creationDate, modifyDate, totalPrice } = props.receipt;
+    const { creationDate, modifyDate, closeDate, totalPrice } = props.receipt;
     const { customerName, customerSurname } = props.receipt.customer!;
 
     const getDescriptionShortcut = (description: string) => {
@@ -59,6 +59,15 @@ const ReceiptDetails: FunctionComponent<IReceiptDetailsProps> = (props: IReceipt
                     </span>
                 </Col>
             </Row>
+            {closeDate !== undefined &&
+                <Row>
+                    <Col>
+                        <span style={{ paddingLeft: 5 }}>
+                            <b>Zamknięty:</b> {closeDate.toLocaleDateString()} {closeDate.toLocaleTimeString().substring(0, 5)}
+                        </span>
+                    </Col>
+                </Row>
+            }
         </>
     );
 }

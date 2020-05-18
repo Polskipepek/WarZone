@@ -7,7 +7,8 @@ export default class Resources {
         login: "/login",
     };
     public static buttons = {
-        accept: "Akceptuję"
+        accept: "Akceptuję",
+        closeReceiptButton: "Zamknij rachunek",
     }
     public static persistentKeys = {
         appUser: "appUser",

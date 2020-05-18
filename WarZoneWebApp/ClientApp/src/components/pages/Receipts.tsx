@@ -15,22 +15,31 @@ const Receipts: React.FunctionComponent<IReceiptsProps> = (props: IReceiptsProps
     const [receipts, setReceipts] = useState<IReceipt[] | null>();
     const { selectedReceipt, toggleSelectedReceipt } = useContext<IAppContext>(AppContext);
 
+    const [closedReceiptsSwitch, setClosedReceiptsSwitch] = useState<boolean>(false);
+
     let refreshRetriesLeft = 5;
 
-    const PullReceipts = (boo?: boolean) => {
-        if (boo !== undefined && boo === true) {
-            new ReceiptClient().getClosedReceipts().then(e => {
-                setReceipts(e);
-            })
-        } else {
+    const PullReceipts = () => {
+        if (closedReceiptsSwitch !== true) {
+            console.log("getOpenReceipts, " + closedReceiptsSwitch);
             new ReceiptClient().getOpenReceipts().then(e => {
+                setReceipts(e);
+            });
+        } else {
+            console.log("getClosedReceipts," + closedReceiptsSwitch);
+            new ReceiptClient().getClosedReceipts().then(e => {
                 setReceipts(e);
             });
         }
     }
+
     useEffect(() => {
         PullReceipts();
     }, []);
+
+    useEffect(() => {
+        PullReceipts();
+    }, [closedReceiptsSwitch]);
 
     const RefreshReceipt = () => {
         if (refreshRetriesLeft > 0 && selectedReceipt) {
@@ -50,10 +59,14 @@ const Receipts: React.FunctionComponent<IReceiptsProps> = (props: IReceiptsProps
         }
     }
 
+    const toggleClosedReceiptSwitch = () => {
+        setClosedReceiptsSwitch(!closedReceiptsSwitch);
+    }
+
     return (<>
-        <ReceiptFilterCollapse pullRequest={PullReceipts} />
+        <ReceiptFilterCollapse setClosedReceiptsSwitch={() => toggleClosedReceiptSwitch()} />
         <Row>
-            <AddReceiptPanel pullReceipts={PullReceipts} />
+            {closedReceiptsSwitch !== true && <AddReceiptPanel pullReceipts={PullReceipts} />}
             {receipts && receipts.map((receipt, index) => {
                 return (
                     <React.Fragment key={index}>
