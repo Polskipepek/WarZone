@@ -13,4 +13,8 @@ export default class Resources {
         appUser: "appUser",
         authorized: "authorized",
     }
+    public static filters = {
+        openReceipts: "Otwarte rachunki",
+        closedReceipts: "Zamknięte rachunki"
+    }
 }

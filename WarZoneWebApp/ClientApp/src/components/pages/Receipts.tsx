@@ -1,6 +1,7 @@
 import AddReceiptPanel from '../receipt/AddReceiptPanel';
 import EditReceiptPanelModal from '../receipt/EditReceiptPanelModal';
 import React, { useContext, useEffect, useState } from 'react';
+import ReceiptFilterCollapse from '../receipt/ReceiptsFilterCollapse';
 import ReceiptPanel from '../receipt/ReceiptPanel';
 import { AppContext, IAppContext } from '../../App';
 import { IReceipt, ReceiptClient } from '../../ApiClient';
@@ -16,12 +17,17 @@ const Receipts: React.FunctionComponent<IReceiptsProps> = (props: IReceiptsProps
 
     let refreshRetriesLeft = 5;
 
-    const PullReceipts = () => {
-        new ReceiptClient().getOpenReceipts().then(e => {
-            setReceipts(e);
-        });
+    const PullReceipts = (boo?: boolean) => {
+        if (boo !== undefined && boo === false) {
+            new ReceiptClient().getClosedReceipts().then(e => {
+                setReceipts(e);
+            })
+        } else {
+            new ReceiptClient().getOpenReceipts().then(e => {
+                setReceipts(e);
+            });
+        }
     }
-
     useEffect(() => {
         PullReceipts();
     }, []);
@@ -45,6 +51,7 @@ const Receipts: React.FunctionComponent<IReceiptsProps> = (props: IReceiptsProps
     }
 
     return (<>
+        <ReceiptFilterCollapse pullRequest={PullReceipts} />
         <Row>
             <AddReceiptPanel pullReceipts={PullReceipts} />
             {receipts && receipts.map((receipt, index) => {
