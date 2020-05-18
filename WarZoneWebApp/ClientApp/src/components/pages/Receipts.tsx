@@ -18,7 +18,7 @@ const Receipts: React.FunctionComponent<IReceiptsProps> = (props: IReceiptsProps
     let refreshRetriesLeft = 5;
 
     const PullReceipts = (boo?: boolean) => {
-        if (boo !== undefined && boo === false) {
+        if (boo !== undefined && boo === true) {
             new ReceiptClient().getClosedReceipts().then(e => {
                 setReceipts(e);
             })
