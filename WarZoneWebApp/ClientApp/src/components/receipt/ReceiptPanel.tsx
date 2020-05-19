@@ -179,19 +179,18 @@ const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps> = (props: IRecei
             setValuesState(newValuesState);
         }
     }
-    const closeReceipt = () => {
-        var today = new Date();
-        var date = today.getFullYear() + '.' + (today.getMonth() + 1) + '.' + today.getDate();
-        var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-        props.receipt.closeDate = today;
-    }
+
 
     return (<>
         {transactions && transactions.length > 0 &&
             <Col span={8}>
                 <Card title={getHeader()} key={props.id} style={{ width: "28vw", height: "auto", maxHeight: "60vh" }}>
+                    {props.receipt.closeDate &&
+                        <span style={{ paddingLeft: 5 }}>
+                            <b>Zamknięty:</b> {props.receipt.closeDate.toLocaleDateString()} {props.receipt.closeDate.toLocaleTimeString().substring(0, 5)}
+                        </span>}
                     <ReceiptTableInner {...props} tableValues={valuesState!} changeCountValue={changeCountValue} />
-                    {props.editMode !== true && (
+                    {props.editMode !== true && props.receipt.closeDate === undefined && (
                         <Button
                             size="large"
                             style={{ marginTop: "1vh" }}
@@ -199,13 +198,13 @@ const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps> = (props: IRecei
                                 toggleSelectedReceipt!(props.receipt);
                             }}>Edycja</Button>
                     )}
-                    {props.receipt.closeDate === undefined && props.editMode && (
+                    {/*                     {props.receipt.closeDate === undefined && props.editMode && (
                         <Button
                             size="middle"
-                            style={{ marginLeft: "35%", marginBottom: "3vh", marginTop: "1vh" }}
+                            style={{ marginLeft: "35%", marginBottom: "1vh" }}
                             onClick={() => { closeReceipt() }}
                         >{Resources.buttons.closeReceiptButton}</Button>
-                    )}
+                    )} */}
 
                 </Card>
             </Col>

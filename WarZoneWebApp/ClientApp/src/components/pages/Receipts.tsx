@@ -5,6 +5,7 @@ import ReceiptFilterCollapse from '../receipt/ReceiptsFilterCollapse';
 import ReceiptPanel from '../receipt/ReceiptPanel';
 import { AppContext, IAppContext } from '../../App';
 import { IReceipt, ReceiptClient } from '../../ApiClient';
+import { openNotification } from '../../helpers/NotificationHelper';
 import { Row } from 'antd';
 
 export interface IReceiptsProps {
@@ -14,19 +15,16 @@ export interface IReceiptsProps {
 const Receipts: React.FunctionComponent<IReceiptsProps> = (props: IReceiptsProps) => {
     const [receipts, setReceipts] = useState<IReceipt[] | null>();
     const { selectedReceipt, toggleSelectedReceipt } = useContext<IAppContext>(AppContext);
-
     const [closedReceiptsSwitch, setClosedReceiptsSwitch] = useState<boolean>(false);
 
     let refreshRetriesLeft = 5;
 
     const PullReceipts = () => {
         if (closedReceiptsSwitch !== true) {
-            console.log("getOpenReceipts, " + closedReceiptsSwitch);
             new ReceiptClient().getOpenReceipts().then(e => {
                 setReceipts(e);
             });
         } else {
-            console.log("getClosedReceipts," + closedReceiptsSwitch);
             new ReceiptClient().getClosedReceipts().then(e => {
                 setReceipts(e);
             });
@@ -50,6 +48,7 @@ const Receipts: React.FunctionComponent<IReceiptsProps> = (props: IReceiptsProps
                     const newReceipts = receipts.filter(r => r.id != receipt.id);
                     newReceipts.splice(receiptIndex, 0, receipt);
                     setReceipts(newReceipts);
+                    openNotification(`Modyfikacja rachunku.`, `Modyfikacja rachunku ${receipt.id} przebiegła pomyślnie.`);
                     return;
                 } else {
                     refreshRetriesLeft--;
@@ -80,4 +79,3 @@ const Receipts: React.FunctionComponent<IReceiptsProps> = (props: IReceiptsProps
 }
 
 export default Receipts;
-

@@ -64,7 +64,7 @@ const defaultAppContext: IAppContext = {
   appUser: undefined,
   selectedReceipt: undefined,
   toggleSelectedReceipt: undefined,
-  refreshPage: undefined
+  refreshPage: undefined,
 }
 export const AppContext = createContext<IAppContext>(defaultAppContext);
 
@@ -111,7 +111,6 @@ const App: React.FunctionComponent = () => {
       }
     });
   }
-
 
   return (
     <BrowserRouter>

@@ -17,6 +17,8 @@ namespace WarZoneWebApp.Controllers {
         private readonly Context context;
         private readonly TransactionControllerLogic transactionControllerLogic;
 
+        public const int ReceiptsPerPage = 6;
+
         public ReceiptController (Context context, TransactionControllerLogic transactionControllerLogic) {
             this.context = context;
             this.transactionControllerLogic = transactionControllerLogic;
@@ -47,7 +49,7 @@ namespace WarZoneWebApp.Controllers {
         [Route ("[action]")]
         public ActionResult<Receipt[]> GetOpenReceipts () {
             context.Receipts.Include (e => e.Customer).Load ();
-            var receipts = context.Receipts.Where (e => e.Id != -1 && !e.CloseDate.HasValue).OrderByDescending (e => e.ModifyDate).ToList ();
+            var receipts = context.Receipts.Where (e => e.Id != -1 && !e.CloseDate.HasValue).OrderByDescending (e => e.ModifyDate)/*.Skip ((page - 1) * ReceiptsPerPage).Take (ReceiptsPerPage)*/.ToList ();
             receipts.ForEach (e => e.GetTotalPrice (context));
 
             return receipts.ToArray ();
@@ -57,7 +59,7 @@ namespace WarZoneWebApp.Controllers {
         [Route ("[action]")]
         public ActionResult<Receipt[]> GetClosedReceipts () {
             context.Receipts.Include (e => e.Customer).Load ();
-            var receipts = context.Receipts.Where (e => e.Id != -1 && e.CloseDate.HasValue).OrderByDescending (e => e.ModifyDate).ToList ();
+            var receipts = context.Receipts.Where (e => e.Id != -1 && e.CloseDate.HasValue).OrderByDescending (e => e.ModifyDate)/*.Skip ((page - 1) * ReceiptsPerPage).Take (ReceiptsPerPage)*/.ToList ();
             receipts.ForEach (e => e.GetTotalPrice (context));
 
             return receipts.ToArray ();
@@ -121,7 +123,7 @@ namespace WarZoneWebApp.Controllers {
 
         [HttpPost]
         [Route ("[action]")]
-        public ActionResult<Receipt> CloseReceipt (int receiptId) {
+        public ActionResult CloseReceipt (int receiptId) {
             var receipt = context.Receipts.Find (receiptId);
             if (receipt != null) {
                 receipt.CloseDate = DateTime.Now;

@@ -6,13 +6,14 @@ import { LogoutOutlined } from '@ant-design/icons';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { UsersClient } from '../ApiClient';
 import React, {
-    useContext, useState,
+    useContext, useState, useEffect,
 } from 'react';
 
 const { Header, Content, Footer } = Layout;
 
 const WarzoneLayoutInner: React.FunctionComponent<RouteComponentProps> = (props) => {
     const { toggleAppUser, appUser, refreshPage } = useContext<IAppContext>(AppContext);
+
 
     const changePage = (page: string) => {
         props.history.push(page);
@@ -43,7 +44,7 @@ const WarzoneLayoutInner: React.FunctionComponent<RouteComponentProps> = (props)
         return "1";
     }
 
-    return (
+    return (<>
         <Layout className="layout">
             <Header color="white" >
                 <div className="logo" onClick={() => changePage(Resources.pageAdresses.home)}>
@@ -96,7 +97,7 @@ const WarzoneLayoutInner: React.FunctionComponent<RouteComponentProps> = (props)
                             Wybrany rachunek: {console.log(props.selectedReceipt.id + "\n" + props.selectedReceipt.totalPrice)}
                         </MenuItem>
                     } */}
-                    {appUser &&
+                    {appUser && appUser.id == 1 &&
                         <MenuItem
                             key="10"
                             title="Wyloguj się!"
@@ -114,7 +115,7 @@ const WarzoneLayoutInner: React.FunctionComponent<RouteComponentProps> = (props)
             </Content>
             <Footer style={{ textAlign: 'center' }}><div className="kliven-centered">Created by KlivenINC</div></Footer>
         </Layout>
-    );
+    </>);
 };
 //export default connect(mapStateToProps, mapDispatchToProps)(Receipts);
 

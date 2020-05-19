@@ -21,6 +21,7 @@ import {
     ReceiptClient
     } from '../../ApiClient';
 import { Link } from 'react-router-dom';
+import { openErrorNotification, openNotification } from '../../helpers/NotificationHelper';
 
 export interface IFormValues {
     name?: string
@@ -46,7 +47,13 @@ const InnerConsentForm: FunctionComponent<IInnerConsentForm> = (props) => {
             customerName: name,
             customerSurname: surname
         };
-        new ReceiptClient().addReceipt(customer as Customer);
+        new ReceiptClient().addReceipt(customer as Customer).then((r) => {
+            if (r!.status === 200) {
+                openNotification(`Tworzenie nowego rachunku...`, `Wykonano pomyślnie.`);
+            } else {
+                openErrorNotification(`Tworzenie nowego rachunku...`, `Błąd przy zapisie do bazy danych.`);
+            }
+        });
         props.setVisible();
         if (props.pullReceipts) {
             setTimeout(() => props.pullReceipts!(), 500);
@@ -133,8 +140,9 @@ const InnerConsentForm: FunctionComponent<IInnerConsentForm> = (props) => {
 
                     <Form.Item
                         name="consentAgreement"
-
-                        rules={[{ validator: (_, value) => value ? Promise.resolve() : Promise.reject('Wymagana zgoda'), required: true }]}
+                        valuePropName="checked"
+                        rules={[{ validator: (_, value) => value ? Promise.resolve() : Promise.reject('Wymagana zgoda') }]}
+                        {...tailLayout}
                     >
                         <Checkbox>
                             Akceptuję <Link to="#" onClick={() => onConsentClick()}>regulamin</Link>
@@ -143,13 +151,15 @@ const InnerConsentForm: FunctionComponent<IInnerConsentForm> = (props) => {
 
                     <Form.Item
                         name="gdprAgreement"
+                        valuePropName="checked"
                         rules={[{ validator: (_, value) => value ? Promise.resolve() : Promise.reject('Wymagana zgoda') }]}
-                        required={true}
+                        {...tailLayout}
                     >
                         <Checkbox>
                             Akceptuję <Link to="#" onClick={() => onGDPRClick()}>RODO</Link>
                         </Checkbox>
                     </Form.Item>
+
                     <Form.Item {...tailLayout} shouldUpdate={true}>
                         <Button
                             size="large"

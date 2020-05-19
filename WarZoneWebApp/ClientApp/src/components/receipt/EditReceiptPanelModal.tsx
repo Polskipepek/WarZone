@@ -1,6 +1,9 @@
+import CloseReceiptModal from './CloseReceiptModal';
 import React, { useContext, useEffect, useState } from 'react';
 import ReceiptPanel from './ReceiptPanel';
+import Resources from '../../Resources';
 import { AppContext, IAppContext } from '../../App';
+import { Button, Modal } from 'antd';
 import { FunctionComponent } from 'react';
 import {
     IReceipt,
@@ -10,7 +13,6 @@ import {
     TransactionListDto
     } from '../../ApiClient';
 import { IReceiptTableValues } from './ReceiptTableInner';
-import { Modal } from 'antd';
 import { openErrorNotification, openNotification } from '../../helpers/NotificationHelper';
 
 export interface IEditReceiptPanelModalProps {
@@ -21,6 +23,9 @@ const EditReceiptPanelModal: FunctionComponent<IEditReceiptPanelModalProps> = (p
     const { selectedReceipt, toggleSelectedReceipt } = useContext<IAppContext>(AppContext);
     const [saveButtonEnabled, setSaveButtonEnabled] = useState<boolean>(false);
     const [tableValues, setStateTableValues] = useState<IReceiptTableValues[] | undefined>([]);
+    const [closeReceiptModalVisible, setCloseReceiptModalVisible] = useState<boolean>(false);
+
+    const { refreshPage } = useContext<IAppContext>(AppContext);
 
     const calculateCurrentTotalPrice = (_tableValues?: IReceiptTableValues[]) => {
         if (!_tableValues) {
@@ -76,25 +81,35 @@ const EditReceiptPanelModal: FunctionComponent<IEditReceiptPanelModalProps> = (p
         setStateTableValues(undefined);
         setCurrentTotalPrice(undefined);
     }
+    const closeReceipt = () => {
+        if (selectedReceipt) {
+            new ReceiptClient().closeReceipt(selectedReceipt.id).then((r) => {
+                openNotification(`Zamknięto rachunek`, ``);
+            })
+        }
+        props.receiptRefreshFunc!();
+        toggleSelectedReceipt!(undefined);
+        refreshPage!();
+    }
 
-    return (
+    return (<>
         <Modal
             title={<big><b>{`Edycja rachunku #${selectedReceipt ? selectedReceipt.id : ""}`}</b></big>}
             visible={selectedReceipt !== undefined}
-            onOk={() => OnOkay()}
-            onCancel={() => OnCancel()}
             centered
             cancelText="Anuluj"
             okText="Zapisz"
             width="auto"
             bodyStyle={{ height: "60vh" }}
             okButtonProps={{ disabled: !saveButtonEnabled }}
+            footer={<><Button onClick={() => setCloseReceiptModalVisible(true)}>{Resources.buttons.closeReceiptButton}</Button><Button onClick={() => OnCancel()}>Cancel</Button><Button onClick={() => OnOkay()}>OK</Button></>}
         >
             {selectedReceipt && (
                 <ReceiptPanel receipt={selectedReceipt} id={0} editMode setParentTableValues={setTableValues} totalPrice={currentTotalPrice} />)
             }
         </Modal>
-    );
+        <CloseReceiptModal modalVisible={closeReceiptModalVisible} setModalVisible={setCloseReceiptModalVisible} closeReceipt={() => closeReceipt()} />
+    </>);
 }
 
 export default EditReceiptPanelModal;
