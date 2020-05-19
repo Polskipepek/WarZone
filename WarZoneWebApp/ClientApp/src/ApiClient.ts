@@ -444,7 +444,7 @@ export class ReceiptClient extends ClientBase {
         return Promise.resolve<Receipt | null>(<any>null);
     }
 
-    closeReceipt(receiptId: number): Promise<Receipt | null> {
+    closeReceipt(receiptId: number): Promise<FileResponse | null> {
         let url_ = this.baseUrl + "/api/Receipt/CloseReceipt?";
         if (receiptId === undefined || receiptId === null)
             throw new Error("The parameter 'receiptId' must be defined and cannot be null.");
@@ -466,22 +466,20 @@ export class ReceiptClient extends ClientBase {
         });
     }
 
-    protected processCloseReceipt(response: Response): Promise<Receipt | null> {
+    protected processCloseReceipt(response: Response): Promise<FileResponse | null> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? Receipt.fromJS(resultData200) : <any>null;
-            return result200;
-            });
+        if (status === 200 || status === 206) {
+            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
+            const fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
+            const fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
+            return response.blob().then(blob => { return { fileName: fileName, data: blob, status: status, headers: _headers }; });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<Receipt | null>(<any>null);
+        return Promise.resolve<FileResponse | null>(<any>null);
     }
 }
 

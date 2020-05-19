@@ -34,8 +34,9 @@ const GdprContentModal: FunctionComponent<IGdprContentModalProps> = (props) => {
                     Jeśli Pani/Pana dane osobowe są przetwarzane dla celów marketingu bezpośredniego ma Pani/Pan prawo wnieść w dowolnym momencie, bezpłatnie sprzeciw wobec tego przetwarzania pierwotnego lub dalszego – w tym profilowania, o ile jest ono powiązane z marketingiem bezpośrednim.</h3>
                 <h3>Administratorem Pani/Pana danych osobowych jest WAR ZONE S.C., ul. Kolbuszowska 25/1, 53-404 Wrocław</h3>
                 <h3>We wszystkich sprawach dotyczących przetwarzania danych osobowych przez Administratora oraz korzystania z praw związanych z przetwarzaniem danych osobowych można kontaktować się na adres e-mail: biuro@war-zone.com.pl, lub pisemnie na wyżej podany adres Administratora z dopiskiem „dane osobowe”.</h3>
-                <h3><strong>§1.</strong> Pani/Pana dane osobowe będą przez nas przetwarzane w celu dla którego udzielona została zgoda i może być to:</h3>
-                <h3>realizacja rezerwacji na strzelnicę / laser tag</h3>
+                <h3><strong>§1.</strong> Pani/Pana dane osobowe będą przez nas przetwarzane:</h3>
+                <h3>a) w celu spełnienia wymogów ustawy o broni i amunicji w której wymagane jest prowadzenie ksiazki rejestru korzystania ze strzelnicy.</h3>
+                <h3>b) w celu prowadzenia  i rozliczenia rachunku.</h3>
                 <h3>Przetwarzanie w powyższym zakresie odbywa się na podstawie udzielonej zgody (art. 6 ust. 1 pkt a) RODO), ponadto przekazane dane osobowe mogą być przetwarzane:</h3>
                 <h3>ewentualnie w celu marketingu bezpośredniego produktów i usług własnych Administratora, przetwarzanie odbywa się na podstawie tzw. prawnie uzasadnionego interesu Administratora jakim jest prowadzenie marketingu bezpośredniego swoich usług i produktów (art. 6 ust. 1 pkt. f) RODO),<br />
                     świadczenia usług przewidzianych dla użytkowników kont zgodnie z Regulaminem, którego akceptacja równoznaczna jest z zawarciem umowy o świadczenie tychże usług. Przetwarzanie odbywa się w celu wykonania umowy (art. 6 ust. 1 pkt. b) RODO),<br />
