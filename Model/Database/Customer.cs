@@ -6,6 +6,5 @@ namespace Model.Database {
     public class Customer : ModelBase {
         public string CustomerName { get; set; }
         public string CustomerSurname { get; set; }
-
     }
 }

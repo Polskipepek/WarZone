@@ -729,8 +729,6 @@ export class Receipt extends ModelBase implements IReceipt {
     modifyDate!: Date;
     closeDate?: Date | undefined;
     totalPrice!: number;
-    customerId!: number;
-    customer?: Customer | undefined;
 
     constructor(data?: IReceipt) {
         super(data);
@@ -743,8 +741,6 @@ export class Receipt extends ModelBase implements IReceipt {
             this.modifyDate = _data["modifyDate"] ? new Date(_data["modifyDate"].toString()) : <any>undefined;
             this.closeDate = _data["closeDate"] ? new Date(_data["closeDate"].toString()) : <any>undefined;
             this.totalPrice = _data["totalPrice"];
-            this.customerId = _data["customerId"];
-            this.customer = _data["customer"] ? Customer.fromJS(_data["customer"]) : <any>undefined;
         }
     }
 
@@ -761,8 +757,6 @@ export class Receipt extends ModelBase implements IReceipt {
         data["modifyDate"] = this.modifyDate ? this.modifyDate.toISOString() : <any>undefined;
         data["closeDate"] = this.closeDate ? this.closeDate.toISOString() : <any>undefined;
         data["totalPrice"] = this.totalPrice;
-        data["customerId"] = this.customerId;
-        data["customer"] = this.customer ? this.customer.toJSON() : <any>undefined;
         super.toJSON(data);
         return data; 
     }
@@ -773,8 +767,39 @@ export interface IReceipt extends IModelBase {
     modifyDate: Date;
     closeDate?: Date | undefined;
     totalPrice: number;
-    customerId: number;
-    customer?: Customer | undefined;
+}
+
+export class Weapon extends ModelBase implements IWeapon {
+    weaponName?: string | undefined;
+
+    constructor(data?: IWeapon) {
+        super(data);
+    }
+
+    init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.weaponName = _data["weaponName"];
+        }
+    }
+
+    static fromJS(data: any): Weapon {
+        data = typeof data === 'object' ? data : {};
+        let result = new Weapon();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["weaponName"] = this.weaponName;
+        super.toJSON(data);
+        return data; 
+    }
+}
+
+export interface IWeapon extends IModelBase {
+    weaponName?: string | undefined;
 }
 
 export class Customer extends ModelBase implements ICustomer {
@@ -812,39 +837,6 @@ export class Customer extends ModelBase implements ICustomer {
 export interface ICustomer extends IModelBase {
     customerName?: string | undefined;
     customerSurname?: string | undefined;
-}
-
-export class Weapon extends ModelBase implements IWeapon {
-    weaponName?: string | undefined;
-
-    constructor(data?: IWeapon) {
-        super(data);
-    }
-
-    init(_data?: any) {
-        super.init(_data);
-        if (_data) {
-            this.weaponName = _data["weaponName"];
-        }
-    }
-
-    static fromJS(data: any): Weapon {
-        data = typeof data === 'object' ? data : {};
-        let result = new Weapon();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["weaponName"] = this.weaponName;
-        super.toJSON(data);
-        return data; 
-    }
-}
-
-export interface IWeapon extends IModelBase {
-    weaponName?: string | undefined;
 }
 
 export class TransactionListDto implements ITransactionListDto {

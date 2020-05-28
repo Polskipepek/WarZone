@@ -18,8 +18,8 @@ using WarZoneWebApp.Constants;
 [Route ("api/[controller]")]
 public class UsersController : ControllerBase {
     private IUserService UserService { get; set; }
-    private Context context;
-    private IOperationContext operationContext;
+    private readonly Context context;
+    private readonly IOperationContext operationContext;
 
     public UsersController (Context context, IUserService userService, IOperationContext operationContext) {
         this.context = context;

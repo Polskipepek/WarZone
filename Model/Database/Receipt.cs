@@ -14,10 +14,5 @@ namespace Model.Database {
         public void GetTotalPrice (Context context) {
             TotalPrice = context.Transactions.Where (e => e.Receipt == this).Sum (e => e.Service.ServicePrice);
         }
-
-        public int CustomerId { get; set; }
-
-        [ForeignKey (nameof (CustomerId))]
-        virtual public Customer Customer { get; set; }
     }
 }

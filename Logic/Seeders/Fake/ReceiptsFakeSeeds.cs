@@ -14,7 +14,6 @@ namespace Logic.Seeders.Fake {
                     CreationDate = creationDate,
                     ModifyDate = Faker.Generators.Booleans.Bool () ? modifyDate : creationDate,
                     CloseDate = Faker.Generators.Booleans.Bool () ? (DateTime?) Faker.Generators.DateTimes.GetDateTime (modifyDate, DateTime.Now) : null,
-                    CustomerId = Faker.Generators.Numbers.Int (1, 20)
 
                 }); ;
             }

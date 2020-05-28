@@ -31,15 +31,14 @@ namespace WarZoneWebApp.Controllers {
                 return BadRequest ();
             }
             Customer existingCustomer = context.Customers.FirstOrDefault (c => c.CustomerName == customer.CustomerName && c.CustomerSurname == customer.CustomerSurname);
-            if (existingCustomer == null) {
+            if (existingCustomer == null ) {
                 var receipt = new Receipt {
                     CreationDate = DateTime.Now,
                     ModifyDate = DateTime.Now,
-                    Customer = customer
                 };
-                context.Transactions.Add (new Transaction { Customer = customer, Receipt = receipt, ServiceId = GetEntryServiceId () });
+                context.Transactions.Add (new Transaction { Receipt = receipt, ServiceId = GetEntryServiceId () });
             } else {
-                context.Receipts.Add (new Receipt { CreationDate = DateTime.Now, ModifyDate = DateTime.Now, CustomerId = existingCustomer.Id });
+                context.Receipts.Add (new Receipt { CreationDate = DateTime.Now, ModifyDate = DateTime.Now });
             }
             context.SaveChanges ();
             return Ok ();
@@ -48,7 +47,6 @@ namespace WarZoneWebApp.Controllers {
         [HttpGet]
         [Route ("[action]")]
         public ActionResult<Receipt[]> GetOpenReceipts () {
-            context.Receipts.Include (e => e.Customer).Load ();
             var receipts = context.Receipts.Where (e => e.Id != -1 && !e.CloseDate.HasValue).OrderByDescending (e => e.ModifyDate)/*.Skip ((page - 1) * ReceiptsPerPage).Take (ReceiptsPerPage)*/.ToList ();
             receipts.ForEach (e => e.GetTotalPrice (context));
 
@@ -58,7 +56,6 @@ namespace WarZoneWebApp.Controllers {
         [HttpGet]
         [Route ("[action]")]
         public ActionResult<Receipt[]> GetClosedReceipts () {
-            context.Receipts.Include (e => e.Customer).Load ();
             var receipts = context.Receipts.Where (e => e.Id != -1 && e.CloseDate.HasValue).OrderByDescending (e => e.ModifyDate)/*.Skip ((page - 1) * ReceiptsPerPage).Take (ReceiptsPerPage)*/.ToList ();
             receipts.ForEach (e => e.GetTotalPrice (context));
 
@@ -82,10 +79,12 @@ namespace WarZoneWebApp.Controllers {
             var serviceIds = originalTransactionsDtos.Select (t => t.ServiceId).Concat (transactionListDtos.Select (t => t.ServiceId)).Distinct ();
 
             foreach (var serviceId in serviceIds) {
-                var originalDto = originalTransactionsDtos.Select ((t) => (t.ServiceId, t.Count)).FirstOrDefault ((_tuple) => _tuple.ServiceId == serviceId);
+               // var originalDto = originalTransactionsDtos.Select ((t) => (t.ServiceId, t.Count)).FirstOrDefault ((_tuple) => _tuple.ServiceId == serviceId);
+                var (ServiceId, Count) = originalTransactionsDtos.Select ((t) => (t.ServiceId, t.Count)).FirstOrDefault ((_tuple) => _tuple.ServiceId == serviceId);
+
                 var newDto = transactionListDtos.Select ((t) => (t.ServiceId, t.Count)).FirstOrDefault ((_tuple) => _tuple.ServiceId == serviceId);
 
-                var delta = newDto.Count - originalDto.Count;
+                var delta = newDto.Count - Count;
 
                 List<int> removedTransactionIds = new List<int> ();
 
@@ -93,7 +92,7 @@ namespace WarZoneWebApp.Controllers {
                     continue;
                 else if (delta > 0) {
                     for (int i = 0; i < delta; i++) {
-                        context.Transactions.Add (new Transaction { CustomerId = receipt.CustomerId, ReceiptId = receiptId, ServiceId = serviceId });
+                        context.Transactions.Add (new Transaction { ReceiptId = receiptId, ServiceId = serviceId });
                     }
 
                 } else if (delta < 0) {
@@ -115,7 +114,6 @@ namespace WarZoneWebApp.Controllers {
         [HttpPost]
         [Route ("[action]")]
         public ActionResult<Receipt> GetReceipt (int receiptId) {
-            context.Receipts.Include (e => e.Customer).Load ();
             var receipt = context.Receipts.Find (receiptId);
             receipt?.GetTotalPrice (context);
             return receipt;

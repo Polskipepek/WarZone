@@ -1,6 +1,5 @@
-﻿
+﻿import { ModelBase } from './ModelBase';
 
-import { ModelBase } from './ModelBase';
 export interface Customer extends ModelBase {
 	
 		customerName: string;

@@ -1,6 +1,4 @@
-﻿
-
-import { ModelBase } from './ModelBase';
+﻿import { ModelBase } from './ModelBase';
 export interface Service extends ModelBase {
 	
 		serviceName: string;

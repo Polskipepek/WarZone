@@ -1,7 +1,3 @@
-﻿
-
-
-export interface ModelBase {
-	
+﻿export interface ModelBase {
 		id: number;
 }

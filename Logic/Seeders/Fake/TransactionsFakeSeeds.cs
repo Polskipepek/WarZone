@@ -8,7 +8,6 @@ namespace Logic.Seeders.Fake {
             var tempTransactions = new List<Transaction> ();
             for (int t = 0; t < 1; t++) {
                 tempTransactions.Add (new Transaction {
-                    CustomerId = Faker.Generators.Numbers.Int (1,1),
                     ServiceId = Faker.Generators.Numbers.Int (1, 1),
                     ReceiptId = Faker.Generators.Numbers.Int (1, 1)
                 });

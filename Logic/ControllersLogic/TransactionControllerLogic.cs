@@ -13,7 +13,7 @@ namespace Logic.ControllersLogic {
         }
 
         public TransactionListDto[] GetTransactionsByReceiptId (int receiptId) {
-            context.Transactions.Include (e => e.Customer).Include (e => e.Service).Include (e => e.Receipt).Load ();
+            context.Transactions.Include (e => e.Service).Include (e => e.Receipt).Load ();
             var transactions = context.Transactions.Where (e => e.ReceiptId == receiptId).OrderBy (e => e.ServiceId).ToArray ();
 
             return new TransactionListDtoMapper ().Map (transactions);

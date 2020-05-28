@@ -15,7 +15,6 @@ export interface IReceiptDetailsProps {
 
 const ReceiptDetails: FunctionComponent<IReceiptDetailsProps> = (props: IReceiptDetailsProps) => {
     const { creationDate, modifyDate, closeDate, totalPrice } = props.receipt;
-    const { customerName, customerSurname } = props.receipt.customer!;
 
     const getDescriptionShortcut = (description: string) => {
         const maxLength = 18;
@@ -30,17 +29,6 @@ const ReceiptDetails: FunctionComponent<IReceiptDetailsProps> = (props: IReceipt
     return (
         <>
             <Row>
-                <Col span={14} >
-                    <span style={{ paddingLeft: 5 }}>
-                        <b>Imię i nazwisko: </b>
-                        <Tooltip overlayClassName="tooltip-box" placement="bottomRight" title={(<div>
-                            <span className="tooltip-title">{<b>Imię i nazwisko</b>}</span>
-                            <div>{`${customerName} ${customerSurname}`}</div>
-                        </div>)}>
-                            <span>{getDescriptionShortcut(`${customerName} ${customerSurname}`)}</span>
-                        </Tooltip>
-                    </span>
-                </Col>
                 <Col span={6} >
                     <span style={{ paddingRight: 5 }}>
                         <b>Wartość koszyka:</b> {props.totalPrice ? props.totalPrice : totalPrice}zł

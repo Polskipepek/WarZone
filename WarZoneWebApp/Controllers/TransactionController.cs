@@ -10,7 +10,7 @@ namespace WarZoneWebApp.Controllers {
     [ApiController]
     public class TransactionController : ControllerBase {
 
-        private readonly Context context;
+        private Context context;
 
         private readonly TransactionControllerLogic transactionControllerLogic;
 
@@ -22,7 +22,7 @@ namespace WarZoneWebApp.Controllers {
         [HttpPost]
         [Route ("[action]")]
         public ActionResult<TransactionListDto[]> GetTransactions ([FromBody]Receipt receipt) {
-            if (receipt == null || receipt.Customer == null) {
+            if (receipt == null) {
                 return BadRequest ();
             }
             return transactionControllerLogic.GetTransactionsByReceiptId (receipt.Id);
