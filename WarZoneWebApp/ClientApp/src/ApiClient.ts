@@ -233,6 +233,102 @@ export class OfferClient extends ClientBase {
     }
 }
 
+export class ReceiptAndCustomerBinderClient extends ClientBase {
+    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
+        super();
+        this.http = http ? http : <any>window;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    setCustomers(receiptId: number, customersId?: number[] | null | undefined): Promise<FileResponse | null> {
+        let url_ = this.baseUrl + "/api/ReceiptAndCustomerBinder/SetCustomers?";
+        if (receiptId === undefined || receiptId === null)
+            throw new Error("The parameter 'receiptId' must be defined and cannot be null.");
+        else
+            url_ += "receiptId=" + encodeURIComponent("" + receiptId) + "&"; 
+        if (customersId !== undefined)
+            customersId && customersId.forEach(item => { url_ += "customersId=" + encodeURIComponent("" + item) + "&"; });
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "POST",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.transformResult(url_, _response, (_response: Response) => this.processSetCustomers(_response));
+        });
+    }
+
+    protected processSetCustomers(response: Response): Promise<FileResponse | null> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200 || status === 206) {
+            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
+            const fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
+            const fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
+            return response.blob().then(blob => { return { fileName: fileName, data: blob, status: status, headers: _headers }; });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<FileResponse | null>(<any>null);
+    }
+
+    getCustomers(receipt: Receipt | null): Promise<ReceiptWithCustomerDto[] | null> {
+        let url_ = this.baseUrl + "/api/ReceiptAndCustomerBinder/GetCustomers";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(receipt);
+
+        let options_ = <RequestInit>{
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.transformResult(url_, _response, (_response: Response) => this.processGetCustomers(_response));
+        });
+    }
+
+    protected processGetCustomers(response: Response): Promise<ReceiptWithCustomerDto[] | null> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(ReceiptWithCustomerDto.fromJS(item));
+            }
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<ReceiptWithCustomerDto[] | null>(<any>null);
+    }
+}
+
 export class ReceiptClient extends ClientBase {
     private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
     private baseUrl: string;
@@ -800,6 +896,46 @@ export class Weapon extends ModelBase implements IWeapon {
 
 export interface IWeapon extends IModelBase {
     weaponName?: string | undefined;
+}
+
+export class ReceiptWithCustomerDto implements IReceiptWithCustomerDto {
+    receipt?: Receipt | undefined;
+    customer?: Customer | undefined;
+
+    constructor(data?: IReceiptWithCustomerDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.receipt = _data["receipt"] ? Receipt.fromJS(_data["receipt"]) : <any>undefined;
+            this.customer = _data["customer"] ? Customer.fromJS(_data["customer"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): ReceiptWithCustomerDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ReceiptWithCustomerDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["receipt"] = this.receipt ? this.receipt.toJSON() : <any>undefined;
+        data["customer"] = this.customer ? this.customer.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IReceiptWithCustomerDto {
+    receipt?: Receipt | undefined;
+    customer?: Customer | undefined;
 }
 
 export class Customer extends ModelBase implements ICustomer {

@@ -11,7 +11,8 @@ import {
     Collapse,
     Divider,
     Tooltip,
-    Typography
+    Typography,
+    Select
     } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
 import {
@@ -20,7 +21,9 @@ import {
     ITransactionListDto,
     Receipt,
     ReceiptClient,
-    TransactionClient
+    TransactionClient,
+    ReceiptWithCustomerDto,
+    ReceiptAndCustomerBinderClient
     } from '../../ApiClient';
 import { openErrorNotification } from '../../helpers/NotificationHelper';
 
@@ -36,6 +39,7 @@ const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps> = (props: IRecei
     const [transactions, setTransactions] = useState<ITransactionListDto[] | null>([]);
     const { selectedReceipt, toggleSelectedReceipt } = useContext<IAppContext>(AppContext);
     const [valuesState, setValuesState] = useState<IReceiptTableValues[] | undefined>(undefined);
+    const [receiptwithcustomerDto, setReceiptwithcustomerDto]= useState<ReceiptWithCustomerDto[]|undefined>(undefined);
 
     useEffect(() => {
         new TransactionClient().getTransactions(props.receipt as Receipt).then((_transactions) => {
@@ -46,6 +50,7 @@ const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps> = (props: IRecei
     }, [props.receipt]);
 
     useEffect(() => {
+        CustomersMultipleSelection();
         if (props.editMode) {
             if (valuesState === undefined) {
                 setValuesState([])
@@ -116,7 +121,7 @@ const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps> = (props: IRecei
         return data;
     }
 
-    const getHeader = () => {
+/*     const getHeader = () => {
         if (!!props.editMode) {
             return (
                 <ReceiptDetails receipt={props.receipt} totalPrice={props.totalPrice} />
@@ -154,7 +159,7 @@ const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps> = (props: IRecei
                 </div>
             );
         }
-    }
+    } */
 
     const getDescriptionShortcut = (description: string) => {
         if (description.length > 30) {
@@ -180,11 +185,29 @@ const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps> = (props: IRecei
         }
     }
 
+    const CustomersMultipleSelection = ()=>{
+        let customers:ReceiptWithCustomerDto[] = [];
+        new ReceiptAndCustomerBinderClient().getCustomers(props.receipt as Receipt).then(customers=>{
+            receiptwithcustomerDto.map((c, i)=>{
+                customers.push(c);
+            })
+        })
+        setReceiptwithcustomerDto(customers);
+        return customers;
+    }
+
+    
 
     return (<>
         {transactions && transactions.length > 0 &&
             <Col span={8}>
-                <Card title={getHeader()} key={props.id} style={{ width: "28vw", height: "auto", maxHeight: "60vh" }}>
+                <Card title={"tytul panelu"/* getHeader() */} key={props.id} style={{ width: "28vw", height: "auto", maxHeight: "60vh" }}>
+                    <Select 
+                        mode="multiple"
+                        disabled={true}
+                    >
+                        {receiptwithcustomerDto}
+                    </Select>
                     {props.receipt.closeDate &&
                         <span style={{ paddingLeft: 5 }}>
                             <b>Zamknięty:</b> {props.receipt.closeDate.toLocaleDateString()} {props.receipt.closeDate.toLocaleTimeString().substring(0, 5)}
