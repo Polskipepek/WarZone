@@ -10,6 +10,5 @@ namespace Model.Database {
 
         [ForeignKey (nameof (ReceiptId))]
         public virtual Receipt Receipt { get; set; }
-
     }
 }

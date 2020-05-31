@@ -284,7 +284,7 @@ export class ReceiptAndCustomerBinderClient extends ClientBase {
         return Promise.resolve<FileResponse | null>(<any>null);
     }
 
-    getCustomers(receipt: Receipt | null): Promise<ReceiptWithCustomerDto[] | null> {
+    getCustomers(receipt: Receipt | null): Promise<ReceiptAndCustomerBinder[] | null> {
         let url_ = this.baseUrl + "/api/ReceiptAndCustomerBinder/GetCustomers";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -306,7 +306,7 @@ export class ReceiptAndCustomerBinderClient extends ClientBase {
         });
     }
 
-    protected processGetCustomers(response: Response): Promise<ReceiptWithCustomerDto[] | null> {
+    protected processGetCustomers(response: Response): Promise<ReceiptAndCustomerBinder[] | null> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -316,7 +316,7 @@ export class ReceiptAndCustomerBinderClient extends ClientBase {
             if (Array.isArray(resultData200)) {
                 result200 = [] as any;
                 for (let item of resultData200)
-                    result200!.push(ReceiptWithCustomerDto.fromJS(item));
+                    result200!.push(ReceiptAndCustomerBinder.fromJS(item));
             }
             return result200;
             });
@@ -325,7 +325,7 @@ export class ReceiptAndCustomerBinderClient extends ClientBase {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<ReceiptWithCustomerDto[] | null>(<any>null);
+        return Promise.resolve<ReceiptAndCustomerBinder[] | null>(<any>null);
     }
 }
 
@@ -898,44 +898,49 @@ export interface IWeapon extends IModelBase {
     weaponName?: string | undefined;
 }
 
-export class ReceiptWithCustomerDto implements IReceiptWithCustomerDto {
-    receipt?: Receipt | undefined;
+export class ReceiptAndCustomerBinder extends ModelBase implements IReceiptAndCustomerBinder {
+    customerId!: number;
+    receiptId!: number;
     customer?: Customer | undefined;
+    receipt?: Receipt | undefined;
 
-    constructor(data?: IReceiptWithCustomerDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
+    constructor(data?: IReceiptAndCustomerBinder) {
+        super(data);
     }
 
     init(_data?: any) {
+        super.init(_data);
         if (_data) {
-            this.receipt = _data["receipt"] ? Receipt.fromJS(_data["receipt"]) : <any>undefined;
+            this.customerId = _data["customerId"];
+            this.receiptId = _data["receiptId"];
             this.customer = _data["customer"] ? Customer.fromJS(_data["customer"]) : <any>undefined;
+            this.receipt = _data["receipt"] ? Receipt.fromJS(_data["receipt"]) : <any>undefined;
         }
     }
 
-    static fromJS(data: any): ReceiptWithCustomerDto {
+    static fromJS(data: any): ReceiptAndCustomerBinder {
         data = typeof data === 'object' ? data : {};
-        let result = new ReceiptWithCustomerDto();
+        let result = new ReceiptAndCustomerBinder();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["receipt"] = this.receipt ? this.receipt.toJSON() : <any>undefined;
+        data["customerId"] = this.customerId;
+        data["receiptId"] = this.receiptId;
         data["customer"] = this.customer ? this.customer.toJSON() : <any>undefined;
+        data["receipt"] = this.receipt ? this.receipt.toJSON() : <any>undefined;
+        super.toJSON(data);
         return data; 
     }
 }
 
-export interface IReceiptWithCustomerDto {
-    receipt?: Receipt | undefined;
+export interface IReceiptAndCustomerBinder extends IModelBase {
+    customerId: number;
+    receiptId: number;
     customer?: Customer | undefined;
+    receipt?: Receipt | undefined;
 }
 
 export class Customer extends ModelBase implements ICustomer {

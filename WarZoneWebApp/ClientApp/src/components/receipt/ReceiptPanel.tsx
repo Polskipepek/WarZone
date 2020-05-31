@@ -22,8 +22,9 @@ import {
     Receipt,
     ReceiptClient,
     TransactionClient,
-    ReceiptWithCustomerDto,
-    ReceiptAndCustomerBinderClient
+    ReceiptAndCustomerBinderClient,
+    ReceiptAndCustomerBinder,
+    Customer
     } from '../../ApiClient';
 import { openErrorNotification } from '../../helpers/NotificationHelper';
 
@@ -35,13 +36,15 @@ interface IReceiptPanelProps {
     totalPrice?: number;
 }
 
+
 const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps> = (props: IReceiptPanelProps) => {
     const [transactions, setTransactions] = useState<ITransactionListDto[] | null>([]);
     const { selectedReceipt, toggleSelectedReceipt } = useContext<IAppContext>(AppContext);
     const [valuesState, setValuesState] = useState<IReceiptTableValues[] | undefined>(undefined);
-    const [receiptwithcustomerDto, setReceiptwithcustomerDto]= useState<ReceiptWithCustomerDto[]|undefined>(undefined);
+    const [customersDto, setCustomersDto] = useState<Customer[]>([]);
 
     useEffect(() => {
+        CustomersMultipleSelection();
         new TransactionClient().getTransactions(props.receipt as Receipt).then((_transactions) => {
             setTransactions(_transactions);
             if (_transactions)
@@ -161,6 +164,7 @@ const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps> = (props: IRecei
         }
     } */
 
+
     const getDescriptionShortcut = (description: string) => {
         if (description.length > 30) {
             return `${description.substring(0, 30)}...`;
@@ -186,17 +190,24 @@ const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps> = (props: IRecei
     }
 
     const CustomersMultipleSelection = ()=>{
-        let customers:ReceiptWithCustomerDto[] = [];
-        new ReceiptAndCustomerBinderClient().getCustomers(props.receipt as Receipt).then(customers=>{
-            receiptwithcustomerDto.map((c, i)=>{
-                customers.push(c);
-            })
+        let customers:Customer[] = [];
+        new ReceiptAndCustomerBinderClient().getCustomers(props.receipt as Receipt).then(customersDtos=>{
+            if(customersDtos==null){
+                return;
+            }else{
+                customersDtos.map((c)=>{
+                    customers.push(c);
+                })
+            }
         })
-        setReceiptwithcustomerDto(customers);
+       // setCustomersDto(customers);
         return customers;
     }
+    const handleChangeCustomersSelection = (selectedCustomers:Customer[])=>{
+            new ReceiptAndCustomerBinderClient().setCustomers(props.receipt.id, selectedCustomers);
+    }
 
-    
+
 
     return (<>
         {transactions && transactions.length > 0 &&
@@ -204,9 +215,12 @@ const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps> = (props: IRecei
                 <Card title={"tytul panelu"/* getHeader() */} key={props.id} style={{ width: "28vw", height: "auto", maxHeight: "60vh" }}>
                     <Select 
                         mode="multiple"
-                        disabled={true}
+                        disabled={!props.editMode}
+                        placeholder="Proszę wybrać klientów podpiętych do rachunku:"
+                        onChange={handleChangeCustomersSelection}
+                        style={{width:"auto", minWidth:"250px"}}
                     >
-                        {receiptwithcustomerDto}
+                        {CustomersMultipleSelection()}
                     </Select>
                     {props.receipt.closeDate &&
                         <span style={{ paddingLeft: 5 }}>
@@ -221,13 +235,6 @@ const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps> = (props: IRecei
                                 toggleSelectedReceipt!(props.receipt);
                             }}>Edycja</Button>
                     )}
-                    {/*                     {props.receipt.closeDate === undefined && props.editMode && (
-                        <Button
-                            size="middle"
-                            style={{ marginLeft: "35%", marginBottom: "1vh" }}
-                            onClick={() => { closeReceipt() }}
-                        >{Resources.buttons.closeReceiptButton}</Button>
-                    )} */}
 
                 </Card>
             </Col>

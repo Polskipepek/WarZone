@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Logic.ControllersLogic;
+using Logic.DtoMappers;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Model;
 using Model.Database;
@@ -7,6 +9,7 @@ using Namotion.Reflection;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace WarZoneWebApp.Controllers {
@@ -22,12 +25,13 @@ namespace WarZoneWebApp.Controllers {
 
         [HttpPost]
         [Route ("[action]")]
-        public ActionResult SetCustomers (int receiptId, int[] customersId) {
+        public ActionResult SetCustomers (int receiptId, Customer[] customersId) {
             if (receiptId == 0 || customersId.Length == 0) {
                 return BadRequest ();
             }
-            foreach (int customerId in customersId) {
-                context.ReceiptAndCustomerBinders.Add (new ReceiptAndCustomerBinder () { ReceiptId = receiptId, CustomerId = customerId });
+
+            foreach (Customer c in customersId) {
+                context.ReceiptAndCustomerBinders.Add (new ReceiptAndCustomerBinder () { ReceiptId = receiptId, CustomerId = c.Id });
             }
             context.SaveChanges ();
             return Ok ();
@@ -35,19 +39,18 @@ namespace WarZoneWebApp.Controllers {
 
         [HttpPost]
         [Route ("[action]")]
-        public ActionResult<ReceiptWithCustomerDto[]> GetCustomers ([FromBody]Receipt receipt) {
+        public ActionResult<ReceiptAndCustomerBinder[]> GetCustomers ([FromBody]Receipt receipt) {
+            List<ReceiptAndCustomerBinder> dtos = new List<ReceiptAndCustomerBinder> ();
+
             if (receipt == null) {
                 return BadRequest ();
             }
-            
-            var customersId = context.ReceiptAndCustomerBinders.Where (r => r.ReceiptId == receipt.Id).Select (s => s.ReceiptId).ToList ();
+            var data = context.ReceiptAndCustomerBinders.Where (r => r.ReceiptId == receipt.Id);
+            foreach (var item in data) {
+                dtos.Add (item);
+            }
 
-            var query = from receiptAndCustomerBinds in customersId
-                        join customer in context.Customers on receiptAndCustomerBinds equals customer.Id into gj
-                        from subCustomer in gj.DefaultIfEmpty ()
-                        select new ReceiptWithCustomerDto { receipt = receipt, customer = subCustomer };
-
-            return query.ToArray ();
+            return dtos.ToArray ();
         }
     }
 }
