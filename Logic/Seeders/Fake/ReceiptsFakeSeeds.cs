@@ -7,7 +7,7 @@ namespace Logic.Seeders.Fake {
     class ReceiptsFakeSeeds : SeedBase {
         public override void Seed (Context context) {
             var tempReceipts = new List<Receipt> ();
-            for (int t = 0; t < 1; t++) {
+            for (int t = 0; t < 20; t++) {
                 var creationDate = Faker.Generators.DateTimes.GetDateTime (DateTime.Now - TimeSpan.FromDays (351), DateTime.Now);
                 var modifyDate = Faker.Generators.DateTimes.GetDateTime (creationDate, DateTime.Now);
                 tempReceipts.Add (new Receipt {

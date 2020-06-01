@@ -10,13 +10,16 @@ import {
     ITransactionListDto,
     ReceiptClient,
     TransactionClient,
-    TransactionListDto
+    TransactionListDto,
+    Customer
     } from '../../ApiClient';
 import { IReceiptTableValues } from './ReceiptTableInner';
 import { openErrorNotification, openNotification } from '../../helpers/NotificationHelper';
 
 export interface IEditReceiptPanelModalProps {
     receiptRefreshFunc?: () => void | undefined;
+    getAvailableCustomers:Customer[];
+    setAvailableCustomers:any;
 }
 
 const EditReceiptPanelModal: FunctionComponent<IEditReceiptPanelModalProps> = (props: IEditReceiptPanelModalProps) => {
@@ -96,16 +99,18 @@ const EditReceiptPanelModal: FunctionComponent<IEditReceiptPanelModalProps> = (p
         <Modal
             title={<big><b>{`Edycja rachunku #${selectedReceipt ? selectedReceipt.id : ""}`}</b></big>}
             visible={selectedReceipt !== undefined}
+            maskClosable
             centered
             cancelText="Anuluj"
             okText="Zapisz"
+            onCancel={()=>OnCancel()}
             width="auto"
             bodyStyle={{ height: "60vh" }}
             okButtonProps={{ disabled: !saveButtonEnabled }}
             footer={<><Button onClick={() => setCloseReceiptModalVisible(true)}>{Resources.buttons.closeReceiptButton}</Button><Button onClick={() => OnCancel()}>Cancel</Button><Button onClick={() => OnOkay()}>OK</Button></>}
         >
             {selectedReceipt && (
-                <ReceiptPanel receipt={selectedReceipt} id={0} editMode setParentTableValues={setTableValues} totalPrice={currentTotalPrice} />)
+                <ReceiptPanel receipt={selectedReceipt} id={0} editMode setParentTableValues={setTableValues} totalPrice={currentTotalPrice} getAvailableCustomers={props.getAvailableCustomers} setAvailableCustomers={props.setAvailableCustomers} />)
             }
         </Modal>
         <CloseReceiptModal modalVisible={closeReceiptModalVisible} setModalVisible={setCloseReceiptModalVisible} closeReceipt={() => closeReceipt()} />

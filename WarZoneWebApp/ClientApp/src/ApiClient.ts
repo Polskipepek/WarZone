@@ -244,14 +244,14 @@ export class ReceiptAndCustomerBinderClient extends ClientBase {
         this.baseUrl = baseUrl ? baseUrl : "";
     }
 
-    setCustomers(receiptId: number, customersId?: number[] | null | undefined): Promise<FileResponse | null> {
-        let url_ = this.baseUrl + "/api/ReceiptAndCustomerBinder/SetCustomers?";
+    setReceiptCustomers(receiptId: number, customers?: number[] | null | undefined): Promise<FileResponse | null> {
+        let url_ = this.baseUrl + "/api/ReceiptAndCustomerBinder/SetReceiptCustomers?";
         if (receiptId === undefined || receiptId === null)
             throw new Error("The parameter 'receiptId' must be defined and cannot be null.");
         else
             url_ += "receiptId=" + encodeURIComponent("" + receiptId) + "&"; 
-        if (customersId !== undefined)
-            customersId && customersId.forEach(item => { url_ += "customersId=" + encodeURIComponent("" + item) + "&"; });
+        if (customers !== undefined)
+            customers && customers.forEach(item => { url_ += "customers=" + encodeURIComponent("" + item) + "&"; });
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ = <RequestInit>{
@@ -264,11 +264,11 @@ export class ReceiptAndCustomerBinderClient extends ClientBase {
         return this.transformOptions(options_).then(transformedOptions_ => {
             return this.http.fetch(url_, transformedOptions_);
         }).then((_response: Response) => {
-            return this.transformResult(url_, _response, (_response: Response) => this.processSetCustomers(_response));
+            return this.transformResult(url_, _response, (_response: Response) => this.processSetReceiptCustomers(_response));
         });
     }
 
-    protected processSetCustomers(response: Response): Promise<FileResponse | null> {
+    protected processSetReceiptCustomers(response: Response): Promise<FileResponse | null> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200 || status === 206) {
@@ -284,8 +284,8 @@ export class ReceiptAndCustomerBinderClient extends ClientBase {
         return Promise.resolve<FileResponse | null>(<any>null);
     }
 
-    getCustomers(receipt: Receipt | null): Promise<ReceiptAndCustomerBinder[] | null> {
-        let url_ = this.baseUrl + "/api/ReceiptAndCustomerBinder/GetCustomers";
+    geReceiptCustomers(receipt: Receipt | null): Promise<ReceiptAndCustomerBinder[] | null> {
+        let url_ = this.baseUrl + "/api/ReceiptAndCustomerBinder/GeReceiptCustomers";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(receipt);
@@ -302,11 +302,11 @@ export class ReceiptAndCustomerBinderClient extends ClientBase {
         return this.transformOptions(options_).then(transformedOptions_ => {
             return this.http.fetch(url_, transformedOptions_);
         }).then((_response: Response) => {
-            return this.transformResult(url_, _response, (_response: Response) => this.processGetCustomers(_response));
+            return this.transformResult(url_, _response, (_response: Response) => this.processGeReceiptCustomers(_response));
         });
     }
 
-    protected processGetCustomers(response: Response): Promise<ReceiptAndCustomerBinder[] | null> {
+    protected processGeReceiptCustomers(response: Response): Promise<ReceiptAndCustomerBinder[] | null> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -326,6 +326,46 @@ export class ReceiptAndCustomerBinderClient extends ClientBase {
             });
         }
         return Promise.resolve<ReceiptAndCustomerBinder[] | null>(<any>null);
+    }
+
+    getAvailableCustomers(): Promise<Customer[] | null> {
+        let url_ = this.baseUrl + "/api/ReceiptAndCustomerBinder/GetAvailableCustomers";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "POST",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.transformResult(url_, _response, (_response: Response) => this.processGetAvailableCustomers(_response));
+        });
+    }
+
+    protected processGetAvailableCustomers(response: Response): Promise<Customer[] | null> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(Customer.fromJS(item));
+            }
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<Customer[] | null>(<any>null);
     }
 }
 
