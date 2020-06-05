@@ -13,7 +13,7 @@ import {
     Tooltip,
     Typography,
     Select
-    } from 'antd';
+} from 'antd';
 import { EditOutlined } from '@ant-design/icons';
 import {
     IReceipt,
@@ -23,10 +23,10 @@ import {
     ReceiptClient,
     TransactionClient,
     ReceiptAndCustomerBinderClient,
-    ReceiptAndCustomerBinder,
-    Customer
-    } from '../../ApiClient';
+    ICustomer
+} from '../../ApiClient';
 import { openErrorNotification } from '../../helpers/NotificationHelper';
+import CustomerFinder from './CustomerFinder';
 
 interface IReceiptPanelProps {
     receipt: IReceipt;
@@ -34,8 +34,7 @@ interface IReceiptPanelProps {
     editMode?: boolean;
     setParentTableValues?: (newValues: IReceiptTableValues[]) => void;
     totalPrice?: number;
-    getAvailableCustomers?:Customer[];
-    setAvailableCustomers?:any;
+    setCustomersCopy?: (newCustomers: ICustomer[]) => void;
 }
 
 
@@ -43,13 +42,17 @@ const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps> = (props: IRecei
     const [transactions, setTransactions] = useState<ITransactionListDto[] | null>([]);
     const { selectedReceipt, toggleSelectedReceipt } = useContext<IAppContext>(AppContext);
     const [valuesState, setValuesState] = useState<IReceiptTableValues[] | undefined>(undefined);
-    const [customers, setCustomers] = useState<Customer[]>([]);
+    const [customers, setCustomers] = useState<ICustomer[]>([]);
 
     useEffect(() => {
         new TransactionClient().getTransactions(props.receipt as Receipt).then((_transactions) => {
             setTransactions(_transactions);
             if (_transactions)
                 setValuesState(mapTransactionsToValues(_transactions));
+        })
+
+        new ReceiptAndCustomerBinderClient().getReceiptCustomers(props.receipt.id).then((cust) => {
+            setCustomers(cust ? cust : []);
         })
     }, [props.receipt]);
 
@@ -68,9 +71,17 @@ const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps> = (props: IRecei
         }
     }, [valuesState])
 
-    useEffect(()=>{
+    useEffect(() => {
+        if (props.setCustomersCopy) {
+            props.setCustomersCopy(customers);
+        }
+    }, [customers])
 
-    },[props.editMode]);
+    /*     useEffect(() => {
+            new ReceiptAndCustomerBinderClient().getReceiptCustomers(props.receipt.id).then((cust) => {
+                setCustomers(cust ? cust : []);
+            })
+        }, [props.editMode]); */
 
     const changeCountValue = (newValue: number, service: IService) => {
         if (service.id < 3 && newValue == -2137) { // próba dodania nowej wejsciowki poprzez searchService
@@ -128,7 +139,7 @@ const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps> = (props: IRecei
         return data;
     }
 
-     const getHeader = () => {
+    const getHeader = () => {
         if (!!props.editMode) {
             return (
                 <ReceiptDetails receipt={props.receipt} totalPrice={props.totalPrice} />
@@ -158,8 +169,7 @@ const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps> = (props: IRecei
                 </div>
             );
         }
-    } 
-
+    }
 
     const getDescriptionShortcut = (description: string) => {
         if (description.length > 30) {
@@ -185,39 +195,11 @@ const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps> = (props: IRecei
         }
     }
 
-    const getAllAvailableCustomers = ()=>{
-        let customers:Customer[] = [];
-        new ReceiptAndCustomerBinderClient().geReceiptCustomers(props.receipt as Receipt).then(customersDtos=>{
-            if(customersDtos==null){
-                return;
-            }else{
-                customersDtos.map((c)=>{
-                    customers.push(c);
-                })
-            }
-        })
-    }
-
-    const handleChangeCustomersSelection = (selectedCustomers:any)=>{
-        console.log(selectedCustomers);
-        new ReceiptAndCustomerBinderClient().setReceiptCustomers(props.receipt.id, selectedCustomers );
-        setCustomers(selectedCustomers as Customer[]);
-    }
-
     return (<>
         {transactions && transactions.length > 0 &&
             <Col span={8}>
                 <Card title={getHeader()} key={props.id} style={{ width: "28vw", height: "auto", maxHeight: "60vh" }}>
-                    <Select 
-                        mode="multiple"
-                        disabled={!props.editMode}
-                        placeholder="Kllienci podpięci do rachunku"
-                        onChange={(v)=>handleChangeCustomersSelection(v)}
-                        /* onClick={(v)=>handleChangeCustomersSelection(v)} */
-                        style={{width:"99%"}}
-                    >
-                        {props.getAvailableCustomers}
-                    </Select>
+                    <CustomerFinder editMode={!!props.editMode} customers={customers} setCustomers={setCustomers} />
                     {props.receipt.closeDate &&
                         <span style={{ paddingLeft: 5 }}>
                             <b>Zamknięty:</b> {props.receipt.closeDate.toLocaleDateString()} {props.receipt.closeDate.toLocaleTimeString().substring(0, 5)}

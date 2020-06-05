@@ -10,7 +10,7 @@ interface IServiceFinderProps {
 const ServiceFinder: FunctionComponent<IServiceFinderProps> = (props: IServiceFinderProps) => {
     const [form] = Form.useForm();
 
-    const [waitingTimeout, setWaitingTimeout] = useState();
+    const [waitingTimeout, setWaitingTimeout] = useState<any>();
     const [rawSearchData, setRawSearchData] = useState<IService[] | null>(null);
 
     const layout = {

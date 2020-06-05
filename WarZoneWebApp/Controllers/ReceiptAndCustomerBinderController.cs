@@ -25,7 +25,7 @@ namespace WarZoneWebApp.Controllers {
 
         [HttpPost]
         [Route ("[action]")]
-        public ActionResult SetReceiptCustomers (int receiptId, int[] customers) {
+        public ActionResult SetReceiptCustomers (int receiptId, [FromBody]int[] customers) {
             if (receiptId == 0 || customers.Length == 0) {
                 return BadRequest ();
             }
@@ -44,34 +44,23 @@ namespace WarZoneWebApp.Controllers {
 
         [HttpPost]
         [Route ("[action]")]
-        public ActionResult<ReceiptAndCustomerBinder[]> GeReceiptCustomers ([FromBody]Receipt receipt) {
-            List<ReceiptAndCustomerBinder> dtos = new List<ReceiptAndCustomerBinder> ();
-
-            if (receipt == null) {
+        public ActionResult<Customer[]> GetReceiptCustomers (int receiptId) {
+            if (receiptId < 1) {
                 return BadRequest ();
             }
-            var data = context.ReceiptAndCustomerBinders.Where (r => r.ReceiptId == receipt.Id);
-            foreach (var item in data) {
-                dtos.Add (item);
+            var customersIds = context.ReceiptAndCustomerBinders.Where (e => e.ReceiptId == receiptId).Select(binding=>binding.CustomerId).ToArray();
+
+            if (customersIds == null) {
+                return BadRequest ();
             }
 
-            return dtos.ToArray ();
+            return context.Customers.Where (cus => customersIds.Contains (cus.Id)).ToArray ();
         }
 
         [HttpPost]
         [Route("[action]")]
-        public ActionResult<Customer[]> GetAvailableCustomers () {
-            List<Customer> availableCustomers = new List<Customer> ();
-            var allCustomersIds = context.Customers.Select (s => s.Id);
-            var bindCustomers = context.ReceiptAndCustomerBinders.Select (s => s.Id);
-
-            foreach (var id in allCustomersIds) {
-                if(!context.ReceiptAndCustomerBinders.Where (r => r.CustomerId == id).Any ()) {
-                    var tempCustomer = context.Customers.Where (w => w.Id == id).FirstOrDefault ();
-                    availableCustomers.Add (tempCustomer);
-                }   
-            }
-            return availableCustomers.ToArray();
+        public ActionResult<Customer[]> GetAvailableCustomers (string searchString) {
+            return context.Customers.Where(w=>w.CustomerName.ToLower().Contains(searchString.ToLower()) || w.CustomerSurname.ToLower ().Contains (searchString.ToLower ())).ToArray();
         }
     }
 }

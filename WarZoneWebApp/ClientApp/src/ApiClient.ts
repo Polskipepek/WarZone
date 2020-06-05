@@ -244,19 +244,21 @@ export class ReceiptAndCustomerBinderClient extends ClientBase {
         this.baseUrl = baseUrl ? baseUrl : "";
     }
 
-    setReceiptCustomers(receiptId: number, customers?: number[] | null | undefined): Promise<FileResponse | null> {
+    setReceiptCustomers(receiptId: number, customers: number[] | null): Promise<FileResponse | null> {
         let url_ = this.baseUrl + "/api/ReceiptAndCustomerBinder/SetReceiptCustomers?";
         if (receiptId === undefined || receiptId === null)
             throw new Error("The parameter 'receiptId' must be defined and cannot be null.");
         else
             url_ += "receiptId=" + encodeURIComponent("" + receiptId) + "&"; 
-        if (customers !== undefined)
-            customers && customers.forEach(item => { url_ += "customers=" + encodeURIComponent("" + item) + "&"; });
         url_ = url_.replace(/[?&]$/, "");
 
+        const content_ = JSON.stringify(customers);
+
         let options_ = <RequestInit>{
+            body: content_,
             method: "POST",
             headers: {
+                "Content-Type": "application/json",
                 "Accept": "application/json"
             }
         };
@@ -284,17 +286,17 @@ export class ReceiptAndCustomerBinderClient extends ClientBase {
         return Promise.resolve<FileResponse | null>(<any>null);
     }
 
-    geReceiptCustomers(receipt: Receipt | null): Promise<ReceiptAndCustomerBinder[] | null> {
-        let url_ = this.baseUrl + "/api/ReceiptAndCustomerBinder/GeReceiptCustomers";
+    getReceiptCustomers(receiptId: number): Promise<Customer[] | null> {
+        let url_ = this.baseUrl + "/api/ReceiptAndCustomerBinder/GetReceiptCustomers?";
+        if (receiptId === undefined || receiptId === null)
+            throw new Error("The parameter 'receiptId' must be defined and cannot be null.");
+        else
+            url_ += "receiptId=" + encodeURIComponent("" + receiptId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(receipt);
-
         let options_ = <RequestInit>{
-            body: content_,
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
                 "Accept": "application/json"
             }
         };
@@ -302,11 +304,11 @@ export class ReceiptAndCustomerBinderClient extends ClientBase {
         return this.transformOptions(options_).then(transformedOptions_ => {
             return this.http.fetch(url_, transformedOptions_);
         }).then((_response: Response) => {
-            return this.transformResult(url_, _response, (_response: Response) => this.processGeReceiptCustomers(_response));
+            return this.transformResult(url_, _response, (_response: Response) => this.processGetReceiptCustomers(_response));
         });
     }
 
-    protected processGeReceiptCustomers(response: Response): Promise<ReceiptAndCustomerBinder[] | null> {
+    protected processGetReceiptCustomers(response: Response): Promise<Customer[] | null> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -316,7 +318,7 @@ export class ReceiptAndCustomerBinderClient extends ClientBase {
             if (Array.isArray(resultData200)) {
                 result200 = [] as any;
                 for (let item of resultData200)
-                    result200!.push(ReceiptAndCustomerBinder.fromJS(item));
+                    result200!.push(Customer.fromJS(item));
             }
             return result200;
             });
@@ -325,11 +327,15 @@ export class ReceiptAndCustomerBinderClient extends ClientBase {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<ReceiptAndCustomerBinder[] | null>(<any>null);
+        return Promise.resolve<Customer[] | null>(<any>null);
     }
 
-    getAvailableCustomers(): Promise<Customer[] | null> {
-        let url_ = this.baseUrl + "/api/ReceiptAndCustomerBinder/GetAvailableCustomers";
+    getAvailableCustomers(searchString: string | null): Promise<Customer[] | null> {
+        let url_ = this.baseUrl + "/api/ReceiptAndCustomerBinder/GetAvailableCustomers?";
+        if (searchString === undefined)
+            throw new Error("The parameter 'searchString' must be defined.");
+        else
+            url_ += "searchString=" + encodeURIComponent("" + searchString) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ = <RequestInit>{
@@ -936,51 +942,6 @@ export class Weapon extends ModelBase implements IWeapon {
 
 export interface IWeapon extends IModelBase {
     weaponName?: string | undefined;
-}
-
-export class ReceiptAndCustomerBinder extends ModelBase implements IReceiptAndCustomerBinder {
-    customerId!: number;
-    receiptId!: number;
-    customer?: Customer | undefined;
-    receipt?: Receipt | undefined;
-
-    constructor(data?: IReceiptAndCustomerBinder) {
-        super(data);
-    }
-
-    init(_data?: any) {
-        super.init(_data);
-        if (_data) {
-            this.customerId = _data["customerId"];
-            this.receiptId = _data["receiptId"];
-            this.customer = _data["customer"] ? Customer.fromJS(_data["customer"]) : <any>undefined;
-            this.receipt = _data["receipt"] ? Receipt.fromJS(_data["receipt"]) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): ReceiptAndCustomerBinder {
-        data = typeof data === 'object' ? data : {};
-        let result = new ReceiptAndCustomerBinder();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["customerId"] = this.customerId;
-        data["receiptId"] = this.receiptId;
-        data["customer"] = this.customer ? this.customer.toJSON() : <any>undefined;
-        data["receipt"] = this.receipt ? this.receipt.toJSON() : <any>undefined;
-        super.toJSON(data);
-        return data; 
-    }
-}
-
-export interface IReceiptAndCustomerBinder extends IModelBase {
-    customerId: number;
-    receiptId: number;
-    customer?: Customer | undefined;
-    receipt?: Receipt | undefined;
 }
 
 export class Customer extends ModelBase implements ICustomer {

@@ -11,21 +11,23 @@ import {
     ReceiptClient,
     TransactionClient,
     TransactionListDto,
-    Customer
-    } from '../../ApiClient';
+    Customer,
+    ICustomer,
+    ReceiptAndCustomerBinderClient,
+    SwaggerException
+} from '../../ApiClient';
 import { IReceiptTableValues } from './ReceiptTableInner';
 import { openErrorNotification, openNotification } from '../../helpers/NotificationHelper';
 
 export interface IEditReceiptPanelModalProps {
     receiptRefreshFunc?: () => void | undefined;
-    getAvailableCustomers:Customer[];
-    setAvailableCustomers:any;
 }
 
 const EditReceiptPanelModal: FunctionComponent<IEditReceiptPanelModalProps> = (props: IEditReceiptPanelModalProps) => {
     const { selectedReceipt, toggleSelectedReceipt } = useContext<IAppContext>(AppContext);
     const [saveButtonEnabled, setSaveButtonEnabled] = useState<boolean>(false);
     const [tableValues, setStateTableValues] = useState<IReceiptTableValues[] | undefined>([]);
+    const [customersCopy, setCustomersCopy] = useState<ICustomer[] | undefined>([]);
     const [closeReceiptModalVisible, setCloseReceiptModalVisible] = useState<boolean>(false);
 
     const { refreshPage } = useContext<IAppContext>(AppContext);
@@ -60,23 +62,37 @@ const EditReceiptPanelModal: FunctionComponent<IEditReceiptPanelModalProps> = (p
     }
 
     const OnOkay = () => {
-        if (selectedReceipt && tableValues) {
-            new ReceiptClient().updateReceipt(selectedReceipt.id, mapTableValuesToTransactionListDtos(tableValues) as TransactionListDto[]).then(e => {
-                if (e && e.status == 200) {
+        if (selectedReceipt) {
+            if (tableValues) {
+                new ReceiptClient().updateReceipt(selectedReceipt.id, mapTableValuesToTransactionListDtos(tableValues) as TransactionListDto[]).then(e => {
                     openNotification(`Edycja rachunku`, `Pomyślnie edytowano rachunek.`);
-                } else {
-                    openErrorNotification(`Edycja rachunku`, `Błąd podczas edytowania rachunka.`);
-                }
-            });
-            if (props.receiptRefreshFunc) {
-                setTimeout(() =>
-                    props.receiptRefreshFunc!(),
-                    300
-                );
+                    refreshReceipt();
+                }).catch(ex => {
+                    openErrorNotification(`Błąd!`, `Błąd podczas edytowania rachunku.`);
+                })
+            }
+
+            if (customersCopy) {
+                new ReceiptAndCustomerBinderClient().setReceiptCustomers(selectedReceipt.id, customersCopy.map(cus => cus.id)).then(e => {
+                    openNotification(`Edycja klientów`, `Pomyślnie edytowano klientów.`);
+                    refreshReceipt();
+                }).catch(ex => {
+                    openErrorNotification(`Błąd!`, `Błąd podczas edytowania klientów.`);
+                })
             }
         }
         OnCancel();
     }
+
+    const refreshReceipt = () => {
+        if (props.receiptRefreshFunc) {
+            setTimeout(() =>
+                props.receiptRefreshFunc!(),
+                300
+            );
+        }
+    }
+
 
     const OnCancel = () => {
         toggleSelectedReceipt!(undefined);
@@ -101,16 +117,18 @@ const EditReceiptPanelModal: FunctionComponent<IEditReceiptPanelModalProps> = (p
             visible={selectedReceipt !== undefined}
             maskClosable
             centered
-            cancelText="Anuluj"
-            okText="Zapisz"
-            onCancel={()=>OnCancel()}
+            onCancel={() => OnCancel()}
             width="auto"
             bodyStyle={{ height: "60vh" }}
             okButtonProps={{ disabled: !saveButtonEnabled }}
-            footer={<><Button onClick={() => setCloseReceiptModalVisible(true)}>{Resources.buttons.closeReceiptButton}</Button><Button onClick={() => OnCancel()}>Cancel</Button><Button onClick={() => OnOkay()}>OK</Button></>}
+            footer={<>
+                <Button onClick={() => setCloseReceiptModalVisible(true)}>{Resources.buttons.closeReceiptButton}</Button>
+                <Button onClick={() => OnCancel()}>{Resources.buttons.cancel}</Button>
+                <Button onClick={() => OnOkay()}>{Resources.buttons.save}</Button>
+            </>}
         >
             {selectedReceipt && (
-                <ReceiptPanel receipt={selectedReceipt} id={0} editMode setParentTableValues={setTableValues} totalPrice={currentTotalPrice} getAvailableCustomers={props.getAvailableCustomers} setAvailableCustomers={props.setAvailableCustomers} />)
+                <ReceiptPanel receipt={selectedReceipt} id={0} editMode setParentTableValues={setTableValues} totalPrice={currentTotalPrice} setCustomersCopy={setCustomersCopy} />)
             }
         </Modal>
         <CloseReceiptModal modalVisible={closeReceiptModalVisible} setModalVisible={setCloseReceiptModalVisible} closeReceipt={() => closeReceipt()} />
