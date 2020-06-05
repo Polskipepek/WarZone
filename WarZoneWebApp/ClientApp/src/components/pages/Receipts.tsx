@@ -44,7 +44,7 @@ const Receipts: React.FunctionComponent<IReceiptsProps> = (props: IReceiptsProps
                     const newReceipts = receipts.filter(r => r.id != receipt.id);
                     newReceipts.splice(receiptIndex, 0, receipt);
                     setReceipts(newReceipts);
-                    openNotification(`Modyfikacja rachunku.`, `Modyfikacja rachunku ${receipt.id} przebiegła pomyślnie.`);
+                    openNotification(`Odświeżanie rachunku ${receipt.id}.`, ``);
                     return;
                 } else {
                     setRefreshRetriesLeft(refreshRetriesLeft - 1);

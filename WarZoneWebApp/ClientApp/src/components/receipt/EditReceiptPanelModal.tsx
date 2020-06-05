@@ -103,7 +103,9 @@ const EditReceiptPanelModal: FunctionComponent<IEditReceiptPanelModalProps> = (p
     const closeReceipt = () => {
         if (selectedReceipt) {
             new ReceiptClient().closeReceipt(selectedReceipt.id).then((r) => {
-                openNotification(`Zamknięto rachunek`, ``);
+                openNotification(`Zamknięto rachunek`, `Sukces.`);
+            }).catch(ex => {
+                openErrorNotification(`Błąd przy zapisie do bazy danych.`, `Błąd przy wstawianiu daty zamknięcia rachunku.`);
             })
         }
         props.receiptRefreshFunc!();

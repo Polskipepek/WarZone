@@ -7,19 +7,19 @@ import React, {
     FunctionComponent,
     useEffect,
     useState
-    } from 'react';
+} from 'react';
 import {
     Button,
     Checkbox,
     Form,
     Input
-    } from 'antd';
+} from 'antd';
 import {
     Customer,
     ICustomer,
     IReceipt,
     ReceiptClient
-    } from '../../ApiClient';
+} from '../../ApiClient';
 import { Link } from 'react-router-dom';
 import { openErrorNotification, openNotification } from '../../helpers/NotificationHelper';
 
@@ -47,13 +47,12 @@ const InnerConsentForm: FunctionComponent<IInnerConsentForm> = (props) => {
             customerName: name,
             customerSurname: surname
         };
-        new ReceiptClient().addReceipt(customer as Customer).then((r) => {
-            if (r!.status === 200) {
-                openNotification(`Tworzenie nowego rachunku...`, `Wykonano pomyślnie.`);
-            } else {
-                openErrorNotification(`Tworzenie nowego rachunku...`, `Błąd przy zapisie do bazy danych.`);
-            }
+        new ReceiptClient().addReceipt(customer as Customer).then(r => {
+            openNotification(`Tworzenie nowego rachunku...`, `Wykonano pomyślnie.`);
+        }).catch(ex => {
+            openErrorNotification(`Tworzenie nowego rachunku...`, `Błąd przy zapisie do bazy danych.`);
         });
+
         props.setVisible();
         if (props.pullReceipts) {
             setTimeout(() => props.pullReceipts!(), 500);
