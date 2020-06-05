@@ -386,17 +386,13 @@ export class ReceiptClient extends ClientBase {
         this.baseUrl = baseUrl ? baseUrl : "";
     }
 
-    addReceipt(customer: Customer | null): Promise<FileResponse | null> {
+    addReceipt(): Promise<FileResponse | null> {
         let url_ = this.baseUrl + "/api/Receipt/AddReceipt";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(customer);
-
         let options_ = <RequestInit>{
-            body: content_,
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
                 "Accept": "application/json"
             }
         };

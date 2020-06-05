@@ -39,8 +39,8 @@ interface IReceiptPanelProps {
 
 
 const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps> = (props: IReceiptPanelProps) => {
-    const [transactions, setTransactions] = useState<ITransactionListDto[] | null>([]);
     const { selectedReceipt, toggleSelectedReceipt } = useContext<IAppContext>(AppContext);
+    const [transactions, setTransactions] = useState<ITransactionListDto[] | null>([]);
     const [valuesState, setValuesState] = useState<IReceiptTableValues[] | undefined>(undefined);
     const [customers, setCustomers] = useState<ICustomer[]>([]);
 
@@ -76,12 +76,6 @@ const ReceiptPanel: React.FunctionComponent<IReceiptPanelProps> = (props: IRecei
             props.setCustomersCopy(customers);
         }
     }, [customers])
-
-    /*     useEffect(() => {
-            new ReceiptAndCustomerBinderClient().getReceiptCustomers(props.receipt.id).then((cust) => {
-                setCustomers(cust ? cust : []);
-            })
-        }, [props.editMode]); */
 
     const changeCountValue = (newValue: number, service: IService) => {
         if (service.id < 3 && newValue == -2137) { // próba dodania nowej wejsciowki poprzez searchService

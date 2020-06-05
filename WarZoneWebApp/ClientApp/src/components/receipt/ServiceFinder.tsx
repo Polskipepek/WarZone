@@ -23,7 +23,7 @@ const ServiceFinder: FunctionComponent<IServiceFinderProps> = (props: IServiceFi
     };
 
     const onServiceNameFieldChange = (value: string) => {
-        if (value.length < 1)
+        if (value.length < 2)
             return;
         if (isNaN(parseInt(value[0])) == false) {
             const parsedValue = parseInt(value);

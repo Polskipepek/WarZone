@@ -68,7 +68,7 @@ const EditReceiptPanelModal: FunctionComponent<IEditReceiptPanelModalProps> = (p
                     openNotification(`Edycja rachunku`, `Pomyślnie edytowano rachunek.`);
                     refreshReceipt();
                 }).catch(ex => {
-                    openErrorNotification(`Błąd!`, `Błąd podczas edytowania rachunku.`);
+                    openErrorNotification(`Błąd!`, `Błąd podczas edytowania rachunku.\nReceiptClient().updateReceipt()`);
                 })
             }
 
@@ -77,7 +77,7 @@ const EditReceiptPanelModal: FunctionComponent<IEditReceiptPanelModalProps> = (p
                     openNotification(`Edycja klientów`, `Pomyślnie edytowano klientów.`);
                     refreshReceipt();
                 }).catch(ex => {
-                    openErrorNotification(`Błąd!`, `Błąd podczas edytowania klientów.`);
+                    openErrorNotification(`Błąd!`, `Błąd podczas edytowania klientów.\nReceiptAndCustomerBinderClient().setReceiptCustomers()`);
                 })
             }
         }
@@ -105,7 +105,7 @@ const EditReceiptPanelModal: FunctionComponent<IEditReceiptPanelModalProps> = (p
             new ReceiptClient().closeReceipt(selectedReceipt.id).then((r) => {
                 openNotification(`Zamknięto rachunek`, `Sukces.`);
             }).catch(ex => {
-                openErrorNotification(`Błąd przy zapisie do bazy danych.`, `Błąd przy wstawianiu daty zamknięcia rachunku.`);
+                openErrorNotification(`Błąd przy zapisie do bazy danych.`, `Błąd przy wstawianiu daty zamknięcia rachunku.\nReceiptClient().closeReceipt`);
             })
         }
         props.receiptRefreshFunc!();
