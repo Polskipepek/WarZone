@@ -4,7 +4,7 @@ import {
     Row,
     Tooltip,
     Typography
-    } from 'antd';
+} from 'antd';
 import { FunctionComponent } from 'react';
 import { IReceipt, Receipt } from '../../ApiClient';
 
@@ -30,7 +30,7 @@ const ReceiptDetails: FunctionComponent<IReceiptDetailsProps> = (props: IReceipt
         <>
             <Row>
                 <Col span={6} >
-                    <span style={{ paddingRight: 5 }}>
+                    <span style={{ paddingLeft: 5 }}>
                         <b>Wartość koszyka:</b> {props.totalPrice ? props.totalPrice : totalPrice}zł
                 </span>
                 </Col>

@@ -3,6 +3,7 @@ import { Form, Input, Select } from 'antd';
 import { FunctionComponent } from 'react';
 import { ICustomer, CustomerClient, ReceiptAndCustomerBinderClient } from '../../ApiClient';
 import FormItemLabel from 'antd/lib/form/FormItemLabel';
+import { OptionType } from 'antd/lib/select';
 
 interface ICustomerFinderProps {
     editMode: boolean;
@@ -26,7 +27,7 @@ const CustomerFinder: FunctionComponent<ICustomerFinderProps> = (props: ICustome
     };
 
     const onCustomerNameFieldChange = (value: string) => {
-        if (value.length < 1)
+        if (value.length < 2)
             return;
 
         // szukamy po nazwie
@@ -35,15 +36,13 @@ const CustomerFinder: FunctionComponent<ICustomerFinderProps> = (props: ICustome
             setRawSearchData(customers ? customers as ICustomer[] : null);
         });
     }
-
     const searchResults = () => {
-        return (
-            rawSearchData ? rawSearchData.map(
-                searchResult => <Select.Option value={`${searchResult.customerName!} ${searchResult.customerSurname!}`} key={searchResult.id}>{`${searchResult.customerName!} ${searchResult.customerSurname!}`}</Select.Option>) : undefined
-        )
+        return rawSearchData ? rawSearchData.map(
+            searchResult => <Select.Option value={`${searchResult.customerName!} ${searchResult.customerSurname!}`} key={searchResult.id}>{`${searchResult.customerName!} ${searchResult.customerSurname!}`}</Select.Option>) : undefined;
     }
 
     const onSelect = (customerId: number) => {
+        console.log(customerId);
         if (rawSearchData) {
             const customer = rawSearchData.find(customer => customer.id == customerId);
             if (customer) {
@@ -51,6 +50,18 @@ const CustomerFinder: FunctionComponent<ICustomerFinderProps> = (props: ICustome
             }
         }
     }
+    const onDeselect = (customerName: string) => {
+        console.log(customerName);
+        const customer = props.customers.find(customer => `${customer.customerName} ${customer.customerSurname}` == customerName);
+        console.log(customer);
+        if (customer) {
+            var filtered = props.customers.filter((value) => { return value != customer })
+            console.log(filtered);
+            props.setCustomers(filtered);
+        }
+
+    }
+
 
     return (<>
         <Form
@@ -82,11 +93,14 @@ const CustomerFinder: FunctionComponent<ICustomerFinderProps> = (props: ICustome
                         notFoundContent={null}
                         disabled={!props.editMode}
                         onSelect={(value, option) => onSelect(option.key as number)}
+                        onDeselect={(value, option) => { onDeselect(value) }}
                         value={props.customers.map((cus) => (`${cus.customerName!} ${cus.customerSurname!}`))}
                     >
                         {searchResults()}
                     </Select>
+
                 </div>
+
             </Form.Item>
         </Form>
     </>);
