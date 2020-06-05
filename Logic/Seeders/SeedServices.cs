@@ -62,6 +62,7 @@ namespace Logic.Seeders {
             services.Add (new Service { Id = services.Count + 1, ServiceName = "Walther P38: 5 strzałów", ServicePrice = 25.00M });
             services.Add (new Service { Id = services.Count + 1, ServiceName = "WALTHER P99: 10 strzałów", ServicePrice = 25.00M });
             services.Add (new Service { Id = services.Count + 1, ServiceName = "Winchester Lever Action: 10 strzałów", ServicePrice = 60.00M });
+            services.Add (new Service { Id = services.Count + 1, ServiceName = "Zniżka w zł", ServicePrice = -1.00M });
             context.Services.AddRange (services);
         }
     }
