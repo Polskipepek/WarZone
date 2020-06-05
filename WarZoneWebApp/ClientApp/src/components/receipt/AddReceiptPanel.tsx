@@ -1,7 +1,6 @@
-import AddReceiptModal from './AddReceiptModal';
-import React, { FunctionComponent, useState } from 'react';
+import React, { FunctionComponent } from 'react';
 import { Button, Card, Col } from 'antd';
-import { IReceipt, ReceiptClient } from '../../ApiClient';
+import { ReceiptClient } from '../../ApiClient';
 import { UserAddOutlined } from '@ant-design/icons';
 import { openNotification, openErrorNotification } from '../../helpers/NotificationHelper';
 
@@ -24,10 +23,7 @@ const AddReceiptPanel: FunctionComponent<IAddReceiptPanel> = (props) => {
         <Col span={8}>
             <Card style={{ width: "28vw", height: "100%", maxHeight: "29vh" }}>
                 <div className="center">
-                    <Button
-                        onClick={() => OnClick()}
-                        size="large"
-                    >
+                    <Button onClick={() => OnClick()} size="large">
                         <UserAddOutlined style={{ verticalAlign: "baseline" }} />
                         Utwórz nowy rachunek
                     </Button>

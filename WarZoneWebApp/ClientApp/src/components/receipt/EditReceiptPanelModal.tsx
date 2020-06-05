@@ -1,20 +1,16 @@
 import CloseReceiptModal from './CloseReceiptModal';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import ReceiptPanel from './ReceiptPanel';
 import Resources from '../../Resources';
 import { AppContext, IAppContext } from '../../App';
 import { Button, Modal } from 'antd';
 import { FunctionComponent } from 'react';
 import {
-    IReceipt,
     ITransactionListDto,
     ReceiptClient,
-    TransactionClient,
     TransactionListDto,
-    Customer,
     ICustomer,
     ReceiptAndCustomerBinderClient,
-    SwaggerException
 } from '../../ApiClient';
 import { IReceiptTableValues } from './ReceiptTableInner';
 import { openErrorNotification, openNotification } from '../../helpers/NotificationHelper';

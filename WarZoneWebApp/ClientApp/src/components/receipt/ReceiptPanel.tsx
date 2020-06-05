@@ -1,26 +1,19 @@
-import Icon from '@ant-design/icons/lib/components/Icon';
 import React, { useContext, useEffect, useState } from 'react';
 import ReceiptDetails from './ReceiptDetails';
 import ReceiptTableInner, { IReceiptTableValues } from './ReceiptTableInner';
-import Resources from '../../Resources';
 import { AppContext, IAppContext } from '../../App';
 import {
     Button,
     Card,
     Col,
-    Collapse,
     Divider,
     Tooltip,
-    Typography,
-    Select
 } from 'antd';
-import { EditOutlined } from '@ant-design/icons';
 import {
     IReceipt,
     IService,
     ITransactionListDto,
     Receipt,
-    ReceiptClient,
     TransactionClient,
     ReceiptAndCustomerBinderClient,
     ICustomer

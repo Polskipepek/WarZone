@@ -7,7 +7,6 @@ const WeaponList: React.FunctionComponent = props => {
 
     const GetWeapons = () => {
         new OfferClient().getWeapons().then(e => {
-            console.log("premise:");
             setWeapons(e);
         });
     }

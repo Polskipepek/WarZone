@@ -1,11 +1,8 @@
 import LoginForm, { ILoginFormProps } from '../LoginForm';
-import React, { Component, FunctionComponent } from 'react';
-import { Form } from 'antd';
+import React from 'react';
 import { RouteComponentProps } from 'react-router';
 
-export interface ILoginProps extends ILoginFormProps {
-
-}
+export interface ILoginProps extends ILoginFormProps { }
 
 type ILoginJoinedProps = RouteComponentProps & ILoginProps;
 
@@ -15,7 +12,6 @@ const Login: React.FunctionComponent<ILoginJoinedProps> = (props: ILoginJoinedPr
             <LoginForm TryLogin={props.TryLogin} />
         </div>
     );
-
 }
 
 export default Login;

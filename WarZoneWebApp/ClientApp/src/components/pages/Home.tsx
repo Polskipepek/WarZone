@@ -1,23 +1,7 @@
-import LoginForm, { ILoginFormProps } from '../LoginForm';
-import React, { Component, FunctionComponent } from 'react';
-import { RouteComponentProps } from 'react-router';
+import React, { FunctionComponent } from 'react';
 
 export interface IHomeProps {
 
-}
-
-const defaultBasicLayoutProps = {
-    className: "layout",
-    items: [
-        "raz", "dwa", "trzy"
-    ],
-    rowHeight: 30,
-    cols: 5,
-    h: 10,
-    i: "",
-    w: 20,
-    x: 0,
-    y: 0
 }
 
 const Home: FunctionComponent<IHomeProps> = (props: IHomeProps) => {

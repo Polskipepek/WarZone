@@ -1,4 +1,4 @@
-import React, { Children, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { RouteComponentProps, withRouter } from 'react-router';
 
 interface IAuthorizedViewProps {

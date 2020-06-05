@@ -1,9 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { Form, Input, Select } from 'antd';
+import React, { useState } from 'react';
+import { Form, Select } from 'antd';
 import { FunctionComponent } from 'react';
-import { ICustomer, CustomerClient, ReceiptAndCustomerBinderClient } from '../../ApiClient';
-import FormItemLabel from 'antd/lib/form/FormItemLabel';
-import { OptionType } from 'antd/lib/select';
+import { ICustomer, ReceiptAndCustomerBinderClient } from '../../ApiClient';
 
 interface ICustomerFinderProps {
     editMode: boolean;
@@ -30,8 +28,6 @@ const CustomerFinder: FunctionComponent<ICustomerFinderProps> = (props: ICustome
         if (value.length < 2)
             return;
 
-        // szukamy po nazwie
-        console.log("szukam po nazwie")
         new ReceiptAndCustomerBinderClient().getAvailableCustomers(value).then((customers) => {
             setRawSearchData(customers ? customers as ICustomer[] : null);
         });
@@ -42,7 +38,6 @@ const CustomerFinder: FunctionComponent<ICustomerFinderProps> = (props: ICustome
     }
 
     const onSelect = (customerId: number) => {
-        console.log(customerId);
         if (rawSearchData) {
             const customer = rawSearchData.find(customer => customer.id == customerId);
             if (customer) {
@@ -51,12 +46,9 @@ const CustomerFinder: FunctionComponent<ICustomerFinderProps> = (props: ICustome
         }
     }
     const onDeselect = (customerName: string) => {
-        console.log(customerName);
-        const customer = props.customers.find(customer => `${customer.customerName} ${customer.customerSurname}` == customerName);
-        console.log(customer);
+        const customer = props.customers.find(customer => `${customer.customerName} ${customer.customerSurname}` === customerName);
         if (customer) {
-            var filtered = props.customers.filter((value) => { return value != customer })
-            console.log(filtered);
+            var filtered = props.customers.filter((value) => { return value !== customer })
             props.setCustomers(filtered);
         }
 

@@ -92,11 +92,6 @@ const WarzoneLayoutInner: React.FunctionComponent<RouteComponentProps> = (props)
                         >
                             Otwarte rachunki
 						</Menu.Item>}
-                    {/*                     {props.selectedReceipt &&
-                        <MenuItem>
-                            Wybrany rachunek: {console.log(props.selectedReceipt.id + "\n" + props.selectedReceipt.totalPrice)}
-                        </MenuItem>
-                    } */}
                     {appUser && appUser.id == 1 &&
                         <MenuItem
                             key="10"

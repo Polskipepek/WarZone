@@ -1,6 +1,5 @@
 import InnerConsentForm from '../Consents/ConsentForm';
-import React, { FunctionComponent, useState } from 'react';
-import { IReceipt } from '../../ApiClient';
+import React, { FunctionComponent } from 'react';
 import { Modal } from 'antd';
 
 interface IAddReceiptModal {
@@ -19,7 +18,6 @@ const AddReceiptModal: FunctionComponent<IAddReceiptModal> = (props) => {
             onOk={() => props.setVisible()}
         >
             <InnerConsentForm setVisible={props.setVisible} pullReceipts={props.pullReceipts} visible={props.isVisible} />
-
         </Modal >
     </>);
 }

@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import ReceiptPanel from './ReceiptPanel';
+import React from 'react';
 import ServiceFinder from './ServiceFinder';
-import { Button, Pagination, Table } from 'antd';
+import { Button, Table } from 'antd';
 import { IService, ITransactionListDto } from '../../ApiClient';
 
 interface IReceiptPanelProps {
@@ -49,7 +48,7 @@ const ReceiptTableInner: React.FunctionComponent<IReceiptPanelProps> = props => 
                         <span>
                             <Button size="small" onClick={() => { props.changeCountValue(Number(record.count) - 1, { ...record, servicePrice: record.price, id: record.serviceId } as IService) }}>-</Button>
                             &ensp;{`${record.count}`}&ensp;
-                        <Button size="small" onClick={() => { props.changeCountValue(Number(record.count) + 1, { ...record, servicePrice: record.price, id: record.serviceId } as IService) }}>+</Button>
+                            <Button size="small" onClick={() => { props.changeCountValue(Number(record.count) + 1, { ...record, servicePrice: record.price, id: record.serviceId } as IService) }}>+</Button>
                         </span>)
                 ) : <span>&ensp;{`${record.count}`}&ensp;</span>);
             }

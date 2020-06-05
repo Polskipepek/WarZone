@@ -28,16 +28,12 @@ const ServiceFinder: FunctionComponent<IServiceFinderProps> = (props: IServiceFi
         if (isNaN(parseInt(value[0])) == false) {
             const parsedValue = parseInt(value);
             if (isNaN(parsedValue) == false) {
-                // szukamy po id
-                console.log("szukam po id")
                 new ServiceClient().searchServicesById(parsedValue).then((services) => {
                     setRawSearchData(services ? services as unknown as IService[] : null);
                 });
             }
         } else {
             if (value.length > 1) {
-                // szukamy po nazwie
-                console.log("szukam po nazwie")
                 new ServiceClient().searchServicesByName(value).then((services) => {
                     setRawSearchData(services ? services as unknown as IService[] : null);
                 });

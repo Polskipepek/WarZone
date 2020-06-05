@@ -1,20 +1,14 @@
-import Icon from '@ant-design/icons/lib/components/Icon';
 import React, {
     FunctionComponent,
-    useContext,
     useEffect,
     useState
-    } from 'react';
+} from 'react';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { Store } from 'antd/lib/form/interface';
 import {
     Button,
     Form,
     Input,
 } from 'antd';
-function hasErrors(fieldsError: { [x: string]: any; }) {
-    return Object.keys(fieldsError).some(field => fieldsError[field]);
-}
 
 export interface ILoginFormProps {
     TryLogin: (username: string, password: string) => void;
@@ -31,7 +25,6 @@ const LoginForm: FunctionComponent<ILoginFormJoinedProps> = (props: ILoginFormJo
     const [form] = Form.useForm();
 
     const DisplayForms = () => {
-
         const [, forceUpdate] = useState();
 
         useEffect(() => {
@@ -83,7 +76,7 @@ const LoginForm: FunctionComponent<ILoginFormJoinedProps> = (props: ILoginFormJo
                             }
                         >
                             Zaloguj
-                    </Button>)}
+                        </Button>)}
                 </Form.Item>
             </Form>
         );

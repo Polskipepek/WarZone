@@ -1,9 +1,6 @@
-import ConsentContent from '../pages/Consent';
 import ConsentContentModal from './ConsentContent';
 import GdprContent from './GdprContent';
-import Icon from '@ant-design/icons/lib/components/Icon';
 import React, {
-    Component,
     FunctionComponent,
     useEffect,
     useState
@@ -15,9 +12,6 @@ import {
     Input
 } from 'antd';
 import {
-    Customer,
-    ICustomer,
-    IReceipt,
     ReceiptClient
 } from '../../ApiClient';
 import { Link } from 'react-router-dom';
@@ -42,11 +36,6 @@ const InnerConsentForm: FunctionComponent<IInnerConsentForm> = (props) => {
 
 
     const submitForm = (name: string, surname: string) => {
-        const customer: ICustomer = {
-            id: 0,
-            customerName: name,
-            customerSurname: surname
-        };
         new ReceiptClient().addReceipt().then(r => {
             openNotification(`Tworzenie nowego rachunku...`, `Wykonano pomyślnie.`);
         }).catch(ex => {
