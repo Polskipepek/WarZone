@@ -47,7 +47,7 @@ const InnerConsentForm: FunctionComponent<IInnerConsentForm> = (props) => {
             customerName: name,
             customerSurname: surname
         };
-        new ReceiptClient().addReceipt(customer as Customer).then(r => {
+        new ReceiptClient().addReceipt().then(r => {
             openNotification(`Tworzenie nowego rachunku...`, `Wykonano pomyślnie.`);
         }).catch(ex => {
             openErrorNotification(`Tworzenie nowego rachunku...`, `Błąd przy zapisie do bazy danych.`);

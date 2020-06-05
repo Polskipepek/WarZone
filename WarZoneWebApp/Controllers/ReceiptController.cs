@@ -26,20 +26,11 @@ namespace WarZoneWebApp.Controllers {
 
         [HttpPost]
         [Route ("[action]")]
-        public IActionResult AddReceipt ([FromBody]Customer customer) {
-            if (string.IsNullOrWhiteSpace (customer?.CustomerName) || string.IsNullOrWhiteSpace (customer?.CustomerSurname)) {
-                return BadRequest ();
-            }
-            Customer existingCustomer = context.Customers.FirstOrDefault (c => c.CustomerName == customer.CustomerName && c.CustomerSurname == customer.CustomerSurname);
-            if (existingCustomer == null ) {
-                var receipt = new Receipt {
-                    CreationDate = DateTime.Now,
-                    ModifyDate = DateTime.Now,
-                };
-                context.Transactions.Add (new Transaction { Receipt = receipt, ServiceId = GetEntryServiceId () });
-            } else {
-                context.Receipts.Add (new Receipt { CreationDate = DateTime.Now, ModifyDate = DateTime.Now });
-            }
+        public IActionResult AddReceipt () {
+            var receipt = new Receipt { CreationDate = DateTime.Now, ModifyDate = DateTime.Now };
+            context.Receipts.Add (receipt);
+            context.Transactions.Add (new Transaction { Receipt = receipt, ServiceId = GetEntryServiceId () });
+
             context.SaveChanges ();
             return Ok ();
         }
@@ -64,7 +55,7 @@ namespace WarZoneWebApp.Controllers {
 
         [HttpPost]
         [Route ("[action]")]
-        public ActionResult UpdateReceipt (int receiptId, [FromBody]TransactionListDto[] transactionListDtos) {
+        public ActionResult UpdateReceipt (int receiptId, [FromBody] TransactionListDto[] transactionListDtos) {
             if (transactionListDtos == null || !transactionListDtos.Any ())
                 return BadRequest ();
 
@@ -79,7 +70,7 @@ namespace WarZoneWebApp.Controllers {
             var serviceIds = originalTransactionsDtos.Select (t => t.ServiceId).Concat (transactionListDtos.Select (t => t.ServiceId)).Distinct ();
 
             foreach (var serviceId in serviceIds) {
-               // var originalDto = originalTransactionsDtos.Select ((t) => (t.ServiceId, t.Count)).FirstOrDefault ((_tuple) => _tuple.ServiceId == serviceId);
+                // var originalDto = originalTransactionsDtos.Select ((t) => (t.ServiceId, t.Count)).FirstOrDefault ((_tuple) => _tuple.ServiceId == serviceId);
                 var (ServiceId, Count) = originalTransactionsDtos.Select ((t) => (t.ServiceId, t.Count)).FirstOrDefault ((_tuple) => _tuple.ServiceId == serviceId);
 
                 var newDto = transactionListDtos.Select ((t) => (t.ServiceId, t.Count)).FirstOrDefault ((_tuple) => _tuple.ServiceId == serviceId);

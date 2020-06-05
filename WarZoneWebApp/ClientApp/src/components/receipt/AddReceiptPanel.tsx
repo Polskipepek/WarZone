@@ -1,8 +1,9 @@
 import AddReceiptModal from './AddReceiptModal';
 import React, { FunctionComponent, useState } from 'react';
 import { Button, Card, Col } from 'antd';
-import { IReceipt } from '../../ApiClient';
+import { IReceipt, ReceiptClient } from '../../ApiClient';
 import { UserAddOutlined } from '@ant-design/icons';
+import { openNotification, openErrorNotification } from '../../helpers/NotificationHelper';
 
 interface IAddReceiptPanel {
     pullReceipts: () => void;
@@ -10,10 +11,13 @@ interface IAddReceiptPanel {
 
 const AddReceiptPanel: FunctionComponent<IAddReceiptPanel> = (props) => {
 
-    const [isModalShown, setModalShown] = useState<boolean>(false);
-
-    const toggleModalVisibility = () => {
-        return setModalShown(!isModalShown);
+    const OnClick = () => {
+        new ReceiptClient().addReceipt().then(() => {
+            openNotification(`Pomyślnie stworzono nowy rachunek.`, ``);
+            props.pullReceipts();
+        }).catch(ex => {
+            openErrorNotification(`Błąd przy tworzeniu nowego rachunku.`, ``);
+        })
     }
 
     return (<>
@@ -21,7 +25,7 @@ const AddReceiptPanel: FunctionComponent<IAddReceiptPanel> = (props) => {
             <Card style={{ width: "28vw", height: "100%", maxHeight: "29vh" }}>
                 <div className="center">
                     <Button
-                        onClick={() => toggleModalVisibility()}
+                        onClick={() => OnClick()}
                         size="large"
                     >
                         <UserAddOutlined style={{ verticalAlign: "baseline" }} />
@@ -29,7 +33,6 @@ const AddReceiptPanel: FunctionComponent<IAddReceiptPanel> = (props) => {
                     </Button>
                 </div>
             </Card>
-            <AddReceiptModal isVisible={isModalShown} setVisible={toggleModalVisibility} pullReceipts={props.pullReceipts} />
         </Col>
     </>);
 }
