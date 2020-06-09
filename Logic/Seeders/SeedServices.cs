@@ -8,6 +8,8 @@ namespace Logic.Seeders {
             List<Service> services = new List<Service> ();
             services.Add (new Service { Id = services.Count + 1, ServiceName = "Wejście Wtorek – Piątek", ServicePrice = 20.00M });
             services.Add (new Service { Id = services.Count + 1, ServiceName = "Wejście Sobota – Niedziela", ServicePrice = 25.00M });
+            services.Add (new Service { Id = services.Count + 1, ServiceName = "Darmowe Wejście Wtorek – Piątek", ServicePrice = -20.00M });
+            services.Add (new Service { Id = services.Count + 1, ServiceName = "Darmowe Wejście Sobota – Niedziela", ServicePrice = -25.00M });
             services.Add (new Service { Id = services.Count + 1, ServiceName = "B&T MP9: 10 strzałów", ServicePrice = 35.00M });
             services.Add (new Service { Id = services.Count + 1, ServiceName = "BERETTA 92S: 10 strzałów", ServicePrice = 30.00M });
             services.Add (new Service { Id = services.Count + 1, ServiceName = "COLT 1911: 5 strzałów", ServicePrice = 20.00M });
