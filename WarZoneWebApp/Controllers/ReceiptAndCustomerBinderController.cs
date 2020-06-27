@@ -25,9 +25,12 @@ namespace WarZoneWebApp.Controllers {
 
         [HttpPost]
         [Route ("[action]")]
-        public ActionResult SetReceiptCustomers (int receiptId, [FromBody]int[] customers) {
-            if (receiptId == 0 || customers.Length == 0) {
-                return BadRequest ();
+        public ActionResult SetReceiptCustomers (int receiptId, [FromBody] int[] customers) {
+            if (customers != null & context.ReceiptAndCustomerBinders.Count (w => w.ReceiptId == receiptId) == customers.Length) {
+                return Ok ();
+            }
+            if (receiptId == 0 || customers == null) {
+                return Ok();
             }
 
             var query = context.ReceiptAndCustomerBinders.Where (r => r.ReceiptId == receiptId);
@@ -61,6 +64,13 @@ namespace WarZoneWebApp.Controllers {
         [Route("[action]")]
         public ActionResult<Customer[]> GetAvailableCustomers (string searchString) {
             return context.Customers.Where(w=>w.CustomerName.ToLower().Contains(searchString.ToLower()) || w.CustomerSurname.ToLower ().Contains (searchString.ToLower ())).ToArray();
+        }
+        [HttpPost]
+        [Route ("[action]")]
+        public ActionResult AddAvailableCustomers (string name, string surname) {
+            context.Customers.Add(new Customer { CustomerName = name, CustomerSurname = surname });
+            context.SaveChanges ();
+            return Ok ();
         }
     }
 }

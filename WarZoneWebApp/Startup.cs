@@ -1,4 +1,5 @@
 using Logic.ControllersLogic;
+using Logic.DtoMappers;
 using Logic.OperationContext;
 using Logic.Seeders;
 using Logic.Services;
@@ -45,6 +46,7 @@ namespace WarZoneWebApp {
             services.AddSingleton<IUserService, UserService> ();
             services.AddSingleton<IOperationContext, OperationContext> ();
             services.AddTransient<TransactionControllerLogic> ();
+            services.AddTransient<NumberInfoDtoMapper> ();
 
             services.ConfigureAddMvc ();
             services.ConfigureAddAuthentication ();

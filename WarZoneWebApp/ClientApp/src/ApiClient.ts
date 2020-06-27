@@ -373,6 +373,48 @@ export class ReceiptAndCustomerBinderClient extends ClientBase {
         }
         return Promise.resolve<Customer[] | null>(<any>null);
     }
+
+    addAvailableCustomers(name: string | null, surname: string | null): Promise<FileResponse | null> {
+        let url_ = this.baseUrl + "/api/ReceiptAndCustomerBinder/AddAvailableCustomers?";
+        if (name === undefined)
+            throw new Error("The parameter 'name' must be defined.");
+        else
+            url_ += "name=" + encodeURIComponent("" + name) + "&"; 
+        if (surname === undefined)
+            throw new Error("The parameter 'surname' must be defined.");
+        else
+            url_ += "surname=" + encodeURIComponent("" + surname) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "POST",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.transformResult(url_, _response, (_response: Response) => this.processAddAvailableCustomers(_response));
+        });
+    }
+
+    protected processAddAvailableCustomers(response: Response): Promise<FileResponse | null> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200 || status === 206) {
+            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
+            const fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
+            const fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
+            return response.blob().then(blob => { return { fileName: fileName, data: blob, status: status, headers: _headers }; });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<FileResponse | null>(<any>null);
+    }
 }
 
 export class ReceiptClient extends ClientBase {
@@ -721,6 +763,56 @@ export class ServiceClient extends ClientBase {
     }
 }
 
+export class StatClient extends ClientBase {
+    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
+        super();
+        this.http = http ? http : <any>window;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    getDailyIncome(date?: Date | null | undefined): Promise<NumberInfo | null> {
+        let url_ = this.baseUrl + "/api/Stat/GetDailyIncome?";
+        if (date !== undefined)
+            url_ += "date=" + encodeURIComponent(date ? "" + date.toJSON() : "") + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "POST",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.transformResult(url_, _response, (_response: Response) => this.processGetDailyIncome(_response));
+        });
+    }
+
+    protected processGetDailyIncome(response: Response): Promise<NumberInfo | null> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? NumberInfo.fromJS(resultData200) : <any>null;
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<NumberInfo | null>(<any>null);
+    }
+}
+
 export class TransactionClient extends ClientBase {
     private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
     private baseUrl: string;
@@ -1064,6 +1156,46 @@ export class Service extends ModelBase implements IService {
 export interface IService extends IModelBase {
     serviceName?: string | undefined;
     servicePrice: number;
+}
+
+export class NumberInfo implements INumberInfo {
+    total!: number;
+    subtotal!: number;
+
+    constructor(data?: INumberInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.total = _data["total"];
+            this.subtotal = _data["subtotal"];
+        }
+    }
+
+    static fromJS(data: any): NumberInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new NumberInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["total"] = this.total;
+        data["subtotal"] = this.subtotal;
+        return data; 
+    }
+}
+
+export interface INumberInfo {
+    total: number;
+    subtotal: number;
 }
 
 export interface FileResponse {

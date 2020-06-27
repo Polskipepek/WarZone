@@ -11,8 +11,8 @@ namespace Model.Database {
 
         [NotMapped]
         public decimal TotalPrice { get; set; }
-        public void GetTotalPrice (Context context) {
-            TotalPrice = context.Transactions.Where (e => e.Receipt == this).Sum (e => e.Service.ServicePrice);
+        public decimal GetTotalPrice (Context context) {
+            return TotalPrice = context.Transactions.Where (e => e.Receipt == this).Sum (e => e.Service.ServicePrice);
         }
     }
 }
